@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "ipykernel>=7.1.0",
+    "matplotlib>=3.10.8",
     "pandas>=3.0.0",
     "quantulum3>=0.9.2",
+    "seaborn>=0.13.2",
     "setuptools>=80.10.2",
 ]
