@@ -1,9 +1,5 @@
 # **Service Description: ShopWiser Algorithmic Product Categorisation**
 
-**Provider:** Mihail Ionita
-
-**Client:** Jack Templeton (ShopWiser Co-Founder)
-
 ## **1\. Executive Details**
 
 * **Project Goal:** To programmatically restructure raw supermarket inventory data into "Low-Level Categories" that allow for direct price comparison across four target retailers: Tesco, ASDA, Morrisons, and Sainsbury’s.
