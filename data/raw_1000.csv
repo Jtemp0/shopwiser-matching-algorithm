@@ -1,0 +1,1001 @@
+supermarket,prices_(£),prices_unit_(£),unit,names,date,category,own_brand
+Morrisons,1.85,10.3,kg,GetPro Caramel High Protein Pudding,20240413,fresh_food,False
+Tesco,2.6,40.0,kg,John West Smoked Oysters Sunflower Oil 85G,20240413,food_cupboard,False
+Morrisons,2.5,0.4,l,Nestle Pure Life Still Spring Water,20240413,drinks,False
+ASDA,1.05,2.2,kg,ASDA White Lasagne Pasta Sauce,20240413,food_cupboard,True
+ASDA,2.5,14.3,kg,ASDA Extra Special Nut Mix,20240413,fresh_food,True
+Morrisons,2.5,6.25,kg,Mutti Cherry Tomatoes (400g),20240404,food_cupboard,False
+ASDA,1.9,10.6,kg,ASDA Free From Chocolate Mousses,20240413,fresh_food,True
+Sains,4.0,11.11,kg,Sainsbury's Lamb & Mint Kebabs x6 360g,20240405,free-from,True
+Morrisons,6.0,7.98,l,Chevaliers St Martin Aop Bordeaux,20240413,drinks,False
+ASDA,3.25,6.5,kg,Nesquik Strawberry Flavoured Milkshake Powder,20240413,drinks,False
+Tesco,5.0,2.84,l,Scrumpy Jack Premium British Cider Can 4x440ml,20240413,drinks,False
+Morrisons,31.25,625.0,kg,Players Easy Rolling Tobacco,20240413,drinks,False
+Tesco,7.45,29.8,l,Mazzetti Gold Label Balsamic Vinegar Of Modena 250Ml,20240413,food_cupboard,False
+ASDA,10.5,139.96,l,Macon-Villages Reserve Chardonnay 750ml,20240413,drinks,False
+Morrisons,0.97,3.09,kg,Morrison Thin Crust Cheese Pizza,20240413,frozen,False
+ASDA,6.5,86.64,l,Hardys Crest Cabernet Shiraz Merlot,20240413,drinks,False
+Sains,2.1,2.1,l,Sainsbury's Pure 100% Prune Juice 1L,20240413,drinks,True
+Sains,1.5,2.0,l,Sainsbury's Quadruple Strength Summer Fruits Squash 750ml,20240413,drinks,True
+ASDA,1.5,30.0,kg,Buttermilk Peanut Nougat,20240413,food_cupboard,False
+Tesco,2.5,13.3,kg,Tesco Finest 4 Pork Sausage Rolls 188G,20240413,fresh_food,True
+ASDA,2.25,7.8,kg,Blue Riband Original Milk Chocolate Wafer Biscuits 16 Pack,20240413,food_cupboard,False
+Sains,2.35,7.3,kg,Geeta's Mango Chutney 320g,20240413,food_cupboard,False
+ASDA,1.7,0.28,unit,Sheldon's Lancashire Oven Bottom Muffins,20240413,bakery,False
+Sains,2.25,7.5,kg,Kellogg's Special K The Original 300g,20240413,food_cupboard,False
+Morrisons,3.0,33.3,kg,Kind Dark Chocolate Nuts & Sea Sa…,20240413,food_cupboard,False
+ASDA,2.4,4.8,l,Sharp's Doom Bar Amber Ale,20240413,drinks,False
+Tesco,0.89,4.4,kg,Stockwell & Co 80 Tea Bags 200G,20240413,drinks,False
+Tesco,1.95,13.93,kg,Philadelphia Original Soft Cream Cheese Mini Tub 4 Pack 140G,20240413,fresh_food,False
+Morrisons,2.5,12.5,kg,Applewood Vegan Block,20240413,free-from,False
+ASDA,1.0,4.2,kg,Ambrosia Deluxe Custard Madagascan Vanilla 2 x 120g (240g),20240413,food_cupboard,False
+Tesco,1.9,15.2,kg,Tesco Finest Chai 50 Tea Bags 125G,20240413,drinks,True
+Sains,2.0,33.3,kg,Grenade Jaffa Quake Chocolate Orange Flavour 60g,20240413,free-from,False
+Tesco,1.75,13.7,kg,Mars Triple Treat Fruit Nut & Chocolate Bars Multipack 4 X 32g,20240413,food_cupboard,False
+Sains,1.3,15.3,kg,Sainsbury's Paprika Lentil Triangles 85g,20240413,food_cupboard,True
+Sains,7.0,46.67,kg,"Sainsbury's Raw Large Canadian Scallops MSC, Taste the Difference 150g",20240413,free-from,True
+Morrisons,1.8,10.2,kg,Haribo Tangfastics 11 Mini…,20240219,food_cupboard,False
+Sains,2.5,13.7,kg,Snickers Creamy Peanut Butter & Milk Chocolate Snack Bars Multipack 182g,20240324,food_cupboard,False
+Sains,1.15,15.3,kg,Cadbury Dairy Milk Daim Chocolate Dessert 75g,20240413,fresh_food,False
+Tesco,1.05,4.2,kg,Tesco Plant Chef Coleslaw 250G,20240413,fresh_food,True
+Sains,3.35,18.2,kg,"Sainsbury's New York Vanilla Cheesecake Slices, Taste the Difference 2x92g",20240413,free-from,True
+Sains,0.75,5.0,l,Sainsbury's Fresh Soured Cream 150ml,20240313,fresh_food,True
+Sains,1.75,3.5,kg,Chicken Tonight Honey & Mustard 500g,20240413,food_cupboard,False
+Sains,8.0,10.64,l,Brancott Estate Sauvignon Blanc White Wine 75cl,20240413,drinks,False
+Tesco,2.0,11.1,kg,Fox's Milk Chocolate Cookies 180G,20240413,food_cupboard,False
+Tesco,2.2,15.7,kg,Alpro Double Chocolate Dairy Free Vegan Soya Dessert 2x70g,20240413,fresh_food,False
+ASDA,2.2,22.0,kg,ASDA Goat's Cheese,20240216,fresh_food,True
+Sains,6.3,31.5,kg,Lindt Lindor Strawberries & Cream Chocolate Truffles Box 200g,20240413,food_cupboard,False
+Morrisons,2.99,12.9,kg,PG Tips Original 80 Tea Bags,20240413,food_cupboard,False
+Sains,45.0,59.85,l,Pommery Champagne Brut Royal 750ml,20240413,drinks,False
+Sains,1.35,10.4,kg,The Natural Confectionery Company Jelly Snakes Sweets Bag 130g,20240413,food_cupboard,False
+ASDA,1.95,4.9,kg,JUST ESSENTIALS by ASDA Wafer Thin Cooked Ham Slices,20240413,fresh_food,True
+Morrisons,63.5,0.64,unit,Carlton Original Cigarettes Multipack,20240413,drinks,False
+ASDA,2.6,6.5,kg,Birds Eye Steam Fresh Mediterranean Pasta with Veg & Tomato Sauce 400g,20240413,frozen,False
+Morrisons,10.5,13.96,l,Brancott Estate Sauvignon Blanc White Wine,20240413,drinks,False
+Sains,2.0,1.3,l,"Old Jamaica Ginger Beer, Diet 1.5L",20240413,drinks,False
+Sains,10.5,13.96,l,"Sainsbury's Chardonnay, Taste the Difference 75cl",20240413,drinks,True
+Tesco,2.0,16.0,kg,Marmite Yeast Extract Spread 125G,20240413,food_cupboard,False
+Morrisons,1.0,2.0,kg,Skinny Whip Chocolate Orange,20240413,food_cupboard,False
+Tesco,0.75,15.0,kg,Grace Pumpkin Soup Mix 50G,20240413,food_cupboard,False
+Tesco,0.9,18.0,kg,Tesco Scotch Bonnet Chillies 50G,20240413,fresh_food,True
+Tesco,1.99,4.4,kg,Roses Lemon & Lime Marmalade 454G,20240413,food_cupboard,False
+ASDA,2.5,16.9,kg,ASDA Free From 5 Brownie Slices,20240413,bakery,True
+Tesco,3.25,40.6,kg,Tesco Honey Roast Salmon Flakes 80G,20240412,fresh_food,True
+Sains,3.5,14.0,kg,Higgidy Steak & Ale Pie 250g,20240413,fresh_food,False
+Tesco,2.0,7.4,l,Tesco 3 Caramel Millionaires Ice Cream 270Ml,20240207,frozen,True
+Sains,2.5,0.4,l,Nestle Pure Life Still Spring Water 12x500ml,20240413,drinks,False
+Tesco,2.75,4.8,kg,Tesco 4 Chicken & Bacon Pies 568G,20240413,frozen,True
+Sains,0.8,2.7,l,Kubus Go Strawberry-Banana 300ml,20240413,food_cupboard,False
+ASDA,0.95,26.4,kg,Schwartz Somerset Pork Casserole Recipe Mix,20240413,food_cupboard,False
+Sains,2.0,5.7,kg,Yeo Valley Organic Kefir Strawberry Yogurt 350g,20240413,free-from,False
+Morrisons,1.29,3.0,kg,Morrisons Puff Pastry Block,20240413,fresh_food,True
+Morrisons,4.0,8.0,kg,Morrisons 4 Garlic & Herb Chicken Kievs,20240413,frozen,True
+ASDA,0.35,2.8,kg,JUST ESSENTIALS by ASDA Batter Mix,20240413,food_cupboard,True
+Morrisons,6.0,7.98,l,Barefoot Pink Moscato Rose Wine,20240413,drinks,False
+Morrisons,3.79,1.26,kg,Allinson Strong White Flour,20240413,food_cupboard,False
+Sains,4.0,31.3,kg,Häagen-Dazs Salted Caramel Ice Cream Bites 8x15g,20240413,free-from,False
+Morrisons,3.79,0.95,unit,Al Fez Harissa Wrap Kit,20240413,food_cupboard,False
+Morrisons,5.99,5.99,unit,Vuse Go Edition 01 Mint Ice 20mg,20240319,drinks,False
+ASDA,2.7,10.8,kg,ASDA Cheshire Cheese,20240118,fresh_food,True
+Morrisons,0.75,17.9,kg,Kit Kat Chunky Peanut Butter,20240413,food_cupboard,False
+Morrisons,1.99,9.5,kg,Pukka All Day Breakfast Pie,20240412,fresh_food,False
+Sains,12.0,12.0,unit,Sainsbury's Outdoor Novelty Mum & Baby Tete a Tete 9cm,20240309,fresh_food,True
+Sains,4.0,4.0,l,Red Bull Energy Drink Sugar Free 250ml x4,20240413,drinks,False
+Sains,1.35,1.4,l,Rubicon Lychee Fruit Juice Drink 1L,20240330,free-from,False
+Tesco,1.75,19.4,kg,Kind Fruit & Nut 3X30g,20240413,food_cupboard,False
+Sains,2.85,9.7,kg,Dr. Oetker Science Crazy Colour Changing Icing Cupcake Mix 295g,20240413,food_cupboard,False
+ASDA,1.95,14.1,kg,Jacob's Crinkly's Cheese & Onion Flavour Baked Snacks Multipack 6x23g,20240413,food_cupboard,False
+Morrisons,4.25,28.33,kg,Morrisons Fishmongers Frozen Raw Peeled Argentinian Red Shrimp,20240306,fresh_food,True
+Tesco,4.0,13.3,kg,Bisto Chicken Gravy Granules 300g,20240413,food_cupboard,False
+Tesco,10.0,13.3,l,Hardys Tintara Cabernet Sauvignon 750Ml,20240413,drinks,False
+ASDA,3.2,4.6,kg,ASDA Everyday 240 Tea Bags,20240413,drinks,True
+Sains,2.7,5.4,kg,Fudco Idli Instant Mix 500g,20240413,food_cupboard,False
+ASDA,2.4,4.8,kg,ASDA Extra Special Coleslaw,20240413,fresh_food,True
+Morrisons,1.69,15.5,kg,Idahoan Perfect Mash Cheddar Cheese (109g),20240413,food_cupboard,False
+Tesco,3.5,4.0,kg,Natco Ground Coriander 1kg,20240413,food_cupboard,False
+ASDA,2.0,0.2,unit,The BAKERY at ASDA 10 Chocolate Chip Madeleines,20240413,bakery,True
+Morrisons,1.95,2.0,l,Morrisons 100% Orange Juice with Bits,20240413,fresh_food,True
+Morrisons,2.0,2.0,l,Robinsons Fruit & Barley Peac…,20240413,drinks,False
+Sains,4.25,0.5,l,Buxton Still Natural Bottled Mineral Water 6x1.5L,20240413,drinks,False
+ASDA,2.0,18.2,kg,Eat Real Hummus Chips Tomato + Basil Flavour 110g,20240331,food_cupboard,False
+Tesco,2.25,26.5,kg,Popworks Sweet Chipotle Chilli Sharing Bag Popped Crisps 85g,20240409,food_cupboard,False
+Sains,3.0,16.7,kg,Rhokett Chocolate & Caramel Cheesecake Slices 180g,20240209,free-from,False
+ASDA,0.75,10.0,kg,Ainsley Harriott Cream of Wild Mushroom Cup Soup,20240413,food_cupboard,False
+Morrisons,2.0,8.93,kg,Birds Eye 8 Battered Fish Fingers,20240413,frozen,False
+Tesco,8.25,6.25,l,Beavertown Neck Oil Session Ipa 4X330ml,20240413,drinks,False
+ASDA,2.0,8.0,kg,Merchant Gourmet Smoky Spanish-Style Grains & Rice,20240413,food_cupboard,False
+Morrisons,1.29,5.6,kg,Morrisons Everyday Tea Bags 80 Pack,20240413,food_cupboard,True
+Morrisons,2.0,5.0,l,Amoy Rich Coconut Milk,20240413,food_cupboard,False
+Sains,4.0,10.0,kg,Cadbury Dairy Milk Caramel Chocolate Brownie 400g,20240221,frozen,False
+ASDA,4.0,3.03,l,Kopparberg Premium Cider with Strawberry & Pineapple 4 x 330ml,20240413,drinks,False
+ASDA,2.5,1.43,kg,Indus Chana Dal,20240201,food_cupboard,False
+ASDA,1.49,16.0,kg,Batchelors Cup a Soup Tomato Soup 4 Instant Soup Sachets,20240413,food_cupboard,False
+ASDA,3.5,7.5,kg,Nando's Perinaise Garlic Peri-Peri Mayonnaise,20240413,food_cupboard,False
+Morrisons,2.85,14.25,kg,Violife Original Flavour Grated V…,20240413,free-from,False
+Tesco,2.75,9.17,kg,Quorn Biryani Bowl 300G,20240413,fresh_food,False
+Tesco,2.2,7.2,kg,Pukka 2 Chicken Bakes 306g,20240413,frozen,False
+ASDA,0.7,14.0,kg,Grace Coconut Milk Powder,20240413,food_cupboard,False
+Sains,3.35,9.9,kg,"Sainsbury's Set Honey, SO Organic 340g",20240413,food_cupboard,True
+Morrisons,4.95,22.5,kg,Morrisons Boneless Atlantic Salmon Portions Twin Pack,20240118,frozen,True
+Sains,1.5,1.5,l,Sainsbury's Vanilla Flavour Ice Cream 1L,20240413,free-from,True
+ASDA,2.5,6.2,l,Blue Dragon Coconut Milk,20240413,free-from,False
+Sains,2.0,7.7,kg,Nando’s Peri-Peri Marinade Lemon and Herb Extra Mild 260g,20240413,food_cupboard,False
+Morrisons,2.0,2.7,kg,Hartleys Jelly Blackcurrant Flavour Jelly 6PK,20240413,food_cupboard,False
+Sains,14.0,18.62,l,Villa Maria Sparkling Cuvée Brut 75cl,20240413,drinks,False
+Sains,1.95,7.8,l,"Sainsbury's Sicilian Lemon Gin & Tonic, Taste the Difference 250ml",20240405,drinks,True
+Tesco,0.9,12.0,kg,Batchelors Super Noodles Pot Bbq Beef 75G,20240413,food_cupboard,False
+ASDA,25.0,35.71,l,El Jimador 100% Agave Tequila Blanco,20240413,drinks,False
+Sains,5.6,3.5,kg,Muttil Whole Peeled Tomatoes 4x400g,20240413,food_cupboard,False
+Morrisons,1.5,7.5,kg,Morrisons Fishmonger Kipper Fillets,20240413,fresh_food,True
+Sains,3.95,69.3,kg,"Starbucks by Nespresso Decaf Espresso Coffee x10 Pods, 10 Drinks",20240413,food_cupboard,False
+Morrisons,2.39,9.6,kg,Holy Cow! Delhi Tikka Masala,20240413,food_cupboard,False
+Sains,0.62,1.6,kg,Sainsbury's Oxtail Soup 400g,20240413,food_cupboard,True
+Sains,1.75,2.9,kg,Sainsbury's Chunky Vegetable Soup 600g,20240413,fresh_food,True
+ASDA,0.65,0.7,l,ASDA Diet Indian Tonic Water with Lime,20240413,drinks,True
+ASDA,9.5,39.6,kg,Grenade Chocolate Chip Salted Caramel Flavour,20240225,food_cupboard,False
+ASDA,1.69,0.28,unit,ASDA Zingy & Crisp Braeburn Apples,20240413,fresh_food,True
+Sains,20.0,38.5,kg,PhD Smart Protein Powder Plant Chocolate Cookie 500g,20240413,free-from,False
+Morrisons,5.0,15.24,kg,Morrisons The Best Panc…,20240311,fresh_food,True
+Sains,12.5,0.07,unit,Sainsbury's Health Matters Immunity Chewable Vitamin C One a Day Tablet x180 1000mg,20240413,free-from,True
+ASDA,2.75,6.25,l,BrewDog Hazy Jane Guava,20240413,drinks,False
+Sains,2.0,24.4,kg,Science in Sport Beta Fuel Orange Energy Drink 82g,20240413,free-from,False
+Sains,0.55,0.55,unit,Sainsbury's Large Garlic,20240413,fresh_food,True
+Sains,6.25,8.31,l,Edizione 789 Di Mondelli Prosecco 75cl,20240413,drinks,False
+Sains,12.0,49.6,kg,Tony's Chocolonely Milk Chocolate 242g,20240201,food_cupboard,False
+Morrisons,4.25,4.25,kg,Morrisons BBQ Chicken Drums,20240413,fresh_food,True
+Morrisons,0.99,6.69,kg,Morrisons 2 Fresh Bake Pork Sausage Rolls,20240413,fresh_food,True
+Sains,1.25,7.35,kg,Pukka Vegan No Steak Slice 170g,20240413,free-from,False
+Sains,2.5,5.56,kg,Sainsbury's Frozen Peach & Nectarine Slices 450g,20240413,fresh_food,True
+Morrisons,3.49,11.63,kg,Morrisons The Best Aged Red Leicester,20240413,fresh_food,True
+Morrisons,3.0,8.11,kg,This Isn't Chicken Plant-Based Chicken Pieces,20240413,fresh_food,False
+Sains,2.1,2.1,l,Califia Farms Oat Drink Barista Blend 1L,20240413,food_cupboard,False
+ASDA,0.75,3.8,kg,Shalimar Balti Mix 200g,20240413,food_cupboard,False
+Sains,18.0,18.0,l,Grant's Triple Wood Blended Scotch Whisky 1L,20240413,drinks,False
+Tesco,26.0,13.0,kg,Tesco Lamb Whole Leg Joint,20240413,fresh_food,True
+Sains,1.1,30.6,kg,Orion Choco Boy Chocolate Biscuits 36g,20240221,free-from,False
+Sains,5.25,4.4,l,Fever-Tree Premium Indian Tonic Water 8 x 150ml (Sugar levy applied),20240413,drinks,False
+Morrisons,0.49,4.3,kg,Morrisons Savers Fruit Cocktail Trifle,20240413,fresh_food,True
+Tesco,1.4,7.0,kg,Mcvitie's 8 Toasting Waffles Chocolate 200G,20240413,bakery,False
+Morrisons,1.15,4.6,l,UFIT Chocolate Protein,20240413,drinks,False
+ASDA,6.0,2.64,l,Hobgoblin Gold Beer,20240413,drinks,False
+ASDA,1.25,4.2,kg,ASDA Free From Brown Sauce,20240413,free-from,True
+Sains,2.55,2.6,l,Mazola Pure Corn Oil 1L,20240413,food_cupboard,False
+Tesco,2.95,8.2,kg,Bio&Me Super Berry Gut Loving Granola 360g,20240413,food_cupboard,False
+Morrisons,1.99,11.7,kg,Pek Chopped Pork Gold,20240413,food_cupboard,False
+Morrisons,2.25,6.2,kg,Aashirvaad Phulka Roti,20240413,food_cupboard,False
+Sains,3.5,8.75,kg,Plant Pioneers Vegan No Chicken Sweet & Sour with Tofu Fried Rice Ready Meal for 1 400g,20240413,free-from,False
+Tesco,2.4,6.12,kg,Tesco Beef Casserole 392G,20240413,food_cupboard,True
+ASDA,1.4,37.0,kg,Wrigley's Extra Cool Breeze Sugar Free Chewing Gum Sugar Free 3 x 9 Pieces,20240413,food_cupboard,False
+Morrisons,4.5,2.3,l,Monster Energy Drink Ultra Fiesta Mango,20240413,drinks,False
+Sains,5.5,30.6,kg,Sainsbury's Steamed ASC Scottish Salmon Portions x2 180g (Ready to eat),20240413,free-from,True
+Morrisons,1.29,2.6,l,Grace Original Aloe Vera Juice Drink,20240413,food_cupboard,False
+ASDA,1.0,18.0,kg,COOK by ASDA Chopped Garlic,20240413,food_cupboard,True
+Tesco,2.5,9.5,kg,Nandos Peri Peri Quick Marinade Medium 262G,20240413,food_cupboard,False
+Sains,2.25,64.3,kg,"Twinings Spiced Ginger Tea, 20 Tea Bags",20240413,food_cupboard,False
+Tesco,1.25,31.2,kg,Simply Cook Creamy Tuscan Sausage Pasta R/Kit 40G,20240413,food_cupboard,False
+Tesco,4.0,8.0,l,Belvoir Ginger Cordial 500Ml,20240413,drinks,False
+Tesco,1.75,19.44,kg,Tesco Sugar Snap Peas And Sweet Chilli Dip 90G,20240412,fresh_food,True
+Morrisons,2.6,7.0,kg,Bonne Maman Peach Conserve,20240413,food_cupboard,False
+ASDA,2.3,0.14,unit,The BAKERY at ASDA Fluffy 16 Teacake Mini Bites,20240413,bakery,True
+Sains,3.5,8.75,kg,"Black Farmer Premium Pork Sausages, Gluten Free x6 400g",20240413,food_cupboard,False
+Tesco,3.0,7.5,kg,Merchant Gourmet Herby Mediterranean Vegetables & Couscous 400G,20240413,frozen,False
+ASDA,3.0,7.5,kg,Lurpak Slightly Salted Spreadable 400g,20240413,fresh_food,False
+Tesco,15.0,15.0,unit,Tesco Chocolate & Salted Caramel Drip Cake,20240413,bakery,True
+Sains,1.25,1.3,l,Sainsbury's Pure Tomato Juice 1L,20240413,drinks,True
+ASDA,2.0,6.7,kg,ASDA 6 Mini Hog Roast Pork Pies 300g,20240413,fresh_food,True
+Tesco,3.0,6.82,kg,"Tesco Finest 4 Pork, Coastal Cheddar & Confit Onion Sausages 440g",20240413,fresh_food,True
+Morrisons,2.15,2.9,l,Morrisons The Best Elderflower Presse,20240413,drinks,True
+Sains,1.8,0.9,unit,"Sainsbury's Sweet Pointed Peppers, SO Organic x2 (Colours May Vary)",20240413,free-from,True
+Morrisons,1.99,5.8,kg,Mackays Scottish Strawberry Preserve,20240413,food_cupboard,False
+Sains,4.75,10.22,kg,"Sainsbury's Chicken Bacon Caesar, Taste the Difference 465g",20240411,fresh_food,True
+Tesco,27.0,27.0,l,Jim Beam Kentucky Straight Bourbon Whiskey 1L,20240413,drinks,False
+ASDA,3.2,10.7,kg,Sharwood's Plum Sauce,20240413,food_cupboard,False
+Sains,1.25,12.5,kg,Ritter Sport Rum Raisin & Hazelnut 100g,20240413,food_cupboard,False
+Sains,3.0,13.0,kg,Koh-Kae Peanuts Nori Wasabi Flavour Coated 230g,20240413,food_cupboard,False
+Sains,1.5,13.64,kg,"Sainsbury's Mild Cheddar Slices with Cracked Black Pepper, Summer Edition 110g",20240413,free-from,True
+Tesco,2.5,8.33,kg,The Spice Tailor Butter Chicken Mild Curry 300G,20240413,food_cupboard,False
+Tesco,2.85,2.85,unit,Tesco Plant Chef Falafel Houmous Wrap,20240412,fresh_food,True
+Sains,3.0,8.8,kg,Rowse Natural Blossom Honey Squeezy 340g,20240413,food_cupboard,False
+ASDA,1.6,21.3,kg,Grace Exotic Chips Purple Sweet Potato 75g,20240413,food_cupboard,False
+Tesco,1.75,8.75,kg,Tesco Chopped Mixed Nuts 200G,20240413,food_cupboard,True
+Morrisons,1.88,1.88,unit,Morrisons Christmas Dundee Cake,20240207,bakery,True
+Morrisons,5.99,5.99,unit,Vapes Bars Ghost Banana Ice 20mg,20240319,drinks,False
+Tesco,0.65,0.6,l,Tesco Low Calorie Indian Tonic Water With Lime 1Ltr,20240413,drinks,True
+ASDA,29.0,41.43,l,Glen Moray Speyside Single Malt Scotch Whisky Twisted Vine,20240413,drinks,False
+Morrisons,7.0,6.98,l,Morrisons Manor Hall Fortif…,20240413,drinks,True
+Tesco,1.0,19.0,kg,Tesco Ground Nutmeg 52G,20240413,food_cupboard,True
+ASDA,4.25,14.17,kg,Shazans Smoked Salt & Pepper Lamb Sausages,20240413,fresh_food,False
+Sains,2.5,3.3,l,Robinsons Orange 750ml,20240405,drinks,False
+ASDA,2.3,9.2,kg,Goodfella's 2 Triple Cheese Pizza Pockets,20240413,frozen,False
+ASDA,2.25,5.0,kg,ASDA Extra Special Roast Chicken Stock,20240413,food_cupboard,True
+ASDA,1.25,6.2,kg,Santa Maria Hot Green Jalapeños,20240413,food_cupboard,False
+ASDA,1.39,1.7,kg,The BAKERY at ASDA Bake at Home Tiger Bloomer,20240413,bakery,True
+ASDA,1.5,3.8,l,Łowicz Cherry Sour Syrup 400ml,20240413,food_cupboard,False
+Sains,1.75,6.0,kg,Levi Roots Reggae Reggae Jerk BBQ Sauce 290g,20240413,food_cupboard,False
+Sains,0.8,2.4,l,Tropical Sun American Style Root Beer 330ml (Sugar levy applied),20240413,food_cupboard,False
+ASDA,2.15,6.5,l,Innocent Plus Berry Set Go Raspberry & Cherry Juice 330ml,20240413,fresh_food,False
+Morrisons,2.39,2.39,unit,Cadbury Dairy Milk Cornfl…,20240320,bakery,False
+ASDA,10.0,10.0,unit,Contigo Ashland Water Bottle,20240413,drinks,False
+ASDA,2.5,10.4,l,Leon Love Burger Sauce,20240413,food_cupboard,False
+Tesco,7.75,10.31,l,Tesco Finest Pinot Grigio Blush 75Cl,20240413,drinks,True
+Tesco,3.0,12.0,kg,Tesco Finest Salted Caramel Sauce 250G,20240413,food_cupboard,True
+Tesco,1.85,12.33,kg,Yamas Authentic Greek Feta Pdo 150G,20240413,fresh_food,False
+Sains,3.3,5.5,kg,BOL Garden Pea & Spinach Protein Power Soup,20240413,free-from,False
+Morrisons,6.49,6.49,unit,Velo Max Ruby Berry 17mg,20240319,drinks,False
+Morrisons,1.35,7.1,kg,Morrisons Midget Gems,20240413,food_cupboard,True
+Sains,1.65,9.7,kg,"Sainsbury's Fire Roasted Red Pepper Dip Summer Edition, Taste the Difference 170g",20240413,free-from,True
+ASDA,1.75,14.6,kg,Nescafe Gold Cappuccino Decaf Unsweetened Taste Coffee Sachets,20240413,drinks,False
+Sains,1.65,11.0,kg,Walkers Prawn Cocktail Multipack Crisps 6x25g,20240413,food_cupboard,False
+Sains,1.75,3.5,kg,Chicken Tonight Mushroom Sauce 500g,20240413,food_cupboard,False
+Sains,4.2,4.2,l,Diet Coke 4x250ml,20240413,drinks,False
+Sains,2.5,7.1,kg,"Sainsbury's Tomato Sauce with Basil, SO Organic 350g",20240413,food_cupboard,True
+ASDA,2.0,2.0,unit,George Home Stainless Steel Whisk,20240413,food_cupboard,True
+Tesco,1.75,5.8,kg,Tesco Free From Choco-Nut Pillows 300G,20240413,food_cupboard,True
+Sains,1.4,0.35,unit,Sainsbury's Braeburn Apples,20240413,fresh_food,True
+Morrisons,3.99,5.87,kg,Mother Africa Fufu Flour,20240413,food_cupboard,False
+Sains,4.0,22.9,kg,Bisto Gluten Free Gravy Granules 175g,20240413,food_cupboard,False
+Sains,3.0,19.4,kg,Higgidy Spinach & Tomato Quiche 155g,20240413,fresh_food,False
+ASDA,17.0,226.61,l,ASDA Extra Special Cóte De Beaune Villages,20240413,drinks,True
+Tesco,1.3,3.25,kg,Tesco Vanilla Sponge Mix 400G,20240413,food_cupboard,True
+Morrisons,0.99,9.9,kg,Morrisons Sardines in Harissa Sauce (100g),20240413,food_cupboard,True
+Morrisons,12.0,12.0,unit,Cruzcampo Sevilla Lager Beer12 x 330ml,20240306,drinks,False
+Morrisons,2.5,15.6,kg,Princes Mexican Tuna Salad Bowl (160g),20240413,food_cupboard,False
+Tesco,7.0,7.0,unit,Tesco Free From Stripey The Caterpillar Cake,20240413,bakery,True
+Sains,1.0,10.0,kg,Pot Noodle Chilli Chicken Instant Snack 100g,20240413,food_cupboard,False
+ASDA,3.6,8.18,kg,ASDA Tender 4 Pork Loin Steaks,20240224,fresh_food,True
+Sains,1.25,1.3,l,Nexba Naturally Sugar Free Pineapple Soft Drink 1L,20240413,drinks,False
+Morrisons,1.5,1.9,kg,Hovis Seeded Batch Bread,20240413,bakery,False
+Sains,5.75,7.65,l,Hardys VR Sauvignon Blanc 750ml,20240413,drinks,False
+Morrisons,3.0,30.0,kg,Extra Watermelon Flavour Sugarfree Ch…,20240413,food_cupboard,False
+ASDA,2.3,4.6,l,Timothy Taylor's Landlord Classic Pale Ale,20240413,drinks,False
+Sains,4.0,20.0,kg,Costa Coffee Mocha Italia Signature Blend Ground for Cafetiere & Filter 200g,20240413,food_cupboard,False
+Morrisons,2.29,2.29,kg,Allinson Plain Wholemeal Flour,20240413,food_cupboard,False
+Morrisons,3.99,11.4,kg,Morrisons Chinese Sweet & Sour Chicken,20240413,fresh_food,True
+ASDA,0.49,2.04,kg,ASDA Mexican Style Bean Mix in Water,20240308,drinks,True
+Tesco,2.65,11.04,kg,Quorn Tomato & Mozzarella Escalopes 240g,20240413,frozen,False
+Morrisons,1.59,6.36,kg,Crisp 'N' Dry Solid White Vegetable Oil,20240413,fresh_food,False
+ASDA,1.75,5.8,kg,Tropics Original Recipe Hot & Spicy Chicken Fry Mix,20240413,food_cupboard,False
+Tesco,3.0,3.0,l,Tesco Low Alcohol Reduced Cal G&T. 4 X 250Ml,20240413,drinks,True
+Tesco,3.0,16.7,kg,Tony's Chocolonely Milk Chocolate Caramel Biscuit 180G,20240413,food_cupboard,False
+Sains,1.25,3.6,kg,Sainsbury's Arrabiata Sauce 350g (Serves 2),20240413,free-from,True
+Tesco,1.25,1.25,l,Tesco Coconut Drink 1 Litre,20240413,food_cupboard,True
+Sains,1.7,6.8,l,"Red Bull Spiced Pear Energy Drink, the Winter Edition 250ml",20240413,drinks,False
+Tesco,3.3,7.8,kg,Tesco Chicken & Bacon Sandwich Filler 423G,20240413,fresh_food,True
+Tesco,2.25,5.6,l,Cadbury Creme Egg Ice Cream Cones 4X100ml,20240212,frozen,False
+Sains,2.35,7.83,kg,Sainsbury's Watermelon 300g,20240413,fresh_food,True
+Morrisons,1.99,36.2,kg,Cornish Sea Salt Really Garlicky Seasoning,20240413,food_cupboard,False
+Morrisons,1.49,4.3,kg,Regal Bakery Mini Madeira Cakes,20240413,food_cupboard,False
+Tesco,0.59,3.28,kg,Batchelors Bigga Marrowfat Processed Peas 300G,20240413,food_cupboard,False
+Sains,3.25,14.13,kg,Sainsbury's Mini Garlic Pizza Breads x2 230g,20240413,free-from,True
+Sains,1.09,3.2,kg,Sainsbury's Peanut Butter Smooth 340g,20240409,food_cupboard,True
+ASDA,13.0,13.0,unit,George Home Green Simplicity 28cm Wok,20240405,fresh_food,True
+Tesco,1.7,5.7,kg,Tesco Beetroot Salad 300g,20240413,fresh_food,True
+Tesco,0.45,1.0,kg,Hearty Food Co. Curry Sauce 440G,20240413,food_cupboard,True
+Sains,2.25,1.8,l,Lipton Ice Tea Lemon Flavoured Still Soft Drink 1.25L,20240413,drinks,False
+ASDA,1.0,1.0,unit,George Home 2L Grip Measuring Jug,20240413,food_cupboard,True
+Sains,3.8,10.86,kg,"Sainsbury's Extra Mature Cumbrian Cheddar, Taste the Difference 350g",20240413,fresh_food,True
+ASDA,2.0,4.0,l,Kopparberg Premium Cider with Raspberry 500ml,20240413,drinks,False
+Tesco,2.25,9.0,kg,Lactofree Spreadable 250G,20240413,fresh_food,False
+ASDA,2.0,7.6,kg,Nando's Peri-Peri Medium Quick Marinade,20240413,food_cupboard,False
+Morrisons,11.0,14.63,l,Baron Philippe de Rothsch…,20240412,drinks,False
+ASDA,2.0,16.0,kg,Ryvita Crackerbread Wholegrain Crackers 125g,20240413,food_cupboard,False
+Morrisons,3.25,0.7,l,Highland Spring Still Water Sports Cap,20240413,drinks,False
+Tesco,3.25,8.12,kg,Tesco Macaroni Cheese 400G,20240413,fresh_food,True
+ASDA,2.0,13.3,kg,ASDA Vegetable Bouillon Mix,20240413,food_cupboard,True
+Sains,4.5,3.4,l,Get More Vits Vitamin D Sparkling Mango & Passionfruit 4x330ml,20240413,drinks,False
+Tesco,2.0,4.9,kg,Tesco Raspberry Trifles 405G (3X135g),20240302,fresh_food,True
+Morrisons,2.0,4.0,l,Brothers App Solutely Pear Fect Cider,20240413,drinks,False
+ASDA,3.3,19.41,kg,This Isn't Chicken Shawarma 170g,20240413,free-from,False
+ASDA,1.0,2.47,kg,Branston Baked Beans with Sausages in Tomato Sauce,20240413,food_cupboard,False
+Sains,1.9,29.69,kg,Nissin Cup Noodles 5 Spices Beef Flavour Instant Ramen Style Pot 64g,20240413,food_cupboard,False
+ASDA,1.75,4.6,kg,Fage Strawberry Thick & Smooth Strained Yoghurt,20240413,fresh_food,False
+Sains,2.0,6.6,kg,Sainsbury's Cheesy Bean Slices x2 300g,20240413,fresh_food,True
+Sains,2.0,4.0,kg,SO Organic Broccoli 500g,20240413,free-from,False
+Tesco,2.5,0.42,unit,Cadbury Mini Egg Choc Cakes 6 pack,20240326,bakery,False
+ASDA,1.25,8.3,kg,Lindahls Pro + Kvarg Banoffee Pie,20240413,fresh_food,False
+Sains,2.5,13.5,kg,Sainsbury's Free From Raspberry Butterfly Cakes 185g,20240413,free-from,True
+Sains,0.9,2.3,kg,"Sainsbury's Rice Pudding, Creamed 400g",20240413,food_cupboard,True
+ASDA,2.5,2.5,unit,George Home Red Alphabet Glass Mug - G,20240413,drinks,True
+Sains,0.59,3.3,kg,Sainsbury's Wholegrain Mustard 180g,20240413,food_cupboard,True
+Tesco,1.49,17.3,kg,Batchelors Cup A Soup Chicken & Leek 4 Pack 86G,20240413,food_cupboard,False
+Tesco,4.5,11.25,kg,Tesco Fire Pit 10 Sweet & Smoky Beef Kebabs 400G,20240413,fresh_food,True
+Sains,1.8,7.2,l,Bacardi Mango Mojito Premix Rum Cocktail 25cl,20240413,drinks,False
+Sains,5.0,10.2,kg,"Sainsbury's Strawberry & Clotted Cream Cake, Taste the Difference 490g",20240222,bakery,True
+Sains,2.64,5.81,kg,Sainsbury's Beef Burgers With Onion x8 454g,20240413,frozen,True
+Sains,4.4,33.3,kg,"Starbucks by Nescafe Dolce Gusto Madagascar Vanilla Macchiato Coffee Pods, 12 Pods Per Box",20240201,drinks,False
+Tesco,10.0,4.0,l,All Shook Up Mixed Sharing Pack Cocktail Cans 10x250ml,20240413,drinks,False
+Sains,3.0,10.0,kg,Sainsbury's White Red & Black Quinoa 300g,20240413,food_cupboard,True
+ASDA,1.0,28.6,kg,Muscle Moose The Dinky Protein Bar Chocolate Donut Flavour,20240413,food_cupboard,False
+Tesco,2.0,2.0,kg,Tesco Marmalade Oranges Pack 1Kg,20240130,fresh_food,True
+Tesco,4.0,10.0,kg,The Gym Kitchen Piri Piri Chicken 400G,20240413,fresh_food,False
+Morrisons,1.75,17.5,kg,Dr. Oetker Dark Chocolate Bar,20240413,food_cupboard,False
+Morrisons,4.5,9.0,l,Baskin Robbins Cool Mint Cookie Ice Cream,20240413,frozen,False
+Morrisons,7.25,29.0,kg,Illy Espresso Ground Coffee,20240413,food_cupboard,False
+Tesco,2.25,4.96,kg,Tesco Plant Chef 8 Meat Free Burgers 454G,20240413,frozen,True
+ASDA,1.4,6.36,kg,Ben's Original Pilau Microwave Rice,20240413,food_cupboard,False
+ASDA,2.5,0.42,unit,ASDA Extra Special 6 All-Butter Pastry Cases,20240413,food_cupboard,True
+Tesco,6.25,4.74,l,Brewdog Punk Ipa 4X330ml,20240413,drinks,False
+Sains,16.5,23.57,l,Kahlua Coffee Liqueur 70cl,20240413,drinks,False
+ASDA,4.5,18.0,kg,The Lions Kingdom 2 Ostrich Sous-Vide Steaks 250g,20240413,frozen,False
+Sains,1.3,16.3,kg,Sainsbury's Sweet & Smoky BBQ Chicken Breast Chunks 80g,20240329,fresh_food,True
+Tesco,2.15,15.1,l,Tropical Sun Jamaican Scotch Bonnet Pepper Sauce 142ml,20240413,food_cupboard,False
+Sains,1.0,22.2,kg,Walkers Less Salt Mild Cheese & Onion Crisps 45g,20240413,food_cupboard,False
+Morrisons,4.49,5.97,l,Radacini Blanc De Noirs,20240413,drinks,False
+ASDA,2.5,2.5,unit,George Home Blue Bubble Hi-Ball Glass,20240413,drinks,True
+Sains,12.0,23.4,kg,KitKat Caramel Cookie Collision Incredible Giant Easter Egg 512.7g,20240330,free-from,False
+ASDA,1.9,12.7,kg,Jacob's Savours Thins Sour Cream & Chive Crackers 150g,20240413,food_cupboard,False
+ASDA,1.75,5.47,kg,Chicago Town Tiger Crust Double Pepperoni Pizza,20240413,frozen,True
+Morrisons,4.0,10.7,kg,Guylian The Original Seashells Chocolate Box,20240201,food_cupboard,False
+Morrisons,0.99,0.99,kg,Morrisons Mixed Vegetables,20240406,frozen,True
+ASDA,0.99,10.0,kg,Indus Garlic Powder,20240413,food_cupboard,False
+Morrisons,4.25,2.1,l,Flora Pure Sunflower Oil with Vitamin E,20240413,food_cupboard,False
+Tesco,6.5,26.0,kg,Guylian Seashells Boxed Chocolates 250G,20240413,food_cupboard,False
+ASDA,1.7,0.17,unit,ASDA Ice Cream Choc Sticks,20240109,frozen,True
+Sains,1.75,7.61,kg,Mr Kipling Battenberg Cake 230g,20240413,bakery,False
+Morrisons,1.79,1.79,unit,Irwin's Together Cinnamon…,20240219,bakery,False
+Morrisons,0.95,0.95,unit,Morrisons Loose Pomegranate,20240320,fresh_food,True
+Tesco,1.9,10.0,l,Blue Dragon Rich Hoisin Sauce 190Ml,20240413,food_cupboard,False
+ASDA,1.95,13.9,kg,Olly's Pretzels Thins Sour Cream & Onion Pretzel Thins,20240413,food_cupboard,False
+ASDA,0.45,3.0,kg,ASDA Grated Carrot,20240413,fresh_food,True
+Morrisons,1.0,12.5,kg,Lindt Milk Chocolate Mini Eggs Bag,20240403,food_cupboard,False
+Tesco,5.75,14.4,kg,Milo Instant Malt Chocolate Drinking Powder Tin Ghanaian 400g,20240413,food_cupboard,False
+Sains,1.1,3.7,kg,Sainsbury's Deli-Style Traditional Coleslaw 300g,20240413,fresh_food,True
+ASDA,1.95,10.8,kg,Ginsters Chicken & Bacon Pasty,20240413,fresh_food,False
+ASDA,2.5,2.5,unit,George Home Smoked Cappuccino Mug,20240413,drinks,True
+Sains,1.0,4.0,l,Ssh! Indulgent Pot Au Choc Milkshake 250ml,20240315,fresh_food,False
+Sains,3.0,12.5,kg,Sainsbury's Double Chocolate Brownie Mini Bites 240g,20240222,bakery,True
+Sains,2.5,20.0,kg,Twinings English Breakfast Loose Tea 125g,20240413,food_cupboard,False
+Tesco,1.3,23.6,kg,Tesco Vegetable Sushi Snack 55G,20240412,fresh_food,True
+ASDA,1.3,1.3,unit,ASDA Organic Seasonal Cabbage (Colour and Variety may vary),20240413,fresh_food,True
+Sains,30.0,42.86,l,Sipsmith London Limited Edition Very Berry Gin 700ml,20240413,drinks,False
+ASDA,0.7,0.4,l,ASDA Cola 2 Litres,20240413,drinks,True
+Sains,1.25,12.5,kg,Ritter Sport Orange 100g,20240413,food_cupboard,False
+ASDA,3.0,4.69,kg,Chicago Town Takeaway Stuffed Crust Magnificent Meat Feast Large Pizza,20240413,frozen,False
+ASDA,5.0,20.0,l,Mazzetti Organic Balsamic Vinegar of Modena,20240413,food_cupboard,False
+Sains,2.75,18.33,kg,Wasabi Home Bento Spicy Korean Chicken Pops 150g,20240413,fresh_food,False
+Morrisons,23.0,32.85,l,Masons Dry Yorkshire Gin,20240413,drinks,False
+ASDA,10.0,10.0,unit,George Home Green Simplicity 24cm Frying Pan,20240405,fresh_food,True
+Morrisons,2.15,4.5,kg,Kellogg's Chocolate Wheats,20240413,food_cupboard,False
+Tesco,4.0,8.0,l,Belvoir Cordial E/Flower Rose 500ml,20240413,drinks,False
+Tesco,8.0,53.33,l,Beams The Whisky Collection 3 x 5cl Gift Set,20240413,drinks,False
+Morrisons,13.25,8.8,kg,Yorkshire Tea 480 Bags,20240413,food_cupboard,False
+Sains,3.5,14.58,kg,"Sainsbury's Unsmoked Air Dried Wiltshire Cured Back Bacon Rashers, Taste the Difference x8 240g",20240413,fresh_food,True
+Tesco,3.5,7.0,kg,Nesquik Strawberry Flavoured Milkshake Powder Tub 500g,20240413,drinks,False
+Sains,39.0,51.87,l,Piper Heidsieck Brut NV Champagne 75cl,20240413,drinks,False
+Sains,3.9,8.6,kg,Garner's Sweet Pickled Baby Onions 454g,20240413,food_cupboard,False
+Sains,0.62,9.5,kg,Goong Instant Soup Gold Chicken 65g,20240413,food_cupboard,False
+Tesco,1.0,4.0,kg,Tesco Scottish Rough Oatcakes 250G,20240413,food_cupboard,True
+Morrisons,8.0,10.64,l,Barefoot Pinot Grigio White Wine,20240413,drinks,False
+ASDA,22.0,31.43,l,Absolut Wild Berri Berry Flavoured Swedish Vodka,20240311,drinks,False
+Tesco,3.25,10.83,kg,Tesco 2 Breaded Cod Fillets 300G,20240322,fresh_food,True
+ASDA,1.0,1.0,unit,George Green Easter Tumbler,20240331,fresh_food,True
+ASDA,1.5,10.7,kg,Rowntree's Randoms Juicers Sweets Sharing Bag,20240413,food_cupboard,False
+Tesco,4.0,17.8,kg,Tesco Finest Belgian Dark Chocolate Brazil Nuts 225G,20240413,fresh_food,True
+Morrisons,2.49,6.23,kg,Kershaw's The All Day Big Breakfast,20240413,frozen,False
+ASDA,4.0,4.0,unit,George Home Aqua Tracker Bottle,20240413,drinks,True
+Sains,3.5,10.6,kg,Nestle KitKat Milk Chocolate Cereal 330g,20240413,food_cupboard,False
+ASDA,1.39,0.69,kg,JUST ESSENTIALS by ASDA White Potatoes 2kg,20240413,fresh_food,True
+Morrisons,1.35,6.8,kg,Morrisons Strawberry Bon Bons,20240413,food_cupboard,True
+Morrisons,1.65,16.5,kg,Milky Way Magic Stars Milk Ch…,20240413,food_cupboard,False
+Morrisons,4.25,7.7,kg,Jack Daniel's Gluten Free Original BBQ Sauce,20240413,free-from,False
+Tesco,1.65,25.38,kg,Kabuto Noodles Chilli Chicken Ramen 65G,20240413,food_cupboard,False
+Tesco,4.5,26.5,kg,Tesco Finest 10 Prawn Lollipops 170g,20240413,frozen,True
+Tesco,6.5,14.77,kg,Birds Eye 4 Large Breaded Cod Fillets 440G,20240413,frozen,False
+ASDA,1.9,23.8,kg,Knorr Beef Stock Cubes,20240413,food_cupboard,False
+Sains,3.25,8.13,kg,"Sainsbury's Beef Lasagne, Taste the Difference Ready Meal For 1 400g",20240413,fresh_food,True
+ASDA,2.75,6.06,kg,ASDA 8 Succulent Turkey Sausages,20240413,fresh_food,True
+Sains,1.6,6.4,l,Arla Lactofree Cream 250ml,20240413,fresh_food,False
+Sains,2.1,2.1,l,Oatly Oat Drink Light Chilled 1L,20240413,food_cupboard,False
+Sains,1.0,3.13,kg,Stamford Street Co. Frozen Breaded British Chicken Nuggets 320g,20240413,frozen,False
+Tesco,1.35,6.8,kg,Tesco Cheddar Cheese & Chive Dip 200G,20240413,fresh_food,True
+Tesco,18.5,26.43,l,Gordon's Tropical Passionfruit Gin Bottle 37.5% Vol 70Cl,20240121,drinks,False
+ASDA,1.85,1.8,l,Robinsons Apple & Blackcurrant Squash No Added Sugar,20240413,drinks,False
+Morrisons,0.9,5.6,kg,Muller Light Banana and Custard Fat Free Yogurt,20240413,fresh_food,False
+Tesco,3.5,2.65,l,Stella Artois Premium Alcohol Free Lager Beer 4X330ml,20240413,drinks,False
+Tesco,2.5,16.67,kg,Castello Blue Cheese 150G,20240413,fresh_food,False
+ASDA,8.75,116.64,l,Gordon Ramsay Intenso Rosso,20240413,drinks,False
+ASDA,3.0,10.5,kg,Clipper Organic Everyday Tea 80 Tea bags,20240413,drinks,False
+Tesco,1.25,3.1,kg,Warburtons Milk Roll Sliced White Bread 400G,20240413,bakery,False
+Sains,11.0,5.64,l,SlimFast Ready to Drink Meal Replacement Shake Chocolate Flavour 6 meals 325ml,20240413,free-from,False
+Morrisons,5.5,18.34,kg,Gressingham Duck Breast Fillets,20240413,fresh_food,False
+Sains,2.0,33.3,kg,Grenade Carb Killa Chocolate Chip Salted Caramel Bar 60g,20240413,food_cupboard,False
+Morrisons,20.5,29.29,l,Disaronno Amaretto,20240413,drinks,False
+Morrisons,23.0,32.86,l,Red Leg Spiced Rum,20240413,drinks,False
+Tesco,1.3,8.0,kg,Tesco Pitted Green Olives Reduce Salt 340G,20240413,food_cupboard,True
+Tesco,2.85,9.5,kg,Tesco Prawn Layered Salad 300G,20240413,fresh_food,True
+Sains,22.0,29.26,l,"Sainsbury's Demi-sec Champagne, Non Vintage 75cl",20240413,drinks,True
+Tesco,1.5,1.5,unit,Tesco Flat Leaf Parsley Medium Pot,20240413,fresh_food,True
+Sains,3.0,7.2,kg,Betty Crocker Chocolate Fudge Brownie Mix 415g,20240413,food_cupboard,False
+ASDA,1.25,4.28,kg,JUST ESSENTIALS by ASDA Pepperoni Pizza,20240413,fresh_food,True
+ASDA,3.0,10.0,kg,ASDA White Black & Red Quinoa,20240413,food_cupboard,True
+ASDA,1.5,0.12,unit,George Home Happy Birthday Candles,20240413,bakery,True
+Tesco,2.25,5.6,kg,Maggi Authentic Indian Masala Chilli Sauce 400g,20240413,food_cupboard,False
+Tesco,4.25,17.71,kg,Itsu Teriyaki Chick'n Vegan Gyoza 240G,20240413,frozen,False
+Morrisons,1.99,11.7,kg,Ginsters Cheddar & Onion Slice,20240413,fresh_food,False
+Tesco,3.5,8.45,kg,Discover-In Hoisin Chicken Bao Bun Kit 414g,20240413,frozen,False
+ASDA,18.0,18.0,unit,George Home Yellow Fast Boil Textured Kettle GTK101Y-21,20240413,drinks,True
+Tesco,2.5,25.0,kg,Tony's Chocolonely Littl' Bits Triple chocolate mix 100g,20240413,food_cupboard,False
+Tesco,1.5,10.0,kg,Sensations Crushed Sea Salt & Black Peppercorn Flavour Potato Crisps 150g,20240413,food_cupboard,False
+Morrisons,0.39,0.39,unit,Market Street Salad Cress,20240320,fresh_food,False
+Sains,11.0,0.37,unit,Optibac Kids Strawberry Gummies x30,20240413,free-from,False
+Sains,5.5,12.9,l,Ben & Jerry's Sundae Ice Cream Tub Marshmallow & S'more 427ml,20240413,frozen,False
+Morrisons,26.0,37.14,l,Jaffa Cake Gin,20240413,drinks,False
+ASDA,1.5,23.4,kg,Patak's Plain Pappadums x 8,20240413,food_cupboard,False
+Sains,3.55,10.14,kg,Sainsbury's British Fresh Chicken Thigh Fillets In a Hot & Spicy Breadcrumb Coating 350g,20240413,fresh_food,True
+Tesco,1.75,3.5,kg,Ambrosia Light 30% Less Sugar & Fat Custard 500G,20240413,food_cupboard,False
+ASDA,0.75,0.01,unit,ASDA Cake White Paper Cases,20240403,food_cupboard,True
+Sains,2.0,10.0,kg,Quorn Totally Vegan 10 Fishless Fingers 200g,20240413,free-from,False
+Sains,2.5,2.5,kg,Napolina Spaghetti 1kg,20240413,food_cupboard,False
+ASDA,4.0,36.4,kg,Kenco Duo Cappuccino Instant Coffee,20240413,drinks,False
+Sains,3.0,10.71,kg,La Famiglia Rana Filled Pan-Fry Gnocchi Spinach & Mozzarella 280g,20240413,fresh_food,False
+Sains,1.25,3.8,l,San Pellegrino Orange 330ml,20240413,drinks,False
+Morrisons,6.49,6.49,unit,Velo Freeze 11mg Pouch,20240319,drinks,False
+Sains,2.0,66.7,kg,Clipper Organic Nettle 20 Tea Bags 30g,20240413,food_cupboard,False
+Tesco,1.25,10.4,kg,Cadbury Snack Shortcake Chocolate Biscuits 6 Pack Multipack 120g,20240327,food_cupboard,False
+ASDA,0.95,3.17,kg,ASDA Pickled Beetroot,20240413,fresh_food,True
+Sains,10.0,13.3,l,Journeys End Bluegum Merlot 75cl,20240413,drinks,False
+Morrisons,5.99,5.99,unit,Aspire Origin Bar 600 Blue & Raspberry 20mg,20240201,drinks,False
+ASDA,2.5,27.2,kg,Organix KIDS Cool Choco Mint Mini Organic Flapjack Bites 4x,20240413,free-from,False
+Sains,2.1,10.5,kg,Sainsbury's Cheese & Garlic Mushrooms 200g,20240413,fresh_food,True
+Morrisons,5.99,5.99,unit,Ske Crystal Blue Sour Raspberry 20Mg,20240319,drinks,False
+Morrisons,1.75,10.17,kg,Dairylea Dunkers Nacho Cheese Snacks,20240413,fresh_food,False
+Morrisons,1.8,4.9,kg,Warburtons 4 Large White Rolls,20240413,bakery,False
+Tesco,1.9,4.0,kg,Cocon Assorted Fruit Jelly Pudding 6 X 80G,20240413,food_cupboard,False
+Sains,10.0,13.33,kg,Sainsbury's Football Crazy Madeira Cake 750g,20240222,bakery,True
+ASDA,4.1,1.64,l,ASDA Biere De Luxe 10 x 25cl,20240413,drinks,True
+ASDA,2.0,11.8,kg,Butterkist Crunchy Toffee Popcorn,20240413,food_cupboard,False
+Morrisons,1.3,1.3,kg,Morrisons Cauliflower Florets,20240413,frozen,True
+ASDA,1.25,0.16,unit,Disney 8 Encanto Paper Cups 200ml,20240413,fresh_food,False
+Sains,1.5,25.0,l,Sainsbury's Pink Food Colouring 60 Ml,20240413,food_cupboard,True
+Tesco,0.95,10.8,kg,Tesco Mackerel Fillets Sunflower Oil 125G,20240413,food_cupboard,True
+Tesco,2.75,5.5,kg,TESCO FINEST BEEF DRIPPING GRAVY 500G,20240413,fresh_food,True
+Tesco,3.85,7.7,kg,Tesco Ready To Eat Prunes 500G,20240413,food_cupboard,True
+ASDA,5.15,11.1,l,Ben & Jerry's Caramel Brownie Party Ice Cream,20240413,food_cupboard,False
+Sains,1.75,8.8,kg,Piccolo Organic Cooking Baby Pasta Mini Penne 10+ Months 200g,20240409,free-from,False
+ASDA,2.05,5.1,kg,Cake Decor Rich Chocolate Frosting 400g,20240413,food_cupboard,False
+Sains,1.6,12.3,kg,Whitworths Whole Cranberries 130g,20240413,food_cupboard,False
+ASDA,3.0,8.33,kg,Young's Gastro Cod Spinach Cheese & Potato Gratin,20240413,fresh_food,False
+Tesco,2.75,32.7,kg,Extra Peppermint Sugarfree Chewing Gum Bottle 60 Pieces,20240413,food_cupboard,False
+Sains,1.5,6.0,kg,Belvita Breakfast Biscuits Soft Bakes Choc Chips Multipack 250g,20240208,food_cupboard,False
+ASDA,1.5,14.6,kg,Kellogg's Krave Chocolate Hazelnut Stix,20240413,food_cupboard,False
+ASDA,1.75,1.7,l,Schweppes Slimline Bitter Lemon,20240413,drinks,False
+Tesco,2.75,12.12,kg,Finest Strawberries 227G,20240413,fresh_food,False
+ASDA,14.0,14.0,unit,The BAKERY at ASDA Sid the Sausage Dog Cake,20240413,bakery,True
+Morrisons,10.0,28.57,l,The Famous Grouse Blended Scotch Whisky,20240413,drinks,False
+Sains,3.5,8.24,kg,Sainsbury's British Extra Lean Diced Pork Leg 425g,20240413,fresh_food,True
+Sains,2.25,5.0,kg,"Sainsbury's Chicken Stock, Inspired to Cook 450g (Serves 4)",20240413,fresh_food,True
+Morrisons,1.19,5.9,l,Kingfisher Coconut Milk Light,20240413,food_cupboard,False
+Morrisons,2.2,17.6,kg,Ryvita Thins Rosemary & Sea S…,20240413,food_cupboard,False
+Sains,3.5,21.88,kg,"Sainsbury's Unsmoked Dry Cured British Bacon Medallions, Taste the Difference x8 160g",20240307,fresh_food,True
+Sains,2.5,5.7,kg,Heinz Tomato Ketchup 50% Less Sugar 435g,20240326,free-from,False
+Morrisons,3.8,5.1,l,Innocent Plus Bolt From The Blue Guav…,20240413,fresh_food,False
+Tesco,16.0,21.28,l,Louis Latour Bourgogne Gamay 75Cl,20240413,drinks,False
+Morrisons,1.25,13.2,kg,McVitie's Iced Gems Chocola…,20240413,food_cupboard,False
+Tesco,0.5,3.12,kg,Tesco Sliced Carrots In Water 300G,20240413,food_cupboard,True
+Tesco,3.0,5.0,kg,Tesco Raspberry Trifle 600G,20240302,fresh_food,True
+ASDA,2.0,20.0,kg,Peperami Firestick 5 x 20g (100g),20240413,fresh_food,False
+Tesco,5.4,11.74,kg,Tesco Finest Moroccan Inspired Lamb Kebabs 460G,20240413,fresh_food,True
+ASDA,1.6,3.9,kg,ASDA Sweet Pickled Silverskin Onions,20240413,food_cupboard,True
+ASDA,1.85,5.4,kg,ASDA Extra Special Bolognese Sauce,20240413,food_cupboard,True
+Sains,0.8,10.66,kg,"Batchelors Super Noodles Pot, BBQ Beef 75g",20240413,food_cupboard,False
+Sains,7.35,9.2,l,Starbucks Doubleshot Espresso No Added Sugar Iced Coffee Drink 4 x 200ml,20240413,drinks,False
+Morrisons,3.15,19.69,kg,The Vegetarian Butcher Vegan Chic…,20240413,fresh_food,False
+ASDA,5.8,25.55,kg,ASDA Extra Special Aberdeen Angus Ribeye Steak 30 Day Matured,20240413,fresh_food,True
+Tesco,1.7,1.7,unit,Tesco Angel Layer Cake,20240413,bakery,True
+Tesco,2.7,10.8,kg,Maldon Sea Salt 250G,20240413,food_cupboard,False
+Tesco,1.3,6.5,kg,Tesco Dark Chocolate Bar 200G,20240413,food_cupboard,True
+Tesco,1.5,4.0,kg,Kohinoor Mumbai Kolhapuri Masala Cooking Sauce 375G,20240413,food_cupboard,False
+Morrisons,1.6,17.4,kg,Batchelors Cup A Soup Hot & Sour 4 Pack,20240413,food_cupboard,False
+Tesco,1.0,1.0,l,Tesco Banana Flavoured Milk 1L,20240412,fresh_food,True
+Sains,2.95,9.83,kg,Lowicz Cascaval Cheese 300g,20240413,food_cupboard,False
+ASDA,1.25,6.2,kg,LU Le Petit Biscotte Crunchy Cinnamon and Brown Sugar Biscuits,20240413,food_cupboard,False
+Morrisons,2.0,7.3,kg,Bonne Maman Caramelised Apple Spread,20240413,food_cupboard,False
+Tesco,6.0,54.54,kg,TESCO FINEST PORK LIVER PATE WITH PEAR GLAZE 110G,20240212,fresh_food,True
+Sains,3.75,7.5,kg,Unearthed Spanish Potato Omelette 500g,20240413,free-from,False
+Sains,7.5,9.98,l,Dada Art 391 Malbec 75cl,20240413,drinks,False
+Morrisons,3.0,37.5,kg,Morrisons Tapas Cheddar And Chorizo Rollitos,20240413,fresh_food,True
+Morrisons,4.49,22.5,kg,Taylors Hot Lava Java Coffee Beans,20240413,food_cupboard,False
+ASDA,8.3,16.6,kg,Lavazza Decaffeinated Coffee Beans,20240413,drinks,False
+Tesco,1.5,7.36,kg,Snacksters Big Stack Burger 204G,20240413,frozen,False
+ASDA,3.0,3.0,unit,Widdop 70 Flute,20240413,fresh_food,False
+Tesco,0.65,18.5,kg,Schwartz Chicken & Leek Bake Recipe Mix 35g,20240413,food_cupboard,False
+Morrisons,1.25,7.1,kg,Haribo Sour Sparks Vegeta…,20240413,food_cupboard,False
+Sains,36.5,52.14,l,Toki Suntory Whisky Blended Japanese Whisky 70cl,20240413,drinks,False
+Morrisons,2.95,5.85,kg,Quorn Sausages,20240413,frozen,False
+Sains,2.25,12.01,l,Jam Shed Shiraz 18.7cl,20240413,drinks,False
+ASDA,1.5,12.0,kg,Werthers Original Creamy Filling Sweets,20240413,food_cupboard,False
+Tesco,3.5,5.6,kg,Nestlé Shreddies Original Cereal 630g,20240412,food_cupboard,False
+Sains,4.0,4.0,unit,"Sainsbury's Spiced Butternut & Whipped Feta Wrap, Taste the Difference",20240303,fresh_food,True
+Sains,1.35,3.4,kg,Heinz Chicken & Leek Chunky Big Soup 400g,20240413,food_cupboard,False
+Sains,1.5,3.4,kg,Sainsbury's Hot & Spicy Pickled Onions in Malt Vinegar 440g (220g*),20240413,food_cupboard,True
+ASDA,1.6,8.0,kg,ASDA Crisp & Tender Rainbow Chard,20240413,fresh_food,True
+ASDA,1.5,0.3,unit,The BAKERY at ASDA Strawberry Popdot 5pk,20240413,bakery,True
+Tesco,3.75,6.82,kg,Pilgrims Choice Mature Cheddar Cheese 550 G,20240413,fresh_food,False
+Sains,1.35,10.8,kg,Lindt Classic Recipe Crispy Milk Chocolate Bar 125g,20240413,food_cupboard,False
+ASDA,1.5,25.0,kg,Simply Cook Cajun Jambalaya Recipe Kit 60g,20240413,food_cupboard,False
+Sains,2.0,10.53,kg,Wholecreations Dairy & Gluten Free Garlic Bread Baguette 190g,20240413,food_cupboard,False
+Sains,2.25,9.0,kg,Galbani Mozzarella Cheese Maxi Bag 250g,20240413,fresh_food,False
+Morrisons,1.7,4.2,kg,Heinz Mulligatawny Soup,20240413,food_cupboard,False
+Tesco,1.5,5.0,kg,Kohinoor Dal Tarka 300G,20240413,food_cupboard,False
+Tesco,2.0,4.0,kg,Tesco Oriental Style Takeaway with Vegetable Spring Roll 500g,20240412,frozen,True
+ASDA,15.0,1.89,l,John Smith's 18 Extra Smooth Cans 440ml,20240413,drinks,False
+ASDA,1.35,4.9,l,The Mocktail Company Pino Colada 275ml,20240413,drinks,False
+Sains,1.65,16.5,kg,Milky Way Magic Stars Milk Chocolate Bites Pouch Bag 100g,20240413,food_cupboard,False
+Sains,6.5,12.62,kg,"Sainsbury's Slow Cooked Smoky Gammon Shanks with A Blossom Honey & Wholegrain Mustard Glaze, Taste The Difference x2 515g",20240413,fresh_food,True
+ASDA,1.5,9.1,kg,Penn State Baked Pretzels Roasted Chilli Flavour,20240413,food_cupboard,False
+ASDA,1.4,5.0,l,ASDA 8 x 35ml Assorted Milk Lollies,20240413,frozen,True
+Sains,3.7,1.9,l,Rubicon Sparkling Passionfruit Juice Soft Drink 6x330ml,20240413,food_cupboard,False
+Sains,1.2,3.0,kg,Heinz Cream of Chicken Soup 400g,20240413,food_cupboard,False
+Morrisons,2.5,100.0,kg,Morrisons Flower Modelling Paste,20240413,food_cupboard,True
+ASDA,2.99,8.0,kg,Kellogg's Crunchy Nut Bites Honey & Nut,20240413,food_cupboard,False
+Sains,1.1,3.7,kg,Sainsbury's Deli-Style Coleslaw 300g,20240320,fresh_food,True
+Tesco,1.75,3.5,kg,Blue Dragon Sushi Rice 500g,20240413,food_cupboard,False
+Morrisons,4.99,42.9,kg,Tassimo L'OR Americano Classique Coffee Pods x14,20240413,food_cupboard,False
+Sains,1.75,8.3,kg,Sainsbury's On the Go Greek Style Yogurt with Mixed Berry Compote & Crispy Granola 210g,20240413,fresh_food,True
+Tesco,1.25,5.5,kg,Ginsters Original Cornish Pasty 227G,20240413,fresh_food,False
+Morrisons,3.99,2.66,kg,Morrisons The Best Chunky Chips,20240118,frozen,True
+Morrisons,1.1,8.8,kg,McVitie's Mini BN Strawberry Flavour,20240412,food_cupboard,False
+Tesco,4.5,10.0,kg,Bisto Reduced Salt Gravy Granules 450g,20240413,food_cupboard,False
+Morrisons,2.4,6.0,kg,Pizza Express Dough Ready to Roll,20240413,fresh_food,False
+ASDA,2.0,2.0,kg,Silver Spoon Demerara Sugar 1kg,20240413,drinks,False
+Morrisons,2.5,4.6,kg,Warburtons Multi Seeded Artisan Bread,20240409,bakery,False
+Sains,6.75,1.4,l,Fruit Shoot Orange Kids Juice Drink 24x200ml,20240413,drinks,False
+Tesco,2.0,5.71,kg,Tesco Cauliflower Cheese 350G,20240413,fresh_food,True
+Tesco,2.2,8.6,kg,Tesco 30 Bitesize Pork Cocktail Sausages 255G,20240413,fresh_food,True
+Tesco,1.75,1.8,l,Dr Witt Multivitamins Metabolism Drink 1 Litre,20240413,food_cupboard,False
+ASDA,11.5,11.5,unit,George Home White Pie Dish - Set of 3,20240413,food_cupboard,True
+ASDA,10.0,133.3,l,Lugana Italian Wine,20240413,drinks,False
+ASDA,3.0,3.0,unit,Disney Disney Pride Mug,20240413,drinks,False
+Sains,4.5,14.2,kg,"Sainsbury's Spicy Chicken & Puttanesca Pasta Salad, Taste the Difference",20240413,fresh_food,True
+Tesco,7.3,9.36,kg,Tesco Butter Basted Frozen Turkey Breast Joint 780G,20240413,frozen,True
+ASDA,3.0,7.1,kg,Fray Bentos Minced Beef & Onion,20240413,food_cupboard,False
+Sains,1.6,2.44,kg,Mr Brain's Pork Faggots x6 656g,20240413,frozen,False
+ASDA,7.0,93.31,l,Black Tower Club Edition Pinot Noir Rosé Wine,20240413,drinks,False
+Sains,0.95,4.75,kg,Sainsbury's Baby Cucumbers 200g,20240413,fresh_food,True
+Morrisons,5.0,3.79,l,Kopparberg Winter Punch,20240413,drinks,False
+Morrisons,2.0,14.3,kg,Whitworths Bake Chopped Apricots,20240412,food_cupboard,False
+Sains,0.95,3.2,kg,Sainsbury's Shorties 300g,20240413,food_cupboard,True
+Morrisons,21.0,27.93,l,Jim Barry Wines Single Vineyard Watervale Shiraz,20240405,drinks,False
+Morrisons,11.0,11.0,unit,Morrisons Bloom Bouquet,20240201,fresh_food,True
+Tesco,1.5,3.75,kg,Tesco Sausage And Mash 400G,20240413,frozen,True
+Sains,5.0,2.84,l,Guinness Alcohol Free 0.0% Stout Beer Cans 4x440ml,20240413,drinks,False
+Morrisons,7.0,9.31,l,Giesen Estate Sauvignon Blanc Wine,20240413,drinks,False
+ASDA,1.5,3.3,kg,Light & Free Sticky Toffee Flavour Greek Style 0% Added Sugar Fat Free Yoghurt,20240413,fresh_food,False
+ASDA,2.0,11.9,kg,ASDA Skip Jack Tuna Chunks in Spring Water 3 x 80g,20240223,drinks,True
+Tesco,3.5,8.49,kg,Tesco Garlic & Herb Pork Loin Kievs 412G,20240412,fresh_food,True
+Sains,1.45,1.5,kg,Sainsbury's Tomato Ketchup Sauce 970g,20240229,food_cupboard,True
+ASDA,1.6,13.3,kg,Ambrosia Belgian Chocolate Mousse Pots,20240320,food_cupboard,False
+Sains,2.3,4.2,kg,Sainsbury's Dry Roasted Peanuts 550g,20240413,food_cupboard,True
+Morrisons,4.25,23.61,kg,Morrisons Seabass Fillets,20240413,frozen,True
+Sains,1.95,15.6,kg,Seriously Spreadable Vintage Cheese 125g,20240413,fresh_food,False
+Morrisons,1.75,8.8,kg,Nomadic Protein Pudding Vanilla,20240413,fresh_food,False
+Sains,3.25,8.13,kg,Sainsbury's Beef Hotpot 400g (Serves 1),20240413,fresh_food,True
+ASDA,1.0,37.0,kg,MyProtein Pop Roll Golden Caramel Flavour 27g,20240413,food_cupboard,False
+Sains,4.75,131.9,kg,"Pukka Organic Ginger, Galangal & Golden Turmeric Tea Bags x20",20240413,food_cupboard,False
+Sains,2.0,9.3,kg,Wall's Mini Savoury Eggs 216g,20240128,fresh_food,False
+Tesco,3.0,18.75,kg,Planted Chicken Lemon & Herb 160g,20240413,fresh_food,False
+Sains,1.7,2.3,l,Sainsbury's Reduced Fat Mayonnaise 730ml,20240413,food_cupboard,True
+Morrisons,1.1,11.0,kg,Morrisons Grissini Mini Breadsticks,20240413,food_cupboard,True
+Sains,2.4,13.3,kg,Sainsbury's Vanilla Cheesecake Slices 2x90g,20240413,fresh_food,True
+Sains,2.5,5.6,kg,Bens Original Hot Chilli Con Carne Sauce 450g,20240413,food_cupboard,False
+ASDA,5.75,4.36,l,Peroni Nastro Azzurro Lager Beer Bottle 4 Pack,20240413,drinks,False
+ASDA,3.0,7.5,kg,ASDA British Half Fat Mature Cheddar 400g,20240413,fresh_food,True
+ASDA,4.55,5.83,kg,Tahira Chicken & Beef Burgers Halal,20240413,frozen,False
+Sains,2.1,2.8,kg,"Sainsbury's Whole Rolled Porridge Oats, Taste the Difference 750g",20240413,food_cupboard,True
+Sains,10.5,0.11,unit,Nature's Bounty Gentle Iron Complex with Vitamins B12 and C Capsules x100,20240413,free-from,False
+Sains,2.0,11.1,kg,Cadbury Dairy Milk Orange Chocolate Bar 180g,20240215,free-from,False
+Sains,2.5,1.9,l,Aqua Libra Sparkling Water Infused with Cucumber Mint & Lime 4x330ml,20240413,drinks,False
+ASDA,2.15,7.2,kg,"ASDA Extra Special Fig, Date, & Balsamic Chutney 300g",20240413,food_cupboard,True
+ASDA,55.0,55.0,unit,George Home Black 4L Stand Mixer,20240413,food_cupboard,True
+ASDA,1.3,1.88,kg,Tarantella Organic Tomato Passata,20240413,food_cupboard,False
+Sains,1.2,1.6,l,Radnor Splash Apple & Raspberry Still Flavoured Spring Water 250ml,20240413,drinks,False
+Morrisons,2.35,4.7,l,Potts Beef Stock Can,20240406,food_cupboard,False
+Sains,13.0,17.29,l,Signé Bourgogne Montagny 75cl,20240413,drinks,False
+ASDA,2.0,2.7,l,Innocent Pineapples Bananas & Coconuts Smoothie,20240413,drinks,False
+Morrisons,7.0,9.31,l,Rosemount Diamond Selection Shiraz,20240413,drinks,False
+Morrisons,1.25,7.58,kg,Philadelphia Lightest Low Fat Soft Cream Cheese,20240413,fresh_food,False
+ASDA,0.8,4.4,kg,Jutrzenka Wafle Wafers with Cream Flavoured Cream,20240413,food_cupboard,False
+Tesco,3.75,7.5,kg,Tesco Roast Chicken Dinner Pie 500g,20240413,fresh_food,True
+Sains,1.35,2.7,kg,De Cecco Fusilli 500g,20240413,food_cupboard,False
+ASDA,1.0,10.0,kg,Colman's Original English Mustard,20240321,food_cupboard,False
+Sains,10.5,10.48,l,Sainsbury's Sweet Pale Cream Sherry 1L,20240413,drinks,True
+Tesco,4.0,7.27,kg,Cathedral City Mild Cheddar 550G,20240413,fresh_food,False
+Sains,1.5,1.5,unit,Sainsbury's Seeded White Bloomer 800g,20240413,bakery,True
+Tesco,1.45,7.25,kg,Tesco Bombay Mix Snacks 200 G,20240413,food_cupboard,True
+Sains,0.6,0.3,unit,Sainsbury's Fresh Packed Lemongrass Sticks x2,20240413,fresh_food,True
+ASDA,2.5,3.1,kg,ASDA 8 Vitamin Boosting Peach & Apricot Yogurt Drinks,20240112,drinks,True
+Sains,1.5,18.8,kg,Sainsbury's Garlic & Coriander Poppadoms 80g,20240413,food_cupboard,True
+Morrisons,4.0,10.0,kg,Young's Chip Shop 4 Cod Fillets,20240413,frozen,False
+Sains,2.0,32.3,kg,Battle Bites High Protein Bar Jaffa Bake Flavour 62g,20240413,free-from,False
+Sains,7.5,9.4,kg,"Sainsbury's Orange & Prosecco Doc Panettone, Taste the Difference 800g",20240330,free-from,True
+Tesco,1.2,10.9,kg,The Collective Brekkie Blueberry and Oat Kids Yoghurt Pouch 110g,20240413,fresh_food,False
+ASDA,2.35,10.35,kg,ASDA Plant Based Spiced Bean Burgers,20240413,free-from,True
+Morrisons,3.99,3.99,unit,Aqua Vape British Tobacco 6mg,20240319,drinks,False
+Sains,3.3,9.43,kg,Sainsbury's British or Irish 10% Fat 20 Beef Mini Meatballs 350g,20240413,fresh_food,True
+Tesco,3.25,10.8,l,Magnum Mint Ice Cream Sticks 3x100ml,20240413,frozen,False
+ASDA,2.15,10.75,kg,Lurpak Slightly Salted Butter,20240413,food_cupboard,False
+ASDA,2.0,57.0,kg,Schwartz Cloves Ground,20240413,food_cupboard,False
+ASDA,5.2,2.6,l,Monster Energy Ultra Cans,20240413,drinks,False
+Tesco,6.75,8.98,l,Kumala Reserve Shiraz 75Cl,20240413,drinks,False
+Morrisons,1.25,32.0,kg,Old El Paso Chilli Con Carne Seasoning Mix,20240413,food_cupboard,False
+Tesco,3.7,17.4,kg,John West Red Salmon 213G,20240412,food_cupboard,False
+ASDA,1.5,4.4,kg,Skippy Extra Smooth Creamy Peanut Butter 340g,20240413,food_cupboard,False
+ASDA,1.25,12.5,kg,Butterkist Cinema Sweet Popcorn,20240413,food_cupboard,False
+Sains,4.0,16.0,kg,Sainsbury's Pure Canadian Maple Syrup 250g,20240413,food_cupboard,True
+Morrisons,1.35,9.0,kg,Seabrooks Prawn Cocktail Crisps 6 Pack,20240413,food_cupboard,False
+Sains,2.95,7.4,kg,Bio & Me Oats & Plenty Super Seedy & Nutty 400g,20240413,food_cupboard,False
+Tesco,1.15,3.3,kg,Nishaan Chakki Roti 350G,20240413,food_cupboard,False
+Sains,1.7,11.3,kg,Sainsbury's Milk Chocolate Rice Cakes 4x35.75g,20240413,food_cupboard,True
+ASDA,3.25,8.12,kg,ASDA Meal For One Macaroni Cheese 400g,20240413,fresh_food,True
+Sains,0.75,2.5,kg,Sainsbury's Beansprouts 300g,20240413,fresh_food,True
+Morrisons,2.0,11.9,kg,Soreen Lift Bars Raspberry & Vanilla,20240413,bakery,False
+Morrisons,10.75,10.8,kg,Shazans Mutton Shanks,20240413,food_cupboard,False
+Sains,1.85,3.7,l,Monster Energy Drink 500ml,20240413,drinks,False
+Morrisons,2.5,16.67,kg,Castello Danish Blue Cheese,20240413,fresh_food,False
+Sains,1.6,9.1,kg,Whitworths Figs 175g,20240413,food_cupboard,False
+Morrisons,3.25,1.63,unit,BFree Naan Breads Stone Baked Original,20240413,free-from,False
+Tesco,14.0,18.62,l,Zuccardi Serie A Malbec 75Cl,20240413,drinks,False
+Morrisons,4.99,7.74,kg,Chicago Town Takeaway Large Stu…,20240410,frozen,False
+Morrisons,5.0,18.5,kg,Imperial Chicken Teriyaki Bao Buns,20240413,food_cupboard,False
+Tesco,1.7,13.6,kg,Tesco 5 Pork & Egg Roll Slices 125g,20240413,fresh_food,True
+Sains,1.0,20.0,kg,Blue Dragon Thai Green Curry Paste Pot 50g,20240413,food_cupboard,False
+Tesco,0.62,1.6,kg,Tesco Broccoli And Stilton Soup 400G,20240413,food_cupboard,True
+ASDA,7.5,7.5,unit,Sistema Flip Bottle,20240413,drinks,False
+ASDA,2.25,2.25,kg,Tiger Tiger Sushi Rice,20240413,food_cupboard,True
+Tesco,3.0,7.1,kg,Sharwoods Korma 30% Less Fat Cooking Sauce 420G,20240413,food_cupboard,False
+ASDA,0.75,9.4,kg,Africa's Finest Coconut Chin-Chin,20240413,food_cupboard,False
+Morrisons,1.89,3.78,kg,Morrisons Wholefoods Red Split Lentils,20240413,food_cupboard,True
+Morrisons,2.75,25.0,kg,Nomo Creamy Buttons,20240413,free-from,False
+Tesco,4.2,4.2,l,Ufc 100% Watermelon Drink 1L,20240413,food_cupboard,False
+ASDA,3.0,7.3,kg,Kellogg's Krave Cookies & Cream Cereal,20240413,food_cupboard,False
+Sains,2.5,3.1,kg,Actimel Multifruit Cultured Yogurt Drink 8x100g,20240413,drinks,False
+Sains,2.25,15.0,kg,McCoy's Curry Sauce Flavour Ridge Cut Potato Crisps x6 25g,20240413,food_cupboard,False
+Tesco,0.49,2.0,kg,Ms Molly's Chocolate Chip Cookies 250G,20240413,food_cupboard,True
+ASDA,0.8,8.0,kg,ASDA Free From 13 Slightly Salted Rice Cakes,20240413,free-from,True
+ASDA,1.2,3.0,kg,KTC Crispy Fried Onions 400g,20240413,food_cupboard,False
+Morrisons,1.3,6.8,kg,Morrisons Pimiento-Stuffed Olives (340g),20240413,food_cupboard,True
+Tesco,1.99,0.13,unit,Tesco 15 Eggs,20240412,fresh_food,True
+ASDA,0.75,53.6,kg,Wrigley's Extra White Chewing Gum Sugar Free 10 Pieces,20240413,food_cupboard,False
+ASDA,0.99,1.0,l,ASDA Pomegranate Juice Drink,20240413,drinks,True
+ASDA,0.8,4.3,kg,ASDA Pink Wafers,20240413,food_cupboard,True
+Tesco,2.7,6.1,l,Tesco Free From Toffee & Vanilla Cones 4X110ml,20240406,frozen,True
+Sains,1.7,13.6,kg,"Sainsbury's Earl Grey Decaff Tea Bags, Taste the Difference x50",20240413,food_cupboard,True
+ASDA,2.2,2.2,kg,Arla Skyr Natural Icelandic Style Yogurt,20240413,fresh_food,False
+Morrisons,2.75,7.86,kg,Morrisons Takeaway Chinese Chicken Curry,20240413,frozen,True
+Morrisons,1.49,2.5,kg,Morrisons Casserole Vegetables,20240413,fresh_food,True
+ASDA,1.59,0.8,kg,ASDA Fluffy & Golden Baking Potatoes 2kg,20240413,fresh_food,True
+ASDA,2.25,22.1,kg,Costa Creamy Cappuccino Sachets Drinks 6 x 17g (102g),20240413,drinks,False
+Tesco,4.65,23.2,kg,Tesco Smoked Prosciutto & Salami Plat 200G,20240413,fresh_food,True
+ASDA,0.99,1.0,l,ASDA Exotic Juice Drink,20240413,drinks,True
+Sains,3.5,5.4,kg,"Alara Fruits & Seeds Muesli, Organic 650g",20240413,food_cupboard,False
+ASDA,3.0,12.0,kg,Rana Chicken & Smoked Pancetta Fresh Tortelloni,20240413,fresh_food,False
+Morrisons,1.0,2.6,kg,Cirio Lentils (380g),20240413,food_cupboard,False
+Tesco,1.39,1.39,kg,Tesco Fusilli Whole Wheat Pasta 1Kg,20240413,food_cupboard,True
+Morrisons,2.25,1.28,l,Morrisons Original Bitter Beer Cans 2.8%,20240413,drinks,True
+Morrisons,1.0,4.1,kg,Oreo Sandwich Biscuits Snowy…,20240114,food_cupboard,False
+Sains,2.85,14.25,kg,Cathedral City Lactose Free Mature Cheese 200g,20240413,fresh_food,False
+ASDA,2.25,6.8,kg,Frubes Frubes Strawberry and Banana Flavour Yogurt Tubes,20240221,fresh_food,False
+ASDA,1.35,8.44,kg,ASDA Extra Special Hand Picked Tenderstem Broccoli,20240413,fresh_food,True
+Tesco,5.25,3.5,l,London Essence Original Indian Tonic Water 10X150ml,20240413,drinks,False
+Morrisons,1.25,13.9,kg,Milkybar,20240216,food_cupboard,False
+Tesco,1.0,56.0,kg,Tesco Italian Seasoning 18G ..,20240413,food_cupboard,True
+Tesco,0.9,3.6,l,Tesco Seafood Sauce 250Ml,20240413,food_cupboard,True
+Morrisons,8.99,12.0,l,Filippo Berio Olive Oil,20240413,food_cupboard,False
+Morrisons,4.25,5.65,l,Myton Hill Rose,20240201,drinks,False
+Sains,7.0,35.9,kg,Kenco Gold Indulgence Instant Coffee 195g,20240413,food_cupboard,False
+Sains,3.0,7.5,kg,"Sainsbury's Grapes (Red or Black), SO Organic 400g",20240413,free-from,True
+ASDA,3.0,15.8,kg,Marmite Oven Baked Peanuts,20240413,fresh_food,False
+Sains,4.0,9.09,kg,Young's Breaded Cod Fillets x4 440g,20240413,fresh_food,False
+Tesco,7.0,9.31,l,Jam Shed Australian Chardonnay 750Ml,20240413,drinks,False
+Sains,4.5,2.3,l,Monster Energy Drink Ultra 4x500ml,20240413,food_cupboard,False
+Sains,1.95,3.9,kg,Kellogg's Wheats Apricot Breakfast Cereal 500g,20240413,food_cupboard,False
+Morrisons,1.45,3.2,kg,Morrisons Honey Skyr,20240413,fresh_food,True
+Sains,0.65,16.3,kg,"Sainsbury's Chicken Casserole Recipe Mix, Inspired to Cook 40g",20240413,food_cupboard,True
+Sains,1.65,15.0,kg,Cadbury Dairy Milk Orange Giant Buttons Chocolate Bag 110g,20240208,food_cupboard,False
+ASDA,4.0,4.0,unit,George Home Sipper Bottle - Grey,20240201,drinks,True
+Sains,1.5,4.2,kg,OaYeah! Feelgood Original Large Pancakes x6 360g,20240328,fresh_food,False
+Sains,0.9,7.3,kg,Muller Corner Vanilla Yogurt With Chocolate Digestive Biscuits 124g,20240413,free-from,False
+Tesco,1.8,12.0,l,Tesco Oyster Sauce 150Ml,20240413,food_cupboard,True
+ASDA,13.0,1.64,l,Carlsberg Danish Pilsner 18 x 440ml,20240413,drinks,False
+ASDA,1.2,0.3,unit,New York Bakery Co 4 Soft Seeded Bagel Thins,20240413,free-from,False
+Sains,10.0,10.0,unit,Large Dianthus Ceramic,20240309,fresh_food,False
+Sains,3.0,6.0,kg,Renourish Immunity Kale Spinach & Turmeric Soup 500g,20240413,free-from,False
+Tesco,2.7,18.0,kg,Wasabi Spicy Korean Chicken Pops 150g,20240413,fresh_food,False
+Sains,1.95,1.3,l,Sainsbury's No Added Sugar Fruit Slurps Orange Juice Drink 6 x 250ml,20240413,drinks,True
+Morrisons,1.4,10.77,kg,Heinz Double Concen…,20240413,food_cupboard,False
+Tesco,4.5,13.6,l,Magnum Mini White Chocolate & White Chocolate Almond Ice Cream Sticks 6x55ml,20240413,frozen,False
+ASDA,4.3,10.6,kg,Benecol Blueberry,20240413,fresh_food,False
+Morrisons,3.0,7.7,kg,Morrisons Stewed Steak,20240413,food_cupboard,True
+Sains,9.0,0.15,unit,Vitabiotics Ultra Garlic 400mg Extract Tablets x60,20240413,free-from,False
+Sains,6.0,3.41,l,Brooklyn Brewery Pilsner Crisp Lager x4 440ml,20240413,drinks,False
+Sains,2.75,26.19,kg,This Isn't Streaky Bacon Plant Based Rashers 105g,20240413,free-from,False
+ASDA,3.2,6.4,kg,ASDA Tomato & Pepperoni Pasta Salad,20240413,fresh_food,True
+Tesco,1.35,6.1,kg,Tesco Baby Spinach 220G,20240413,fresh_food,True
+Sains,3.0,7.89,kg,"Sainsbury's Mediterranean Vegetable Pasta Ready Meal For 1, Be Good To Yourself 380g",20240413,food_cupboard,True
+ASDA,2.75,11.0,kg,Captain Cook Dry Salted Skinless & Boneless Salt Fish,20240413,fresh_food,False
+Morrisons,1.0,5.0,kg,Cofresh London Mix,20240413,food_cupboard,False
+Sains,1.7,18.89,kg,Sainsbury's Sun Dried Tomato Paste 90g,20240413,food_cupboard,True
+Morrisons,6.0,13.2,kg,Cantu Shea Butter Leave-In Co…,20240413,food_cupboard,False
+Sains,6.0,4.55,l,Lucky Saint Hazy IPA Alcohol Free Can 4x330ml,20240409,free-from,False
+ASDA,0.75,11.4,kg,Ainsley Harriott Goan Spiced Chicken Cup Soup,20240413,food_cupboard,False
+Morrisons,1.5,3.0,kg,Morrisons Trimmed Leeks,20240413,fresh_food,True
+Sains,15.0,3.79,l,Brooklyn Brewery Brooklyn Pilsner Crisp Lager Beer 12x330ml,20240413,drinks,False
+ASDA,0.58,1.5,kg,JUST ESSENTIALS by ASDA Custard,20240413,food_cupboard,True
+Sains,1.75,1.8,l,"Sainsbury's High Juice Blackcurrant Squash, No Added Sugar 1L",20240413,drinks,True
+Sains,4.0,4.0,l,Fever-Tree Sparkling Mexican Lime 4x250ml,20240413,drinks,False
+Morrisons,8.0,10.64,l,Wolf Blass Red Label Shiraz Cabernet,20240413,drinks,False
+ASDA,0.9,7.2,kg,ASDA Scottish Mackerel Fillets in Brine,20240413,food_cupboard,True
+Tesco,19.0,38.0,l,Jägermeister Cold Brew Coffee Liqueur 50cl,20240121,drinks,False
+Sains,2.6,6.63,kg,Grant's Premium Stewed Steak 392g,20240413,food_cupboard,False
+Tesco,1.75,2.4,l,Shloer Winter Spiced Punch Sparkling 750Ml,20240309,drinks,False
+ASDA,8.0,106.64,l,Greasy Fingers Luscious Red 750ml,20240413,drinks,False
+Sains,0.95,6.3,kg,Ambrosia Devon Custard Pot 150g,20240413,food_cupboard,False
+Sains,25.0,35.71,l,Bacardi Caribbean Spiced Premium Rum 70cl,20240413,drinks,False
+Sains,1.5,0.38,unit,"Sainsbury's Fruity Hot Cross Buns, Taste the Difference x4 280g",20240413,bakery,True
+Sains,2.75,12.8,kg,Maille Dijon Original Mustard 215g,20240413,food_cupboard,False
+Tesco,4.75,3.6,l,Old Mout Berries & Cherries Flavoured Cider 4x330ml,20240412,drinks,False
+Tesco,2.9,4.8,kg,Tesco Double Chocolate Gateau 600G,20240413,frozen,True
+ASDA,3.75,18.75,kg,Whitby Seafoods Wholetail Scampi,20240413,frozen,False
+Sains,1.3,10.0,kg,Sainsbury's Salt & Vinegar Corn & Rice Cakes 130g,20240413,food_cupboard,True
+Morrisons,2.25,12.0,l,Blossom Hill White Wine,20240413,drinks,False
+ASDA,3.2,11.03,kg,ASDA Extra Special 2 Cod Fishcakes with Roasted Tomato & Mozzarella,20240413,fresh_food,True
+ASDA,4.5,22.5,kg,Options Vegan Belgian Hot Choc 200g,20240413,drinks,False
+Tesco,1.1,24.4,kg,Mccoy's Epic Eats Nacho Cheese Crisps 45G,20240412,food_cupboard,False
+ASDA,1.5,16.7,kg,Reese's Peanut Butter Bar 90g,20240413,food_cupboard,False
+Tesco,0.7,15.6,kg,Cheezees Jalapeno 45G 45G,20240413,food_cupboard,False
+Morrisons,5.25,13.13,kg,Morrisons All Day Breakfast,20240413,fresh_food,True
+Morrisons,5.0,9.8,kg,Morrisons Slow Cooked Bourbon…,20240413,fresh_food,True
+Morrisons,2.5,4.2,kg,Sweeties Jelly Mix,20240409,food_cupboard,False
+Sains,2.5,3.97,l,Singha Premium Thai Lager 630ml,20240413,drinks,False
+ASDA,7.25,96.64,l,ASDA Extra Special Côtes de Gascogne,20240306,drinks,True
+Tesco,1.9,12.7,kg,Al'fez Falafel 150G,20240413,food_cupboard,False
+Morrisons,0.89,0.4,l,Morrisons Cola Zero Sugar,20240413,drinks,True
+Sains,2.0,2.0,unit,Sainsbury's Cantaloupe Melon,20240413,fresh_food,True
+ASDA,4.0,37.0,kg,Tassimo Costa Americano Coffee Pods x 12,20240413,drinks,False
+Tesco,3.1,20.7,l,Sharwoods Real Oyster Sauce 150Ml,20240330,food_cupboard,False
+Morrisons,2.05,1.9,kg,McDougalls Self Raising Flour,20240413,food_cupboard,False
+Sains,2.0,8.0,kg,Ben's Original One Pan Creations Spanish Paella Style 250g,20240413,food_cupboard,False
+ASDA,6.0,6.0,l,TRIP CBD Infused Peach Ginger Cans,20240413,drinks,False
+Tesco,0.45,8.2,kg,Tesco Instant Oats Cinnamon Porridge 55G,20240413,food_cupboard,True
+Tesco,3.49,5.5,kg,Chicago Town Large Takeaway Cheese Pizza 630G,20240413,frozen,False
+Morrisons,3.99,399.0,l,Vampire Vape Pinkman 6mg,20240413,drinks,False
+Tesco,5.0,26.0,kg,Little Moons Refreshos Vegan Blood Orange & Pink Grapefruit Mochi Sorbet 6x32g,20240413,frozen,False
+Sains,3.0,13.64,kg,VFC Original Recipe Crispy Popcorn Chicken 220g,20240413,free-from,False
+Tesco,3.8,3.8,unit,Tesco Cinnamon Tear And Share Bun,20240413,bakery,True
+ASDA,2.25,4.5,kg,ASDA Extra Special Fat Free Authentic Greek Yogurt,20240413,fresh_food,True
+Tesco,4.0,6.1,kg,Kellogg's Rice Krispies Cereal 660G,20240413,food_cupboard,False
+Morrisons,5.75,3.27,l,Thatchers Somerset Haze Cider Cans,20240412,drinks,False
+Tesco,1.0,8.0,kg,Eastmans Wafer Thin Cooked Ham 125G,20240413,fresh_food,False
+ASDA,40.0,57.14,l,Aberlour 12 Years Old Speyside Single Malt Scotch Whisky,20240413,drinks,False
+ASDA,1.75,11.7,l,Blue Dragon Oyster Sauce,20240413,food_cupboard,False
+ASDA,3.25,13.54,kg,ASDA Extra Special Oak Smoked Back Bacon Dry Cured 8 Rashers,20240413,fresh_food,True
+ASDA,2.5,2.5,unit,George Home Cat Dad Single Mug,20240413,drinks,True
+Morrisons,3.25,18.1,kg,Morrisons The Best 2 Smoked Salmon Verrines,20240218,fresh_food,True
+Sains,2.0,33.3,l,Unrooted Good Gut Apple Cider Vinegar & Ginger Shot 60ml,20240413,drinks,False
+Tesco,1.8,3.6,kg,Tesco Red Seedless Grapes 500G,20240413,fresh_food,True
+Morrisons,1.89,4.73,kg,Morrisons Italian Sausage Pasta Bake,20240413,frozen,True
+ASDA,24.0,319.92,l,Nicolas Feuillatte Champagne Sélection Brut,20240413,drinks,False
+Morrisons,1.95,6.5,kg,Morrisons Free From Rice Pops,20240413,free-from,True
+Sains,2.75,39.3,kg,Wrigley's Extra Cool Breeze 70g,20240413,food_cupboard,False
+Tesco,22.0,22.0,l,Bailey's Original Irish Cream Liqueur Bottle 17% Vol 1L,20240413,drinks,False
+Tesco,2.49,4.98,kg,Tesco Chicken Mince 5% Fat 500G,20240413,fresh_food,True
+Tesco,3.75,9.4,kg,Tesco Finest Camembert Centred Quiche 400g,20240413,fresh_food,True
+ASDA,0.45,4.5,kg,JUST ESSENTIALS by ASDA Dark Chocolate Sharing Bar,20240413,food_cupboard,True
+Morrisons,1.0,14.3,kg,Fridge Raiders Hot & Spicy Chicken Bites,20240413,fresh_food,False
+Sains,2.0,5.3,kg,Blue Dragon Mild Thai Sweet Chilli Sauce 380g,20240413,food_cupboard,False
+Sains,4.25,18.89,kg,Sainsbury's British or Irish 21 Day Matured Ribeye Steak 225g,20240413,fresh_food,True
+Tesco,2.85,2.85,unit,Tesco Pesto Chicken And Sundried Tomato Wrap,20240412,fresh_food,True
+ASDA,1.45,6.4,kg,ASDA Snack Size Chocolate Nutty Bars 6 Pack,20240413,food_cupboard,True
+Sains,3.0,6.3,l,"Sainsbury's Iced Coffee Ice Cream, Taste the Difference 480ml",20240413,free-from,True
+Tesco,0.65,8.7,kg,Princes Tuna & Mayonnaise Paste 75G,20240413,food_cupboard,False
+ASDA,2.5,11.01,kg,Birds Eye 4 Beef Burgers with Plant Protein and Onion 227g,20240413,frozen,False
+Tesco,1.25,1.2,kg,Tesco Scottish Oats Porridge 1Kg,20240413,food_cupboard,True
+Sains,2.5,1.2,l,"Vimto Sparkling, No Added Sugar 6x330ml",20240413,drinks,False
+ASDA,1.25,0.25,unit,The BAKERY at ASDA 5 Milk Chocolate Chip Cookies,20240413,bakery,True
+Tesco,3.3,13.2,l,Tesco Olive Oil 250Ml,20240413,food_cupboard,True
+Sains,3.6,10.3,kg,Sainsbury's Bakewell Tart Dessert 350g,20240413,fresh_food,True
+ASDA,2.95,11.8,kg,Belvita Breakfast Biscuits Soft Bakes Filled Strawberry 5pk,20240413,food_cupboard,False
+Sains,3.15,53.0,kg,Sainsbury's Oregano 60g,20240413,food_cupboard,True
+Morrisons,3.5,19.4,kg,Walnut Whip Milk Chocolate Multipack,20240116,food_cupboard,False
+ASDA,2.5,7.14,kg,Wai Wai X-Press Instant Noodles Creamy Chicken Flavour 350g,20240413,food_cupboard,False
+Sains,7.5,9.98,l,La Patrie Cahors Malbec 75cl,20240413,drinks,False
+Sains,4.5,15.0,kg,"Sainsbury's Shawarma Chicken & Tabbouleh Salad, Summer Edition, Taste the Difference 300g",20240413,fresh_food,True
+Tesco,3.0,21.4,kg,Pulsin High Fibre Brownie Hazelnut 4X35g,20240413,food_cupboard,False
+Tesco,1.5,1.7,l,Lucozade Energy Caribbean Crush 900Ml,20240413,drinks,False
+Tesco,2.9,4.14,l,Smirnoff Ice Tropical Ready To Drink Premix Bottle 70cl,20240209,drinks,False
+ASDA,2.1,21.0,kg,ASDA Chopped Hazelnuts,20240413,food_cupboard,True
+Morrisons,3.75,10.0,kg,Morrisons Butter Chicken & Pilau Rice,20240413,fresh_food,True
+ASDA,2.5,2.5,unit,George Home Gold Tablecover,20240413,fresh_food,True
+ASDA,1.3,12.5,kg,Naked Big Eat Noodle Thai Style Fiery Chicken Panang,20240413,food_cupboard,False
+Sains,1.15,3.83,kg,"Sainsbury's Broccoli, SO Organic 300g",20240413,free-from,True
+Sains,1.5,16.7,kg,Proper Corn Sweet Cinnamon Popcorn 90g,20240411,free-from,False
+Morrisons,1.09,13.6,kg,Morrisons Italian Style Salad,20240413,fresh_food,True
+Morrisons,1.5,0.7,l,Sprite No Sugar,20240404,drinks,False
+Tesco,3.0,18.8,kg,Tesco Sweet Chilli Roast Chicken Slices 160g,20240412,fresh_food,True
+ASDA,2.0,12.5,kg,Fox's Fabulous Indulgent Centre Cookies Triple Chocolate,20240413,food_cupboard,False
+Tesco,2.5,7.81,kg,Weight Watchers Salmon & Broccoli Melt 320G,20240413,frozen,False
+Morrisons,0.99,4.9,kg,Mars Large Egg,20240413,food_cupboard,False
+Tesco,3.25,1.1,l,Tesco Apple/Blackcurrant Juice (No Added Sugar) 12X250ml,20240413,drinks,True
+Sains,2.5,9.09,l,Bottlegreen Elderflower Vodka Spritz 250ml,20240413,drinks,False
+ASDA,10.0,2.84,l,Guinness Draught Stout Beer 8 x Can (food pack),20240413,drinks,False
+ASDA,2.0,7.4,kg,ASDA Hedgehog Biscuit Kit 270g,20240413,food_cupboard,True
+Tesco,1.45,29.6,kg,Tic Tac Fresh Mint 49G,20240413,food_cupboard,False
+ASDA,2.75,3.8,kg,ASDA Classic Runny Honey 720g,20240413,food_cupboard,True
+ASDA,0.95,25.0,kg,Maggi So Juicy Aromatic and Peppery Cajun Chicken Herbs and Spices Recipe Mix,20240413,food_cupboard,False
+Tesco,3.5,7.3,l,Extreme Raspberry With Cream 250Ml,20240229,frozen,False
+Tesco,2.7,27.0,kg,Tesco Rock Salt Grinder 100G,20240413,food_cupboard,True
+Tesco,1.85,14.7,kg,Dalgety Instant Ginger Tea 126G,20240413,food_cupboard,False
+ASDA,8.0,106.64,l,Cune Rioja,20240413,drinks,False
+ASDA,4.95,65.98,l,Le Manoir Du Baron Viognier,20240413,drinks,False
+ASDA,5.0,9.09,kg,"ASDA Extra Special Pork Cutlets with Sea Salt, Black Pepper & Garlic Crust",20240413,fresh_food,True
+ASDA,3.0,7.8,kg,Kellogg's Pop-Tarts Chocotastic Pastry Snack,20240413,food_cupboard,False
+ASDA,2.75,7.3,kg,Kellogg's Froot Loops,20240413,food_cupboard,False
+Tesco,3.55,8.9,kg,Kellogg's Crunchy Nut Chocolate Clusters Cereal 400G,20240413,food_cupboard,False
+ASDA,3.25,8.12,kg,ASDA Meal For One Chicken & Mushroom Risotto 400g,20240413,fresh_food,True
+ASDA,2.5,17.9,kg,GU Milk Chocolate & Ganache Mousse Dessert,20240413,fresh_food,False
+Tesco,2.5,5.68,l,Northern Monk Wasted Pumpkin Stout 440Ml,20240113,drinks,False
+Sains,6.0,7.98,l,"Sainsbury's Vernaccia Di San Gimignano, Taste the Difference 75cl",20240413,drinks,True
+Morrisons,6.0,6.0,unit,Nordic Spirit Bergamot Wild…,20240319,drinks,False
+Sains,3.4,4.2,l,Heinz Seriously Good Light Mayonnaise 815g,20240413,food_cupboard,False
+Morrisons,2.59,20.7,kg,Najma Wafer Thin Turkey Slices,20240413,food_cupboard,False
+Tesco,3.0,13.04,kg,Violife Vegan Greek White Block 230G,20240413,fresh_food,False
+Sains,3.0,5.4,kg,Yorkshire Provender Thai Green Chicken Noodle Soup 560g,20240413,fresh_food,False
+Sains,3.0,16.7,kg,Sainsbury's Chicken Ceasar Salad,20240413,fresh_food,True
+ASDA,2.25,4.5,l,Black Sheep Ale,20240413,drinks,False
+Sains,1.05,3.6,kg,Sainsbury's Sweet Pickle 295g,20240413,food_cupboard,True
+Morrisons,2.2,22.9,kg,Walkers Quavers Cheese Multipack Snacks Crisps,20240413,food_cupboard,False
+Morrisons,1.25,10.87,kg,Gressingham 12 Chinese Style Pancakes,20240403,food_cupboard,False
+Sains,8.0,32.0,kg,"Sainsbury's Extra Thick Caramel & Biscuit Egg, Taste the Difference 250g",20240124,food_cupboard,True
+Morrisons,1.75,7.0,kg,BelVita Breakfast Biscuits Soft…,20240413,food_cupboard,False
+ASDA,1.1,4.23,kg,ASDA Pineapple Slices in Fruit Juice 432g,20240413,drinks,True
+ASDA,8.5,17.0,l,ASDA Raspberry Liqueur,20240413,drinks,True
+Tesco,3.5,17.5,kg,Taylors Decaffe Roast Ground Coffee 200G,20240413,drinks,False
+Sains,1.6,8.0,kg,Sainsbury's Ready To Eat Prunes 200g,20240413,food_cupboard,True
+Sains,2.3,20.5,kg,Yorkshire Tea Biscuit Brew x40 Tea Bags 112g,20240413,food_cupboard,False
+Tesco,10.0,13.3,l,Howard Park Margaret River Cabernet Sauvignon 75Cl,20240413,drinks,False
+Morrisons,1.85,14.8,kg,Bahlsen Choco Leibniz White,20240216,food_cupboard,False
+Sains,0.65,14.4,kg,Goralki Wafer Chocolate Filling 50g,20240413,food_cupboard,False
+Morrisons,1.35,4.0,kg,Filippo Berio Basilico Pasta Sauce,20240413,food_cupboard,False
+Morrisons,26.0,37.14,l,Courvoisier VS Cognac,20240413,drinks,False
+Sains,1.5,6.0,l,Weetabix On The Go Breakfast Drink Vanilla 250ml,20240413,food_cupboard,False
+ASDA,4.5,7.03,kg,Chicago Town Takeaway Large Cheesy Stuffed Pepperoni Pizza,20240413,frozen,False
+Sains,3.6,10.0,kg,Birds Eye 6 Chunky Fish Fingers 360g,20240413,free-from,False
+Sains,8.5,17.0,kg,Lavazza Espresso Barista Gran Crema Coffee Beans 500g,20240413,food_cupboard,False
+Sains,0.7,31.82,kg,SlimFast Snack Bag Baked Cheddar Flavour Bites single serve 23g,20240325,free-from,False
+Morrisons,5.5,27.5,kg,Morrisons Best White Dark Chocolate…,20240402,food_cupboard,True
+Morrisons,3.39,19.9,kg,Pip & Nut Smooth Almond Butter,20240413,food_cupboard,False
+ASDA,1.0,1.3,l,Radnor Splash Orange & Passion Fruit Still Spring Water Cartons,20240413,drinks,False
+ASDA,1.75,4.38,kg,ASDA Cottage Pie,20240413,frozen,True
+Morrisons,1.6,18.2,kg,Schwartz Extra Mature Cheddar Cheese Sauce Mix,20240112,food_cupboard,False
+Morrisons,1.99,0.3,l,Morrisons Yorkshire Vale Water,20240413,drinks,True
+Sains,4.8,12.3,kg,Bisto Best Beef Gravy Granules 390g,20240413,food_cupboard,False
+Sains,2.5,13.9,kg,Lotus Biscoff Milk Chocolate with Biscoff Crumbs 180g,20240413,food_cupboard,False
+ASDA,0.95,10.56,kg,Mama Hot & Spicy Flavour Oriental Style Instant Noodles,20240413,food_cupboard,False
+Tesco,4.5,11.84,kg,Tesco Beef Brisket Joint In Gravy 380G,20240413,fresh_food,True
+ASDA,2.4,13.33,kg,Cathedral City Grated Extra Mature Cheddar,20240413,fresh_food,False
+Tesco,15.99,2.66,l,Budweiser 20X300ml Bottle,20240413,drinks,False
+Sains,0.5,3.3,kg,Sainsbury's Custard Cream Twists with an Apple Pie Flavour Cream Filling 150g,20240413,food_cupboard,True
+ASDA,7.5,7.5,unit,Scoville Glasslux 2 Piece Roaster Set 2.2L/3L,20240413,fresh_food,False
+ASDA,11.0,11.0,unit,CD Now That's What I Call Pop Gold by Various Artists,20240413,drinks,False
+Sains,1.75,3.5,l,Fanta Orange 500mL,20240413,drinks,False
+Morrisons,0.75,0.9,kg,Morrisons Wholemeal Toastie Bread,20240413,bakery,True
+ASDA,2.69,9.0,kg,Cypressa Brown Tahini,20240413,food_cupboard,False
+Tesco,1.5,6.8,l,The Coconut Collaborative Vegan Double Cream 220Ml,20240413,fresh_food,False
+Sains,17.5,25.0,l,Pimm's No.1 70cl,20240413,drinks,False
+Sains,2.3,2.3,l,J2O Spritz Sparkling Apple & Elderflower Cans 4x250ml,20240413,drinks,False
+Tesco,1.25,2.78,kg,I Can't Believe It's Not Butter Original Spread 450G,20240413,fresh_food,False
+Sains,1.95,13.93,kg,Philadelphia Soft Cheese Mini Tub Light x4 35g,20240413,fresh_food,False
+ASDA,4.5,4.5,unit,George Home Glass Roaster with clip lid 1.5L,20240413,fresh_food,True
+Morrisons,2.49,18.4,kg,Peter's Yard Seeded Sourdough Flatbreds,20240413,food_cupboard,False
+Sains,3.25,2.1,l,Lucozade Energy Cherry 4x380ml,20240302,drinks,False
+Sains,2.0,4.2,l,"Sainsbury's Blonde Chocolate Ice Cream, Taste the Difference 330g",20240215,free-from,True
+Sains,1.35,5.0,kg,McVitie's Dark Chocolate Digestive Biscuits 266g,20240413,food_cupboard,False
+Sains,9.5,1.9,l,Pura Refined Vegetable Oil 5L,20240413,food_cupboard,False
+Morrisons,2.0,10.0,kg,Castle Dairies Welsh Butter With Ha…,20240413,fresh_food,False
+Sains,3.5,43.8,kg,Bastides Petits Saucisson Secs 80G,20240413,fresh_food,False
+ASDA,13.0,13.0,unit,Scoville Frying Pan,20240413,fresh_food,False
+Sains,2.75,12.5,kg,Odysea Aubergine Meze 220g,20240413,food_cupboard,False
+Morrisons,2.79,77.5,kg,Twinings Rooibos & Honey 20 Tea Bags,20240413,food_cupboard,False
+Tesco,2.0,8.0,kg,Riso Gallo Risotto Pronto Mushroom 250g.,20240412,food_cupboard,False
+Sains,2.15,21.5,kg,Lindt Excellence Dark 90% Cocoa Chocolate Bar 100g,20240413,food_cupboard,False
+ASDA,8.0,8.0,unit,Scoville Neverstick 30cm Pizza Tray,20240413,fresh_food,False
+Morrisons,1.65,1.7,l,Morrisons No Added Sugar Orange High Juice Squash,20240413,drinks,True
+Tesco,2.25,12.0,l,Blossom Hill Soft & Fruity 18.75Cl,20240413,drinks,False
+Sains,2.0,8.0,kg,Sainsbury's Ready to Roll Yellow Icing 250g,20240413,food_cupboard,True
+ASDA,0.65,3.3,kg,ASDA Shortcake Biscuits 200g,20240413,food_cupboard,True
+Sains,1.5,3.0,l,Fentimans Connoisseurs Tonic Water 500ml,20240329,drinks,False
+ASDA,1.5,7.2,kg,Pukka All Steak Pie,20240413,fresh_food,False
+ASDA,2.1,35.0,l,MOJU Turmeric Shots,20240413,fresh_food,False
+Tesco,2.65,15.59,kg,Paxo Pork Sausages Meat Flavour Stuffing Mix 170G,20240110,food_cupboard,False
+ASDA,6.0,5.29,kg,ASDA Beef Quarter Pound Burgers,20240413,frozen,True
+Sains,4.25,17.71,kg,itsu Chicken Gyoza 12 Dinner Dumplings 240g,20240413,food_cupboard,False
+ASDA,1.95,4.9,kg,Warburtons Fruit Loaf with Cinnamon & Raisin,20240413,fresh_food,False
+Morrisons,2.0,10.0,kg,Morrisons The Best Chicken Parfait Wi…,20240118,fresh_food,True
+Sains,3.5,7.0,kg,Sainsbury's Unsmoked Back Bacon Rashers x16 (2x250g),20240307,fresh_food,True
+Tesco,1.0,1.0,l,Tesco Strawberry Flavoured Milk 1L,20240413,fresh_food,True
+Morrisons,2.3,0.77,unit,Morrisons Cooking Apples (Min 3),20240413,fresh_food,True
+Tesco,3.0,10.0,kg,Walkers Classic Variety Multipack Crisps 12x25g,20240413,food_cupboard,False
+Sains,1.7,8.5,kg,Sainsbury's Fruit & Nut Dark Chocolate 200g,20240413,food_cupboard,True
+ASDA,4.0,4.0,unit,George Home Cream Teddy Fleece Hot Water Bottle,20240201,drinks,True
+Tesco,5.35,10.7,kg,Tesco Finest 5% Aberdeen Angus Steak Mince 500G,20240413,fresh_food,True
+ASDA,1.5,1.5,unit,George Home Pink Glitter Rosette,20240413,bakery,True
+Sains,1.25,9.5,kg,Oreo Lunchbox Vanilla Cookies 6 Pack Multipack 132g,20240413,food_cupboard,False
+Tesco,2.15,8.6,l,Gordon's Gin & Tonic 250Ml Can,20240406,drinks,False
+Sains,0.9,25.0,kg,Squares Chocolatey Rice Krispies 36g,20240413,food_cupboard,False
+Sains,2.25,2.25,unit,"Sainsbury's Mixed Fruit Bloomer, Taste the Difference 350g",20240413,bakery,True
+Tesco,6.0,7.98,l,Turner Road Reserve Chardonnay 75Cl,20240413,drinks,False
+Sains,2.0,8.0,l,Riddles Lemon Ice Tea Blended with Tequila 250ml,20240413,drinks,False
+Sains,1.0,12.35,kg,Batchelors Low Fat Super Noodles Chilli Chicken Flavour 81g,20240413,food_cupboard,False
+ASDA,1.0,0.05,unit,George Home Football Paper Napkins,20240413,fresh_food,True
+Tesco,2.9,11.6,kg,Bonne Maman Hazelnut Chocolate Spread 250G,20240413,food_cupboard,False
+ASDA,22.0,293.26,l,Graham's 10 Years Old Tawny Port,20240413,drinks,False
+ASDA,1.25,6.9,kg,GetPro 18g Protein Pudding Chocolate Hazelnut Flavour 180g,20240413,fresh_food,False
+ASDA,2.25,15.0,kg,ASDA Sea Salt & Black Pepper Cashews 150g,20240413,fresh_food,True
+Morrisons,2.5,20.8,kg,Morrisons German Salami And Cheese Selection,20240413,fresh_food,True
+ASDA,2.5,1.2,l,ASDA Charge Zero Sugar Energy Drink 4 x 500ml,20240413,drinks,True
+Morrisons,1.5,15.0,kg,Peperami Pep'd Up Chicken Bites,20240118,fresh_food,False
+Tesco,1.75,3.9,kg,Pataks Medium Balti Sauce 450G,20240413,food_cupboard,False
+Morrisons,3.99,399.0,l,Vampire Vape Heisenberg 12mg,20240413,drinks,False
+Morrisons,2.49,9.8,kg,Morrisons The Best Roast Garlic & Herb Flatbread,20240413,fresh_food,True
+Sains,1.2,3.0,kg,Heinz Oxtail Soup 400g,20240413,food_cupboard,False
+Tesco,3.75,10.42,kg,Pot Noodle Chicken & Mushroom Instant Noodles Multipack 4x90g,20240413,food_cupboard,False
+Morrisons,0.85,6.8,kg,Hartley's Raspberry Jelly Pot,20240413,food_cupboard,False
+Sains,2.8,12.3,kg,"Sainsbury's Fairtrade Italian Style Coffee, Strength 4 227g",20240413,food_cupboard,True
+Tesco,1.0,20.0,kg,Walkers Max Pizza Hut Texan Bbq Crisps 50G,20240407,food_cupboard,False
+Tesco,4.0,40.0,kg,Gran Luchito Chipotle Chilli Paste 100G,20240324,food_cupboard,False
+Tesco,1.0,0.25,unit,Tesco Multiseed Deli Rolls 4 Pack,20240413,bakery,True
+Tesco,22.0,31.43,l,Abstrakt Watermelon Strawberry Vodka 70Cl,20240413,drinks,False
+ASDA,1.0,10.0,kg,ASDA Chopped Almonds,20240413,food_cupboard,True
+Sains,14.0,28.0,kg,PhD Diet Plant High Protein Lean Matrix Salted Caramel 500g,20240413,free-from,False
+Tesco,3.0,6.0,l,"Robinsons Raspberry, Rhubarb & Orange Blossom Fruit Cordial 500ml",20240413,drinks,False
+Sains,1.2,36.4,kg,Bird's Dream Topping 36g,20240413,food_cupboard,False
+Sains,2.0,20.0,kg,Butterkist Popcorn Sweet & Salted 100g,20240413,food_cupboard,False
+Tesco,1.05,2.3,kg,Tesco Fine Cut Orange Marmalade 454G,20240413,food_cupboard,True
+ASDA,1.4,8.75,kg,"ASDA Tenderstem Broccoli, Carrot & Sugar Snap",20240413,fresh_food,True
+ASDA,3.5,0.15,unit,Weetabix Chocolate Cereal,20240413,food_cupboard,False
+ASDA,4.0,4.0,unit,George Home Pig Sipper Bottle,20240313,drinks,True
+Sains,1.6,10.5,kg,Sainsbury's Green Tea x80 Tea Bags 152g,20240413,food_cupboard,True
+ASDA,4.0,4.0,l,Red Bull Energy Drink Zero Cans 4x250ml,20240413,drinks,False
+ASDA,1.0,11.1,kg,Terry's Chocolate Orange Mini Eggs Bar 90g,20240328,food_cupboard,False
+Tesco,1.5,3.1,kg,Homepride Chilli Cooking Sauce 485G,20240413,food_cupboard,False
+Morrisons,2.0,10.0,kg,Morrisons The Best Quadru…,20240413,food_cupboard,True
+ASDA,2.65,15.14,kg,Vivera Plant Spicy Chicken Kebab Style 175g,20240413,free-from,False
+Morrisons,3.0,9.0,kg,Goodfella's Stonebaked Thin Pepperoni Pizza,20240413,frozen,False
+Tesco,6.75,5.11,l,Birra Moretti Premium Lager Beer Bottle 4x330ml,20240413,drinks,False
+Tesco,1.5,10.7,kg,Tesco Frozen 12 Mini Eclairs 140G,20240413,frozen,True
+Morrisons,2.25,4.96,kg,Morrisons Butcher's Style Pork Sausages,20240413,fresh_food,True
+Tesco,3.0,8.0,kg,Nature's Finest Tropical Fruits In Juice 700G,20240413,food_cupboard,False
+Tesco,2.0,3.08,l,Viennetta Mint Ice Cream Dessert 650Ml,20240413,frozen,False
+Morrisons,1.79,3.6,l,Oasis Zero Exotic Fruit,20240413,fresh_food,False
+Sains,1.4,15.56,kg,Nissin Soba Japanese Curry Wok Style Instant Cup Noodles Pot 90g,20240413,food_cupboard,False
+Morrisons,1.6,0.27,unit,Richmond 6 Thick Pork Sausages,20240413,fresh_food,False
+ASDA,0.9,0.9,unit,MAD Party Silver Number Sparklers 6,20240413,bakery,False
+ASDA,1.0,26.7,kg,Walkers Baked Prawn Cocktail Snacks Crisps,20240413,fresh_food,False
+Tesco,2.6,28.89,kg,Urban Fruit Dried Strawberries 90G,20240413,food_cupboard,False
+Morrisons,1.89,6.3,kg,Hilal Chicken Sausages,20240413,food_cupboard,False
+ASDA,2.5,2.5,unit,George Home Red Alphabet Glass Mug - L,20240413,drinks,True
+Tesco,1.5,4.69,kg,Tesco Vegetable Stir Fry 320g,20240413,fresh_food,True
+ASDA,2.0,0.5,unit,ASDA Smooth & Sweet Flat Peaches,20240310,fresh_food,True
+Morrisons,0.6,2.4,l,Oshee Magnesium Vitamin Energy Drink,20240413,food_cupboard,False
+Morrisons,0.75,1.5,kg,Morrisons Wholewheat Spaghetti,20240413,food_cupboard,True
+Morrisons,2.6,2.6,kg,Silver Spoon Icing Sugar,20240413,food_cupboard,False
+Morrisons,1.99,1.0,l,Diet Coke No Caffeine,20240413,drinks,False
+Morrisons,1.25,12.5,kg,Whitworths Berry & White Ch…,20240219,food_cupboard,False
+Morrisons,2.39,33.7,kg,Oxo Reduced Salt Beef Stock 12 Cubes,20240413,food_cupboard,False
+Sains,23.0,32.85,l,The Kraken Black Spiced Rum Roast Coffee 70cl,20240413,drinks,False
+Tesco,2.25,25.0,kg,Fruit Bowl Unicorn Fruit Flakes 5X18g,20240413,food_cupboard,False
+Tesco,2.55,8.5,kg,Dunns River Jamaican Jerk Seasoning 300G,20240413,food_cupboard,False
+Sains,1.75,4.62,kg,Sainsbury's Deep Pan Meat Feast Pizza 379g,20240413,frozen,True
+Sains,1.25,8.8,kg,Go Ahead Yogurt Breaks Strawberry Snack Bars 4x35.5g,20240413,food_cupboard,False
+ASDA,2.0,18.2,kg,ASDA Finely Sliced Cured Pastrami,20240413,fresh_food,True
+Sains,2.9,55.8,kg,"Sainsbury's Lungo Decaff Pods, Taste the Difference x10 52g",20240413,drinks,True
+Sains,2.73,4.6,kg,Sainsbury's Triple Chocolate Gateau Dessert 600g,20240413,frozen,True
+Tesco,1.5,13.3,kg,Eat Real Lentil Chips Sea Salt 113G,20240409,food_cupboard,False
+Morrisons,3.75,18.8,kg,Morrisons Cold Water Prawns,20240413,fresh_food,True
+Morrisons,1.5,12.5,kg,Cadbury Dairy Milk Caramel Nibbles Chocolate Bag,20240116,food_cupboard,False
+Morrisons,1.5,3.33,kg,I Can't Believe It's Not Butter Original Spread,20240413,fresh_food,False
+Sains,1.25,5.0,kg,Sainsbury's Sliced White Mushrooms 250g,20240413,fresh_food,True
+Sains,5.75,6.39,kg,Sainsbury's British Pork Shoulder Steaks x6 900g,20240413,fresh_food,True
+Tesco,0.45,7.5,kg,Vifon Beef Flavour Instant Noodle Soup 60g,20240413,food_cupboard,False
+Sains,1.7,4.3,kg,Heinz French Onion Soup 400g,20240413,food_cupboard,False
