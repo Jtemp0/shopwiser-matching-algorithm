@@ -361,12 +361,15 @@ def compute_similarity(row_a, row_b, pass_type, unit_tolerance):
     else:
         threshold = FUZZY_THRESHOLD
 
-    # Short stripped-name guard for branded pass: when both names are ≤3 tokens
-    # (after brand stripping) require a higher similarity floor.  This prevents
+    # Short stripped-name guard for branded pass: when BOTH names have the
+    # SAME token count ≤3, require a higher similarity floor.  This prevents
     # near-synonym product types (e.g. "stock cubes ham" vs "stock cubes lamb")
-    # from matching while still allowing identical short names (score = 1.0).
+    # from matching while still allowing packaging variants
+    # (e.g. "garam masala" 2-tok vs "garam masala jar" 3-tok) to pass through
+    # at the standard threshold.
     if pass_type == 'branded':
-        if len(name_a.split()) <= 3 and len(name_b.split()) <= 3:
+        ta, tb = len(name_a.split()), len(name_b.split())
+        if ta == tb and ta <= 3:
             threshold = max(threshold, SHORT_STRIPPED_THRESHOLD)
 
     # Truncation bonus: lower effective threshold when either product name was
@@ -456,6 +459,11 @@ tests = [
      _mk('stock cubes lamb', 104, 'g', 'Tesco', brand='knorr'),
      _mk('stock cubes ham', 104, 'g', 'ASDA', brand='knorr'),
      'branded', UNIT_TOLERANCE_BRANDED, False),
+
+    ('Schwartz garam masala vs garam masala jar → SHOULD match (packaging variant)',
+     _mk('garam masala', 29.9, 'g', 'Tesco', brand='schwartz'),
+     _mk('garam masala jar', 29.9, 'g', 'ASDA', brand='schwartz'),
+     'branded', UNIT_TOLERANCE_BRANDED, True),
 
     ('Black beans vs Black eyed beans (own-brand) → must NOT match',
      _mk('black beans', 400, 'g', 'Tesco', brand=None, ptype='own_brand'),
@@ -811,6 +819,25 @@ def fix_cross_tier_violation(group_df):
     return sub_clusters
 
 
+def fix_unit_type_violation(group_df):
+    """Split clusters that contain both 'g' and 'ml' products.
+    Products without unit_type are kept with whichever sub-cluster is larger.
+    """
+    uts = group_df['unit_type'].dropna().unique()
+    if len(uts) <= 1:
+        return [group_df]
+    no_unit = group_df[group_df['unit_type'].isna()]
+    sub_clusters = []
+    for ut in uts:
+        sub = group_df[group_df['unit_type'] == ut]
+        if not no_unit.empty:
+            sub = pd.concat([sub, no_unit])
+        sub_clusters.append(sub)
+    # Always split on unit type conflict — the smaller fragment becomes a singleton
+    # rather than polluting the larger cluster with a unit-type mismatch.
+    return sub_clusters
+
+
 print('\nRunning violation fixes...')
 final_clusters        = []
 sm_violations_fixed   = 0
@@ -825,13 +852,20 @@ for members in tqdm(validated_clusters, desc='  Post-processing', leave=True):
     if len(sub_clusters) > 1:
         sm_violations_fixed += 1
     for sc in sub_clusters:
-        tier_subs = fix_cross_tier_violation(sc)
-        if len(tier_subs) > 1:
-            tier_violations_fixed += 1
-        final_clusters.extend(tier_subs)
+        ut_subs = fix_unit_type_violation(sc)
+        for ut_sc in ut_subs:
+            tier_subs = fix_cross_tier_violation(ut_sc)
+            if len(tier_subs) > 1:
+                tier_violations_fixed += 1
+            final_clusters.extend(tier_subs)
 
-print(f'  Same-SM violations fixed:    {sm_violations_fixed:,}')
-print(f'  Cross-tier violations fixed: {tier_violations_fixed:,}')
+unit_type_violations_fixed = sum(
+    1 for members in validated_clusters
+    if len(members) > 1 and df.loc[members, 'unit_type'].dropna().nunique() > 1
+)
+print(f'  Same-SM violations fixed:      {sm_violations_fixed:,}')
+print(f'  Unit-type violations fixed:    {unit_type_violations_fixed:,}')
+print(f'  Cross-tier violations fixed:   {tier_violations_fixed:,}')
 print(f'  Final cluster count:         {len(final_clusters):,}')
 
 # Assign sequential cluster IDs (largest first)

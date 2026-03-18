@@ -14,15 +14,15 @@ SUPERMARKET_BRANDS: Dict[str, List[str]] = {
         'ASDA Extra Special', 'Asda Extra Special', 'ASDA Smart Price', 
         'Just Essentials by ASDA', 'Just Essentials', 'ASDA Plant Based', 
         'ASDA Chosen By You', 'ASDA Free From', 'COOK by ASDA', 'BAKE by ASDA', 
-        'The BAKERY at ASDA', 'OMV! by Asda', 'ASDA', 'Asda'
+        'The BAKERY at ASDA', 'OMV! by Asda', 'George Home', 'George', 'ASDA', 'Asda'
     ],
     'Morrisons': [
         'Morrisons The Best', 'Morrisons Savers', 'Morrisons Free From', 
         'Morrisons Organic', 'Morrisons Market Street', 'Market Street', 
         'Morrisons Plant Revolution', 'Morrisons For Farmers', 'M Kitchen', 
-        'Savers', 'Morrisons'
+        'Savers', 'Morrisons', 'Morrison' # Added to catch typos in raw data
     ],
-    'Sains': [
+    'Sainsburys': [
         "Sainsbury's Taste the Difference", "Taste the Difference", 
         "Sainsbury's Basics", "Stamford Street Co.", "Stamford Street", 
         "Sainsbury's Free From", "Sainsbury's SO Organic", 'SO Organic', 
@@ -321,6 +321,13 @@ KNOWN_BRANDS: List[str] = [
     'berry gardens', 'mushrooms', 'gressingham', 'mowi', 'saucy fish co', 'heck', 
     'peperami', 'rustlers', 'mattessons', 'richmond', 'walls', 'wall\'s',
 
+    # Brands pulled from dataset analysis
+    'scrumpy jack', 'mazzetti', 'buttermilk', 'blue riband', 'sheldon\'s', 'sheldons', 
+    'skinny whip', 'chicken tonight', 'old jamaica', 'kubus', 'al fez', 'al\'fez', 
+    'idahoan', 'popworks', 'ainsley harriott', 'timothy taylor\'s', 'timothy taylors', 
+    'bio&me', 'bio & me', 'pek', 'aashirvaad', 'simply cook', 'discover-in', 'contigo', 
+    'mother africa', 'holy cow!', 'optibac', 'science in sport', 'nomo', 'oshee', 
+    'vifon', 'cantu', 'wrigley\'s', 'wrigleys', 'sistema', 'scoville', 'weight watchers'
 ]
 
 # Attributes (remove from name after detection)
@@ -351,10 +358,10 @@ ATTRIBUTES: Dict[str, List[str]] = {
 # Descriptors (detected but NOT removed from name)
 DESCRIPTORS: Dict[str, List[str]] = {
     'cooking_method': ['roasted', 'grilled', 'baked', 'fried', 'smoked', 'steamed', 'poached', 'bbq', 'barbecue', 'chargrilled'],
-    'texture':        ['crunchy', 'crispy', 'smooth', 'chunky', 'creamy', 'thick', 'thin', 'soft'],
     'flavor':         ['mild', 'medium', 'hot', 'spicy', 'sweet', 'savoury', 'salty', 'tangy', 'sour', 'bitter', 'unsmoked'],
     'form':           ['sliced', 'diced', 'chopped', 'whole', 'halved', 'quartered', 'peeled', 'shredded', 'grated', 'ground', 'crushed', 'powder', 'paste', 'puree', 'concentrate'],
-    'cut_meat':       ['mince', 'minced', 'breast', 'thigh', 'drumstick', 'fillet', 'steak', 'joint', 'chop', 'sausage', 'meatballs', 'burgers'],
+    'texture':        ['crunchy', 'crispy', 'smooth', 'chunky', 'creamy', 'thick', 'thin', 'soft', 'breaded', 'battered', 'coated', 'crumb'],
+    'cut_meat':       ['mince', 'minced', 'breast', 'thigh', 'drumstick', 'fillet', 'steak', 'joint', 'chop', 'sausage', 'meatballs', 'burgers', 'kebabs', 'kebab', 'shanks', 'pancetta', 'gammon', 'brisket'],
     
     # NEW: Grocery-specific preparation states
     'prep_meat_fish': ['boneless', 'bone-in', 'bone in', 'skinless', 'skin-on', 'skin on', 'deboned', 'line caught', 'farmed'],
@@ -372,4 +379,5 @@ _VAPE_KEYWORDS = frozenset([
     'e-liquid', 'e liquid', 'eliquid', 'vape', 'vaping', 'pod', 'pods',
     'nicotine', 'tobacco', 'cigarette', 'e-cig', 'ecig', 'juul', 'elf bar',
     'disposable', 'menthol e', 'nic salt',
+    'vuse', 'velo', 'nordic spirit', 'ske crystal', 'carlton', 'vampire vape', 'aqua vape', 'vapes bars'
 ])
