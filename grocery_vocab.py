@@ -22,7 +22,7 @@ SUPERMARKET_BRANDS: Dict[str, List[str]] = {
         'Morrisons Plant Revolution', 'Morrisons For Farmers', 'M Kitchen', 
         'Savers', 'Morrisons', 'Morrison' # Added to catch typos in raw data
     ],
-    'Sainsburys': [
+    'Sains': [
         "Sainsbury's Taste the Difference", "Taste the Difference", 
         "Sainsbury's Basics", "Stamford Street Co.", "Stamford Street", 
         "Sainsbury's Free From", "Sainsbury's SO Organic", 'SO Organic', 
@@ -99,7 +99,7 @@ KNOWN_BRANDS: List[str] = [
     'kallo', 'eat natural', 'nakd',
 
     # Biscuits, sweets, chocolate
-    'cadbury', 'mars', 'snickers', 'galaxy', 'lindt', 'thorntons',
+    "cadbury's", 'cadbury', 'mars', 'snickers', 'galaxy', 'lindt', 'thorntons',
     'green & black\'s', 'green and blacks', 'ferrero rocher', 'ferrero',
     'toblerone', 'after eight', 'after eights', 'maltesers', 'm&ms', 'm&m\'s',
     'bounty', 'milky way', 'twix', 'kit kat', 'kitkat',

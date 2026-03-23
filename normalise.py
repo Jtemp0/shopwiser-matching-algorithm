@@ -88,12 +88,31 @@ def extract_tier(supermarket_brand: Optional[str]) -> Tuple[Optional[str], Optio
     return 'standard', None
 
 
-def extract_multipack(name: str) -> Tuple[Optional[int], Optional[str], str]:
+_PACK_UNIT_MULTIPLIER: Dict[str, Tuple[float, str]] = {
+    'g':  (1.0,    'g'),
+    'kg': (1000.0, 'g'),
+    'mg': (0.001,  'g'),
+    'ml': (1.0,    'ml'),
+    'cl': (10.0,   'ml'),
+    'l':  (1000.0, 'ml'),
+}
+
+
+def extract_multipack(name: str) -> Tuple[Optional[int], Optional[str], str, Optional[float], Optional[str]]:
+    """Return (pack_quantity, pack_pattern, remaining_name, pack_unit_val, pack_unit_type).
+
+    For the ``count_x_size`` pattern (e.g. "5 x 19.9g", "6x330ml") the per-unit
+    size is converted to standardised g/ml and returned as *pack_unit_val* /
+    *pack_unit_type*; the size token is NOT re-injected into the remaining string.
+    The caller is responsible for computing the total unit_value as
+    ``pack_unit_val * pack_quantity`` when no explicit total is found in step 4.
+    All other patterns return ``None`` for the last two fields.
+    """
     if not isinstance(name, str):
-        return None, None, ''
+        return None, None, '', None, None
     name_str = name.strip()
     patterns = [
-        # "6 x 330ml" or "10x330ml" — keep unit, strip the NxUNIT count part
+        # "6 x 330ml" or "10x330ml" — extract per-unit size but do NOT re-inject
         (r'(\d+)\s*[xX]\s*(\d+(?:\.\d+)?)\s*(mg|g|kg|ml|cl|l\b)', 'count_x_size'),
         # " x6" or " x 12"
         (r'\s[xX]\s*(\d+)\b', 'x_count'),
@@ -114,13 +133,20 @@ def extract_multipack(name: str) -> Tuple[Optional[int], Optional[str], str]:
         match = re.search(pattern, name_str, re.IGNORECASE)
         if match:
             quantity = int(match.group(1))
+            pack_unit_val: Optional[float] = None
+            pack_unit_type: Optional[str] = None
             if pattern_type == 'count_x_size':
-                unit_part = match.group(2) + match.group(3)
-                remaining = name_str[:match.start()] + ' ' + unit_part + ' ' + name_str[match.end():]
+                raw_val  = float(match.group(2))
+                raw_unit = match.group(3).lower().rstrip()
+                factor, base = _PACK_UNIT_MULTIPLIER.get(raw_unit, (1.0, 'g'))
+                pack_unit_val  = round(raw_val * factor, 3)
+                pack_unit_type = base
+                # Strip the whole NxSIZEunit token; do NOT add size back
+                remaining = name_str[:match.start()] + name_str[match.end():]
             else:
                 remaining = name_str[:match.start()] + name_str[match.end():]
             remaining = re.sub(r'\s+', ' ', remaining).strip()
-            return quantity, pattern_type, remaining
+            return quantity, pattern_type, remaining, pack_unit_val, pack_unit_type
     # "80s" pattern: digits followed immediately by 's' at word boundary (e.g. "Tea Bags 80s")
     bag_s = re.search(r'\b(\d{1,3})s\b', name_str, re.IGNORECASE)
     if bag_s:
@@ -128,8 +154,8 @@ def extract_multipack(name: str) -> Tuple[Optional[int], Optional[str], str]:
         if 2 <= qty <= 500:
             remaining = name_str[:bag_s.start()] + name_str[bag_s.end():]
             remaining = re.sub(r'\s+', ' ', remaining).strip()
-            return qty, 'count_s', remaining
-    return None, None, name_str
+            return qty, 'count_s', remaining, None, None
+    return None, None, name_str, None, None
 
 
 def _is_vape_name(name: str) -> bool:
@@ -305,7 +331,7 @@ def normalize_product_name(row: pd.Series) -> dict:
     result['tier_keyword'] = tier_kw
 
     # Step 3: Multipack extraction
-    pack_qty, pack_pat, current = extract_multipack(current)
+    pack_qty, pack_pat, current, pack_unit_val, pack_unit_type = extract_multipack(current)
     result['pack_quantity'] = pack_qty
     result['pack_pattern']  = pack_pat
 
@@ -313,6 +339,15 @@ def normalize_product_name(row: pd.Series) -> dict:
     unit_val, unit_type, current = extract_and_standardize_unit(current)
     result['unit_value'] = unit_val
     result['unit_type']  = unit_type
+
+    # Step 4a: If NxSIZEunit pattern gave a per-unit size but step 4 found nothing,
+    # compute total weight = per_unit_size × pack_quantity (standardises unit_value to
+    # always represent the total sellable weight/volume of the product).
+    if unit_val is None and pack_unit_val is not None and pack_qty:
+        result['unit_value'] = round(pack_unit_val * pack_qty, 3)
+        result['unit_type']  = pack_unit_type
+        unit_val  = result['unit_value']
+        unit_type = result['unit_type']
 
     # Step 4.5: Extract Alcohol %
     abv_val, current = extract_abv(current)
