@@ -20,12 +20,47 @@ import pandas as pd
 
 from shopwiser.paths import normalized_products_path, raw_csv_path
 
+# ── Non-food / non-drink keyword exclusion ────────────────────────────────────
+# Products whose names contain any of these tokens (whole-word, case-insensitive)
+# are excluded from the output — they are non-food items miscategorised by
+# retailer scrapers (tobacco, vaping hardware, kitchenware, candles, etc.).
+_NON_FOOD_PATTERN = re.compile(
+    r'\b(?:'
+    # Tobacco & smoking
+    r'cigarette|tobacco|cigars?|rolling\s+tobacco|pipe\s+tobacco'
+    r'|cigarette\s+papers?|filter\s+tips?|rolling\s+paper'
+    # Vaping hardware (not nicotine pouches which are borderline)
+    r'|e-?liquid|vape\s+kit|vaping\s+device|starter\s+kit'
+    r'|disposable\s+vape|vape\s+pen|vape\s+bar'
+    # Kitchenware / housewares
+    r'|whisk|spatula|colander|peeler|grater|strainer|ladle'
+    r'|chopping\s+board|cutting\s+board|mixing\s+bowl|baking\s+tray'
+    r'|cake\s+tin|baking\s+sheet|oven\s+glove|kitchen\s+towel'
+    # Non-food containers & accessories
+    r'|hot\s+water\s+bottle|reusable\s+bottle|water\s+bottle'
+    r'|flask|thermos|travel\s+mug'
+    # Candles & party items
+    r'|birthday\s+candles?|candle\s+holder|wax\s+melts?'
+    r'|party\s+bag|party\s+supplies'
+    r')s?\b',
+    re.IGNORECASE,
+)
+
 from .attributes import extract_attributes, extract_descriptors
-from .brand import extract_abv, extract_known_brand, extract_supermarket_brand, extract_tier
+from .brand import (
+    extract_abv, extract_known_brand, extract_supermarket_brand,
+    extract_tier, strip_trailing_tier,
+)
 from .cleaning import clean_parenthetical_notes, normalize_accents
 from .units import extract_and_standardize_unit, extract_multipack, infer_unit_from_price
 
 warnings.filterwarnings('ignore')
+
+
+_VAPE_CATEGORY_PATTERN = re.compile(
+    r'\b(?:vap(?:e|ing|our)|e-?cig|nicotine|tobacco|hookah|shisha)\b',
+    re.IGNORECASE,
+)
 
 
 def normalize_product_name(row: pd.Series) -> dict:
@@ -34,6 +69,7 @@ def normalize_product_name(row: pd.Series) -> dict:
     price_val     = row.get('prices_(£)')
     price_per_unit= row.get('prices_unit_(£)')
     unit_col      = str(row.get('unit', '')).strip().lower()
+    category_col  = str(row.get('category', '') or '').strip()
 
     result = {
         'original_name':        original_name,
@@ -61,6 +97,14 @@ def normalize_product_name(row: pd.Series) -> dict:
     result['supermarket_brand'] = sm_brand
 
     tier_type, tier_kw = extract_tier(sm_brand)
+
+    # Strip trailing tier keyword (e.g. Sainsbury's "Camembert, Taste the Difference")
+    # and promote it to tier if no tier was found from the prefix alone.
+    current, trailing_tier_type, trailing_tier_kw = strip_trailing_tier(current)
+    if trailing_tier_type and tier_type in (None, 'standard'):
+        tier_type = trailing_tier_type
+        tier_kw   = trailing_tier_kw
+
     result['tier_type']    = tier_type
     result['tier_keyword'] = tier_kw
 
@@ -80,6 +124,19 @@ def normalize_product_name(row: pd.Series) -> dict:
 
     abv_val, current = extract_abv(current)
     result['abv_percentage'] = abv_val
+
+    # Guard: nullify mg-derived unit values for vape/tobacco products whose brand
+    # keyword wasn't caught by _is_vape_name().  mg→g conversion yields tiny values
+    # like 0.02 g (= 20 mg nicotine strength) which are meaningless for clustering.
+    # Trigger: unit came from mg conversion (value < 0.1 g) AND the product category
+    # column (or unit column) signals a non-food context.
+    if (unit_type == 'g' and unit_val is not None and unit_val < 0.1
+            and (_VAPE_CATEGORY_PATTERN.search(category_col)
+                 or _VAPE_CATEGORY_PATTERN.search(unit_col))):
+        result['unit_value'] = None
+        result['unit_type']  = None
+        unit_val  = None
+        unit_type = None
 
     if unit_val is None:
         inferred_val, inferred_type = infer_unit_from_price(price_val, price_per_unit, unit_col)
@@ -103,7 +160,13 @@ def normalize_product_name(row: pd.Series) -> dict:
     core = re.sub(r'\s*\*\s*$', '', core).strip()
     result['core_product_name'] = core
 
-    normalized = normalize_accents(core).lower()
+    # For branded products, prepend known_brand so that e.g. "Fanta Orange"
+    # normalises to "fanta orange" rather than just "orange".  Without this,
+    # single-flavor cores like "orange", "lemon", or "sugar" from different
+    # brands appear identical and cause false-positive clustering.
+    known_brand = result['known_brand']
+    name_for_norm = f"{known_brand} {core}".strip() if known_brand else core
+    normalized = normalize_accents(name_for_norm).lower()
     normalized = normalized.replace("'", ' ')
     normalized = re.sub(r'[^a-z0-9\s]', ' ', normalized)
     normalized = re.sub(r'\s+', ' ', normalized).strip()
@@ -128,6 +191,14 @@ def main(*, sample: bool = False) -> None:
     initial_count = len(df)
     df = df[df['names'].notna() & (df['names'].str.strip() != '')].reset_index(drop=True)
     print(f'\nLoaded {initial_count:,} rows, removed {initial_count - len(df):,} empty names')
+
+    # Filter out non-food / non-drink items
+    non_food_mask = df['names'].str.contains(_NON_FOOD_PATTERN, na=False)
+    n_non_food = non_food_mask.sum()
+    if n_non_food:
+        print(f'Excluded {n_non_food:,} non-food/non-drink items')
+        df = df[~non_food_mask].reset_index(drop=True)
+
     print(f'Processing {len(df):,} products...')
 
     df['is_truncated'] = df['names'].str.contains(r'[…]|\.{3}', regex=True, na=False)

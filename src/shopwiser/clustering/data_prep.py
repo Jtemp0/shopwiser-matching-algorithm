@@ -28,6 +28,11 @@ _NAME_SYNONYM_RE = [
     (re.compile(r'\bfibre\b'),                  'fiber'),
     # Beanz vs Beans (Heinz specific, but safe broadly)
     (re.compile(r'\bbeanz\b'),                  'beans'),
+    # UK/US colour spelling — "food colouring" vs "food coloring" across SMs
+    (re.compile(r'\bcolouring\b'),              'coloring'),
+    (re.compile(r'\bcolourings\b'),             'colorings'),
+    (re.compile(r'\bcolour\b'),                 'color'),
+    (re.compile(r'\bcolours\b'),                'colors'),
 ]
 
 

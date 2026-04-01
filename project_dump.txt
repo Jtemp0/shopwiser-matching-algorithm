@@ -1,0 +1,3834 @@
+### FOLDER STRUCTURE ###
+-------------------------
+shopwiser/
+    paths.py
+    __init__.py
+    clustering/
+        config.py
+        similarity.py
+        __init__.py
+        data_prep.py
+        pipeline.py
+        blocking.py
+        main.py
+        union_find.py
+    preprocess/
+        units.py
+        attributes.py
+        __init__.py
+        normalise.py
+        grocery_vocab.py
+        brand.py
+        cleaning.py
+    utils/
+        sample_normalized_products.py
+    audit/
+        v5.py
+        __init__.py
+
+============================================================
+### FILE CONTENTS ###
+-------------------------
+
+FILE: paths.py
+--------------
+"""Central path configuration for the ShopWiser pipeline (cwd-independent)."""
+
+import sys
+from pathlib import Path
+
+# src/shopwiser/paths.py -> parents[2] = repository root
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+
+def ensure_repo_on_syspath() -> None:
+    """Put the repo root on ``sys.path`` so ``import tests.…`` works under ``python -m``."""
+    r = str(PROJECT_ROOT)
+    if r not in sys.path:
+        sys.path.insert(0, r)
+
+DATA_RAW = PROJECT_ROOT / "data" / "raw"
+DATA_PROCESSED = PROJECT_ROOT / "data" / "processed"
+DATA_OUTPUTS = PROJECT_ROOT / "data" / "outputs"
+DATA_OUTPUTS_CLUSTERS = DATA_OUTPUTS / "clusters"
+DATA_OUTPUTS_CLUSTERS_SAMPLE = DATA_OUTPUTS / "clusters_sample"
+DATA_EMBEDDINGS = PROJECT_ROOT / "data" / "embeddings"
+
+RAW_CSV = "raw.csv"
+RAW_1000_CSV = "raw_1000.csv"
+ALL_DEC_DATA_CSV = "all_dec_data.csv"
+NORMALIZED_PRODUCTS_CSV = "normalized_products.csv"
+NORMALIZED_SAMPLE_CSV = "normalized_products_sample.csv"
+
+
+def raw_csv_path(*, sample: bool = False) -> Path:
+    """Full scrape vs ~1000-row development slice in ``data/raw/``."""
+    return DATA_RAW / (RAW_1000_CSV if sample else RAW_CSV)
+
+
+def normalized_products_path(*, sample: bool = False) -> Path:
+    """Processed file written by the normalisation step (full vs sample run)."""
+    name = NORMALIZED_SAMPLE_CSV if sample else NORMALIZED_PRODUCTS_CSV
+    return DATA_PROCESSED / name
+
+
+def cluster_outputs_path(*, sample: bool = False) -> Path:
+    """Cluster CSVs and audit samples (separate folder so sample runs do not overwrite)."""
+    return DATA_OUTPUTS_CLUSTERS_SAMPLE if sample else DATA_OUTPUTS_CLUSTERS
+
+
+# Backwards-compatible defaults (full dataset)
+INPUT_RAW = raw_csv_path(sample=False)
+NORMALIZED_PRODUCTS = normalized_products_path(sample=False)
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: __init__.py
+-----------------
+"""ShopWiser data pipeline: preprocessing and product clustering."""
+
+__version__ = "0.1.0"
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: clustering/config.py
+--------------------------
+"""Clustering thresholds, token sets, and seeds (v10)."""
+
+import random
+import numpy as np
+
+from shopwiser.paths import DATA_OUTPUTS_CLUSTERS
+
+# ============================================================
+# CONFIGURATION
+# ============================================================
+
+UNIT_TOLERANCE_BRANDED   = 0.05
+UNIT_TOLERANCE_OWN_BRAND = 0.05
+UNIT_TOLERANCE_UNBRANDED = 0.05
+
+# Wider tolerances used only in completion passes (5B / 5C) where brand+category+unit_type
+# are already tightly constrained.  Minor size reporting differences between retailers
+# (e.g. 400 g vs 415 g) are acceptable there.
+COMPLETION_UNIT_TOL = {
+    'branded':   0.25,   # widened: retailers often differ slightly in stated weight
+    'own_brand': 0.22,
+    'unbranded': 0.22,
+}
+
+FUZZY_THRESHOLD            = 0.710   # lowered from 0.720 — meat/type ONE_SIDED guards protect precision
+FUZZY_THRESHOLD_OWNBRAND   = 0.775   # lowered from 0.805
+FUZZY_THRESHOLD_NOUNIT     = 0.790   # lowered from 0.800
+# v8: per-type thresholds for the completion passes (5B/5C).
+# Branded can go lower because brand pre-filters heavily; own_brand needs
+# to stay high because generic names (e.g. "black beans" vs "black eyed
+# beans") can score above 0.80 despite being different products.
+COMPLETION_THRESHOLD = {
+    'branded':   0.600,   # v10: completion-only threshold; guarded by hard conflicts + brand/unit gates
+    'own_brand': 0.680,   # v10: completion-only threshold in tight tier/category/unit context
+    'unbranded': 0.640,   # v10: completion-only threshold with unit/category guards
+}
+FUZZY_THRESHOLD_COMPLETION = 0.600   # kept for backward-compat references
+
+SHORT_STRIPPED_THRESHOLD = 0.74   # ≤3 equal-token branded pairs (v7: lowered from 0.87;
+                                  # ingredient/flavor conflicts caught by FLAVOR_NAMED_TOKENS and
+                                  # ONE_SIDED_CONFLICT_TOKENS, making the elevated threshold
+                                  # unnecessarily strict for legitimate matches with minor penalties)
+
+PACK_QTY_MAX_RATIO   = 2.0
+MAX_BLOCK_SIZE       = 200
+TRUNCATION_BONUS     = 0.05       # threshold reduction for truncated names
+
+ATTR_PENALTIES = {
+    'organic':   0.20,
+    'free_from': 0.20,
+    'fairtrade': 0.10,
+    'vegan':     0.10,   # v7: reduced from 0.25; "vegan" is often just a label difference for
+                         # the same product (e.g. Cadbury Plant Bar labelled vegan in one store)
+}
+DIET_PENALTY = 0.10
+
+# ── v5: alcohol-free penalty (wired from grocery_vocab ATTRIBUTES['alcohol_marker'])
+ALCOHOL_FREE_PENALTY   = 0.60
+ALCOHOL_FREE_PATTERNS  = [
+    'alcohol free', 'alcohol-free', 'non-alcoholic',
+    '0% alcohol', 'low alcohol', 'alcohol_marker',
+]
+
+# ── v5: Hard conflict token sets ──────────────────────────────────────────────
+# FLAVOR_NAMED_TOKENS: named fruit / herb / spice flavours AND meat/seafood
+# ingredient varieties that, when present in BOTH products with no overlap,
+# indicate irreconcilably different variants.
+#
+# Meat/ingredient tokens (v6): enables lowering SHORT_STRIPPED_THRESHOLD
+# from 0.92 → 0.87 because "lamb stock cubes" vs "ham stock cubes" is now
+# caught here (both have named ingredient tokens that don't overlap) BEFORE
+# the threshold guard is evaluated.
+FLAVOR_NAMED_TOKENS = frozenset({
+    # Fruit, herb, spice flavours
+    'ginger', 'mint', 'raspberry', 'lemon', 'orange', 'cherry',
+    'strawberry', 'blueberry', 'mango', 'blackcurrant', 'blackberry',
+    'elderflower', 'rhubarb', 'lime', 'peach', 'apricot', 'vanilla',
+    'caramel', 'toffee', 'honey', 'maple', 'cinnamon', 'cola',
+    'lychee', 'basil', 'chilli',   # v5.1: audit fixes
+    'banana', 'syrup',             # v5.2: banana vs golden-syrup transitive FP
+    # Additional fruit varieties (audit v10): kiwi/berry/melon/grape prevent
+    # "Ripe & Ready Kiwi" matching "Ripe & Ready Mango" and Huel Vanilla vs Berry
+    'kiwi', 'berry', 'melon', 'grape', 'pear', 'pineapple',
+    'pomegranate', 'watermelon', 'passion', 'fig', 'plum',
+    # Meat / poultry / seafood variety tokens (v6)
+    'lamb', 'ham', 'pork', 'beef', 'chicken', 'turkey', 'duck',
+    'venison', 'bacon',
+    'salmon', 'tuna', 'cod', 'haddock', 'prawn', 'shrimp', 'crab',
+    'mackerel', 'trout', 'sardine', 'anchovy',
+    # Italian brand-variant / coffee-range tokens (v9)
+    # Lavazza: Qualità Rossa (red) vs Qualità Oro (gold) — distinct product lines
+    'rossa', 'oro',
+    # Nescafe Azera: Intenso vs Americano — distinct coffee-style variants
+    'intenso', 'americano',
+})
+
+# MILK_BASE_TOKENS: milk alternatives — mutually exclusive bases.
+MILK_BASE_TOKENS = frozenset({
+    'soy',          # canonical (we normalise 'soya' → 'soy' below)
+    'oat', 'almond', 'hazelnut', 'cashew', 'rice', 'coconut',
+    'hemp', 'pea', 'macadamia', 'pistachio',
+    'ricotta', 'mascarpone',   # v5.1: pasta filling mutual exclusivity
+})
+
+# COOKING_STATE_TOKENS: mutually exclusive cooking / processing states.
+COOKING_STATE_TOKENS = frozenset({
+    'raw', 'roast', 'smoked', 'unsmoked', 'dried', 'cured',
+})
+
+# Normalise variant spellings to canonical form before set lookup.
+HARD_CONFLICT_NORM = {
+    'soya':          'soy',
+    'roasted':       'roast',
+    'cans':          'can',           # v5.2: packaging normalisation (plural → singular)
+    'bottles':       'bottle',        # v5.2: packaging normalisation
+    'decaffeinated': 'decaf',         # v8: treat long form as equivalent to 'decaf'
+    'decaff':        'decaf',         # v8: treat UK abbreviation as equivalent to 'decaf'
+}
+
+# ONE_SIDED_CONFLICT_TOKENS: presence in ONE product but not the other
+# is always a hard conflict (e.g. "baby carrots" vs "carrots").
+# NOTE: the check uses _normalised_ token sets so synonym mappings in
+#       HARD_CONFLICT_NORM are applied first (e.g. decaffeinated→decaf).
+ONE_SIDED_CONFLICT_TOKENS = frozenset({
+    'baby',
+    'reduced',   # v5.1: "reduced fat/sugar" vs standard
+    'granary',   # v5.1: Hovis Granary vs plain Wholemeal
+    'buttons',   # v5.1: chocolate buttons vs chocolate block
+    'rose',      # v5.1: rosé wine vs non-rosé (unaccented spelling)
+    'light',     # v5.2: "light" variant vs full-fat/standard
+    'lite',      # v9: variant spelling of 'light' (e.g. Sprite Lite) — kept in norm_name
+    'decaf',     # v5.2/v8: catches decaf/decaff/decaffeinated (via HARD_CONFLICT_NORM)
+    'blonde',    # v9: Starbucks Blonde Espresso vs regular Espresso — distinct roast
+    'zero',      # v10: "zero sugar" / "zero calorie" vs standard — distinct product
+                 #      (DIET_PENALTY alone insufficient; hard-reject is correct)
+    # 'cup' removed v8: caused false rejections for pot-noodle naming variants
+    #   ("cup noodles pot" vs "noodles pot" blocked incorrectly)
+    # Product-category discriminators: if one product names the category type and the
+    # other doesn't, they are different things (e.g. "Tomato Soup" ≠ "Tomato Sauce").
+    'soup',      # "Tomato Soup" vs "Tomato Sauce" / "Tomato Paste"
+    'jam',       # "Strawberry Jam" vs "Strawberry Yogurt" / "Strawberry Sauce"
+    'juice',     # "Apple Juice" vs "Apple Sauce" / "Apple Cider"
+    'eyed',      # "black-eyed beans" vs "black beans" — distinct legume variety
+    'plum',      # "plum tomatoes" vs "chopped/tinned tomatoes" — distinct variety
+    # Meat / poultry / fish directional tokens: present in one but absent in the
+    # other is always a hard differentiator (e.g. "chicken pizza" ≠ "four cheese pizza").
+    # These are also in FLAVOR_NAMED_TOKENS (fires when BOTH products have named
+    # tokens that differ); ONE_SIDED adds the asymmetric case.
+    'chicken', 'beef', 'pork', 'lamb', 'turkey', 'duck',
+    'salmon', 'tuna', 'cod', 'bacon', 'prawn',
+})
+
+# PREPARATION_CONFLICT_PAIRS: mutually-exclusive preparation tokens —
+# only fires when BOTH products contain a token from the same pair but
+# they disagree (e.g. "in juice" vs "in syrup").
+PREPARATION_CONFLICT_PAIRS = [frozenset({'juice', 'syrup'})]   # v5.1
+
+# PACKAGING_FORMAT_TOKENS: mutually-exclusive physical container types.
+# 'cans'/'bottles' are normalised to 'can'/'bottle' via HARD_CONFLICT_NORM.
+PACKAGING_FORMAT_TOKENS = frozenset({'can', 'bottle'})          # v5.2
+
+# ── End v5 hard conflict sets ─────────────────────────────────────────────────
+
+WINE_TYPE_TOKENS = {'red', 'white', 'rose', 'rosé', 'sparkling', 'prosecco', 'champagne', 'blush'}
+
+FISH_MEDIUM_TOKENS = {'brine', 'spring water', 'olive oil', 'sunflower oil', 'tomato', 'springwater'}
+
+MILK_FAT_MAP = [
+    ('semi-skimmed', 'semi_skimmed'),
+    ('semi skimmed',  'semi_skimmed'),
+    ('skimmed',       'skimmed'),
+    ('full-fat',      'full_fat'),
+    ('full fat',      'full_fat'),
+    ('whole milk',    'whole'),
+    ('whole',         'whole'),
+]
+
+NAS_PATTERNS = ['no added sugar', 'sugar free', 'sugarfree', 'zero sugar', 'no sugar added']
+
+BRAND_EXCLUSIONS = {'extra', 'essential', 'basics', 'finest', 'select', 'special'}
+
+CATEGORY_ALIASES = {
+    # Normalise only the hyphenated variant — all other raw categories are already
+    # distinct enough to serve as fine-grained blocking keys.  Collapsing everything
+    # into 'grocery' destroyed blocking precision (frozen ↔ fresh, bakery ↔ cupboard)
+    # and caused the own-brand completion pool to span the entire supermarket range.
+    'free-from': 'free_from',
+}
+
+# Pass 4 (cross-bucket catch-all) threshold
+PASS4_THRESHOLD = 0.90
+
+OUTPUT_DIR = DATA_OUTPUTS_CLUSTERS
+RANDOM_SEED = 42
+
+random.seed(RANDOM_SEED)
+np.random.seed(RANDOM_SEED)
+
+
+def print_config_banner() -> None:
+    print('Configuration loaded (v10).')
+    print(f'  Fuzzy threshold:          {FUZZY_THRESHOLD} (own-brand: {FUZZY_THRESHOLD_OWNBRAND}, no-unit: {FUZZY_THRESHOLD_NOUNIT})')
+    print(f'  Short stripped threshold: {SHORT_STRIPPED_THRESHOLD}')
+    print(f'  Unit tolerance:           ±{UNIT_TOLERANCE_BRANDED*100:.0f}% branded, ±{UNIT_TOLERANCE_OWN_BRAND*100:.0f}% own-brand')
+    print(f'  Pack ratio max:           {PACK_QTY_MAX_RATIO}  (NaN vs multipack: hard reject)')
+    print(f'  Alcohol-free penalty:     {ALCOHOL_FREE_PENALTY}')
+    print(f'  Pass 4 threshold:         {PASS4_THRESHOLD}')
+    print(f'  Output directory:         {OUTPUT_DIR}')
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: clustering/similarity.py
+------------------------------
+"""Pairwise product similarity (fuzzy matching, hard conflicts, penalties)."""
+
+import re
+
+import numpy as np
+import pandas as pd
+from rapidfuzz import fuzz
+
+from .config import *  # noqa: F403
+
+# ============================================================
+# SIMILARITY SCORING HELPERS
+# ============================================================
+
+def _strip_brand(name: str, brand: str) -> str:
+    if not brand:
+        return name
+    pat = re.compile(r'\b' + re.escape(brand.lower()) + r'\b', re.IGNORECASE)
+    result = pat.sub('', name).strip()
+    return re.sub(r'\s+', ' ', result)
+
+
+def _unit_type_compatible(ut_a, ut_b) -> bool:
+    if pd.isna(ut_a) or pd.isna(ut_b) or not ut_a or not ut_b:
+        return True
+    return str(ut_a).strip().lower() == str(ut_b).strip().lower()
+
+
+def _unit_value_compatible(uv_a, uv_b, tolerance, pq_a=None, pq_b=None) -> bool:
+    """
+    v5.2: Extended with pack-normalised comparison.
+    Some retailers (e.g. ASDA) report the *total* weight of a multipack while
+    others (Sains, Tesco) report the *per-unit* weight.  When both sides share
+    the same pack_quantity (>1), we also try dividing each side's unit_value by
+    its pack_qty before comparing — this recovers matches that would otherwise
+    fail because of the 10× ratio (e.g. 360g total vs 36g per-sachet for a
+    10-pack of porridge sachets).  The guard `pq_a == pq_b` prevents the
+    normalisation from incorrectly linking different-count packs.
+    """
+    a_valid = pd.notna(uv_a) and float(uv_a) > 0
+    b_valid = pd.notna(uv_b) and float(uv_b) > 0
+    if not a_valid or not b_valid:
+        return True
+    uva, uvb = float(uv_a), float(uv_b)
+    # Direct comparison
+    if max(uva, uvb) / min(uva, uvb) <= (1.0 + tolerance):
+        return True
+    # Pack-normalised comparison — only when both pack quantities are the same
+    # integer > 1, so we know neither side is a single-unit product.
+    pqa_ok = pd.notna(pq_a) and float(pq_a) > 1
+    pqb_ok = pd.notna(pq_b) and float(pq_b) > 1
+    if pqa_ok and pqb_ok:
+        pqa, pqb = float(pq_a), float(pq_b)
+        if abs(pqa - pqb) / max(pqa, pqb) < 0.05:   # same pack count (within 5%)
+            per_a = uva / pqa
+            per_b = uvb / pqb
+            # Case A: side-A reports total weight, side-B reports per-unit
+            if per_a > 0 and max(per_a, uvb) / min(per_a, uvb) <= (1.0 + tolerance):
+                return True
+            # Case B: side-B reports total weight, side-A reports per-unit
+            if per_b > 0 and max(uva, per_b) / min(uva, per_b) <= (1.0 + tolerance):
+                return True
+    # One-sided pack normalisation: one SM reports total size, the other reports per-unit
+    # with a pack count (e.g. ASDA "Beck's 1.65L" vs Sains "Beck's 275ml x6").
+    if pqa_ok and not pqb_ok:
+        # A has pack count; check if B's value ≈ A's total (uva × pq_a)
+        total_a = uva * float(pq_a)
+        if total_a > 0 and max(total_a, uvb) / min(total_a, uvb) <= (1.0 + tolerance):
+            return True
+    elif not pqa_ok and pqb_ok:
+        # B has pack count; check if A's value ≈ B's total (uvb × pq_b)
+        total_b = uvb * float(pq_b)
+        if total_b > 0 and max(uva, total_b) / min(uva, total_b) <= (1.0 + tolerance):
+            return True
+    return False
+
+
+def _pack_compatible(pq_a, pq_b) -> bool:
+    """
+    Strict version (own_brand / unbranded): NaN vs multipack → reject.
+    Both NaN → no constraint.
+    """
+    a_valid = pd.notna(pq_a) and float(pq_a) > 0
+    b_valid = pd.notna(pq_b) and float(pq_b) > 0
+    if not a_valid and not b_valid:
+        return True   # both unknown → no constraint
+    if not a_valid or not b_valid:
+        known_qty = float(pq_b if b_valid else pq_a)
+        return known_qty < 1.5   # strictly single (1) is OK; 2-packs and above are not
+    ratio = max(float(pq_a), float(pq_b)) / min(float(pq_a), float(pq_b))
+    return ratio <= PACK_QTY_MAX_RATIO
+
+
+def _pack_compatible_branded(pq_a, pq_b) -> bool:
+    """
+    v7 relaxed version for branded pass only.
+
+    Many retailers scrape pack count inconsistently: one may record pq=5 for a
+    "5 Pack" product while another leaves pack_quantity as NaN even though the
+    total weight matches.  For branded products the known_brand + name similarity
+    check is the primary safeguard; the unit_value check validates total weights.
+    Allows NaN vs known pack_qty ≤ 8; keeps strict ratio for two known pack counts.
+    """
+    a_valid = pd.notna(pq_a) and float(pq_a) > 0
+    b_valid = pd.notna(pq_b) and float(pq_b) > 0
+    if not a_valid and not b_valid:
+        return True
+    if not a_valid or not b_valid:
+        known_qty = float(pq_b if b_valid else pq_a)
+        return known_qty <= 20   # allow common multipack sizes up to 20; unit_value is the real guard
+    ratio = max(float(pq_a), float(pq_b)) / min(float(pq_a), float(pq_b))
+    return ratio <= PACK_QTY_MAX_RATIO
+
+
+def _get_wine_type(text: str) -> str:
+    t = text.lower()
+    for tok in WINE_TYPE_TOKENS:
+        if re.search(r'\b' + re.escape(tok) + r'\b', t):
+            return tok
+    return ''
+
+
+def _get_fish_medium(text: str) -> set:
+    t = text.lower()
+    return {m for m in FISH_MEDIUM_TOKENS if m in t}
+
+
+def _get_milk_fat(text: str):
+    t = text.lower()
+    for pattern, label in MILK_FAT_MAP:
+        if pattern in t:
+            return label
+    return None
+
+
+def _has_diet_marker(text: str) -> bool:
+    t = text.lower()
+    if re.search(r'\bdiet\b', t):
+        return True
+    return any(p in t for p in NAS_PATTERNS)
+
+
+def _has_alcohol_free(text: str) -> bool:
+    """v5: detect alcohol-free markers from grocery_vocab ATTRIBUTES['alcohol_marker']."""
+    t = text.lower()
+    return any(p in t for p in ALCOHOL_FREE_PATTERNS)
+
+
+def _hard_conflict_check(name_a: str, name_b: str) -> bool:
+    """
+    v5 / v5.1: Returns True if the two names represent irreconcilably different
+    product variants regardless of fuzzy score.
+
+    Checks (in order):
+      1. Milk base mismatch  — soya vs oat vs almond / ricotta vs mascarpone
+      2. Named flavor clash  — ginger vs mint vs raspberry etc.
+         (only fires when BOTH have named flavor tokens)
+      3. Cooking state clash — raw vs roast vs smoked etc.
+         (only fires when BOTH have cooking state tokens)
+      4. One-sided always-conflict tokens — baby, reduced, granary, cup,
+         buttons, rose (presence in one but not the other)
+      5. Preparation type conflict — juice vs syrup etc.
+    """
+    toks_a_raw = set(name_a.lower().split())
+    toks_b_raw = set(name_b.lower().split())
+
+    # Normalise variant spellings (roasted→roast, soya→soy)
+    toks_a = {HARD_CONFLICT_NORM.get(t, t) for t in toks_a_raw}
+    toks_b = {HARD_CONFLICT_NORM.get(t, t) for t in toks_b_raw}
+
+    # 1. Milk base conflict
+    base_a = toks_a & MILK_BASE_TOKENS
+    base_b = toks_b & MILK_BASE_TOKENS
+    if base_a and base_b and not (base_a & base_b):
+        return True
+
+    # 2. Named flavor conflict (only when BOTH have named flavor tokens)
+    flavor_a = toks_a & FLAVOR_NAMED_TOKENS
+    flavor_b = toks_b & FLAVOR_NAMED_TOKENS
+    if flavor_a and flavor_b and not (flavor_a & flavor_b):
+        return True
+
+    # 3. Cooking state conflict (only when BOTH have state tokens)
+    state_a = toks_a & COOKING_STATE_TOKENS
+    state_b = toks_b & COOKING_STATE_TOKENS
+    if state_a and state_b and not (state_a & state_b):
+        return True
+
+    # 4. One-sided always-conflict tokens (checked against NORMALISED sets so
+    #    synonym mappings in HARD_CONFLICT_NORM are applied first)
+    for tok in ONE_SIDED_CONFLICT_TOKENS:
+        if (tok in toks_a) != (tok in toks_b):
+            return True
+
+    # 5. Preparation type conflict (e.g. "in juice" vs "in syrup")
+    for pair in PREPARATION_CONFLICT_PAIRS:
+        hits_a = toks_a_raw & pair
+        hits_b = toks_b_raw & pair
+        if hits_a and hits_b and hits_a != hits_b:
+            return True
+
+    # 6. Packaging format conflict (can vs bottle) — v5.2
+    pkg_a = toks_a & PACKAGING_FORMAT_TOKENS
+    pkg_b = toks_b & PACKAGING_FORMAT_TOKENS
+    if pkg_a and pkg_b and not (pkg_a & pkg_b):
+        return True
+
+    return False
+
+
+_AGE_RE = re.compile(r'(\d+)\s*year', re.IGNORECASE)
+
+
+def _attribute_penalty(attrs_a, attrs_b, name_a='', name_b='') -> float:
+    str_a = (str(attrs_a).lower() if pd.notna(attrs_a) else '') + ' ' + str(name_a).lower()
+    str_b = (str(attrs_b).lower() if pd.notna(attrs_b) else '') + ' ' + str(name_b).lower()
+
+    penalty = 0.0
+
+    for attr, p in ATTR_PENALTIES.items():
+        if (attr in str_a) != (attr in str_b):
+            penalty += p
+
+    if _has_diet_marker(str_a) != _has_diet_marker(str_b):
+        penalty += DIET_PENALTY
+
+    # v5: alcohol-free conflict (wired from grocery_vocab ATTRIBUTES['alcohol_marker'])
+    if _has_alcohol_free(str_a) != _has_alcohol_free(str_b):
+        penalty += ALCOHOL_FREE_PENALTY
+
+    wine_a = _get_wine_type(str_a)
+    wine_b = _get_wine_type(str_b)
+    if (wine_a or wine_b) and (wine_a != wine_b):
+        penalty += 0.60
+
+    med_a = _get_fish_medium(str_a)
+    med_b = _get_fish_medium(str_b)
+    if med_a and med_b and med_a != med_b:
+        penalty += 0.50
+
+    fat_a = _get_milk_fat(str_a)
+    fat_b = _get_milk_fat(str_b)
+    if fat_a and fat_b and fat_a != fat_b:
+        penalty += 0.50
+
+    ages_a = [int(m.group(1)) for m in _AGE_RE.finditer(str_a)]
+    ages_b = [int(m.group(1)) for m in _AGE_RE.finditer(str_b)]
+    if ages_a and ages_b and set(ages_a) != set(ages_b):
+        penalty += 0.60
+
+    return min(penalty, 1.0)
+
+
+def compute_similarity(row_a, row_b, pass_type, unit_tolerance):
+    # Hard constraint 1: same supermarket
+    if row_a['supermarket'] == row_b['supermarket']:
+        return False, 0.0
+
+    # Hard constraint 2: unit type mismatch
+    if not _unit_type_compatible(row_a.get('unit_type'), row_b.get('unit_type')):
+        return False, 0.0
+
+    # Hard constraint 3: unit value out of tolerance
+    if not _unit_value_compatible(
+            row_a.get('unit_value'), row_b.get('unit_value'), unit_tolerance,
+            pq_a=row_a.get('pack_quantity'), pq_b=row_b.get('pack_quantity')):
+        return False, 0.0
+
+    # Hard constraint 4: pack quantity ratio
+    # v7: branded pass uses a relaxed check (unit_value is the primary safeguard for branded);
+    # own_brand / unbranded keep the strict check to avoid generic-name false positives.
+    _pq_fn = _pack_compatible_branded if pass_type == 'branded' else _pack_compatible
+    if not _pq_fn(row_a.get('pack_quantity'), row_b.get('pack_quantity')):
+        return False, 0.0
+
+    # Pass-specific rules
+    if pass_type == 'branded':
+        if str(row_a['known_brand_clean']).lower() != str(row_b['known_brand_clean']).lower():
+            return False, 0.0
+    elif pass_type == 'own_brand':
+        tier_a = str(row_a.get('tier_type', '') or '').lower() or 'standard'
+        tier_b = str(row_b.get('tier_type', '') or '').lower() or 'standard'
+        if tier_a != tier_b:
+            return False, 0.0
+        if row_a.get('product_type') != row_b.get('product_type'):
+            return False, 0.0
+        # v10: frozen vs fresh_food / food_cupboard are distinct storage conditions
+        # (prevents fresh whole vegetables matching frozen prepared products)
+        _cat_a = str(row_a.get('category', '') or '').lower()
+        _cat_b = str(row_b.get('category', '') or '').lower()
+        if ('frozen' in _cat_a) != ('frozen' in _cat_b):
+            return False, 0.0
+
+    raw_name_a = str(row_a.get('normalized_name', '') or '')
+    raw_name_b = str(row_b.get('normalized_name', '') or '')
+
+    # v10: both names empty → nothing to compare; reject
+    if not raw_name_a and not raw_name_b:
+        return False, 0.0
+
+    # Hard constraint 5 (v5): irreconcilable product variant
+    if _hard_conflict_check(raw_name_a, raw_name_b):
+        return False, 0.0
+
+    # Brand stripping for branded pass
+    if pass_type == 'branded':
+        brand = str(row_a.get('known_brand_clean', '') or '').lower()
+        name_a = _strip_brand(raw_name_a, brand)
+        name_b = _strip_brand(raw_name_b, brand)
+    else:
+        name_a, name_b = raw_name_a, raw_name_b
+
+    # Short-name guard: both ≤2 tokens AND neither has a unit → reject
+    if len(name_a.split()) <= 2 and len(name_b.split()) <= 2:
+        if not (row_a['has_unit'] and row_b['has_unit']):
+            return False, 0.0
+
+    # --- FUZZY SCORING ---
+    token_sort = fuzz.token_sort_ratio(name_a, name_b) / 100.0
+    partial    = fuzz.partial_ratio(name_a, name_b) / 100.0
+
+    len_a, len_b = len(name_a), len(name_b)
+    len_ratio = min(len_a, len_b) / max(len_a, len_b) if max(len_a, len_b) > 0 else 1.0
+
+    if len_ratio < 0.65:
+        token_set = fuzz.token_set_ratio(name_a, name_b) / 100.0
+        score = 0.45 * token_sort + 0.25 * token_set + 0.30 * partial
+    else:
+        score = 0.70 * token_sort + 0.30 * partial
+
+    # Attribute penalty (includes v5 alcohol-free)
+    penalty = _attribute_penalty(
+        row_a.get('attributes_keywords'), row_b.get('attributes_keywords'),
+        name_a=raw_name_a, name_b=raw_name_b
+    )
+    score -= penalty
+
+    # Threshold selection
+    if not row_a['has_unit'] or not row_b['has_unit']:
+        threshold = FUZZY_THRESHOLD_NOUNIT
+    elif pass_type == 'own_brand':
+        threshold = FUZZY_THRESHOLD_OWNBRAND
+    else:
+        threshold = FUZZY_THRESHOLD
+
+    # Short stripped-name guard for branded pass
+    if pass_type == 'branded':
+        ta, tb = len(name_a.split()), len(name_b.split())
+        if ta == tb and ta <= 3:
+            threshold = max(threshold, SHORT_STRIPPED_THRESHOLD)
+
+    # Truncation bonus
+    trunc_a = bool(row_a.get('is_truncated', False))
+    trunc_b = bool(row_b.get('is_truncated', False))
+    if trunc_a or trunc_b:
+        threshold -= TRUNCATION_BONUS
+
+    return score >= threshold, score
+
+
+def compute_similarity_pass4(row_a, row_b):
+    """
+    v5 Pass 4 — cross-bucket catch-all.
+
+    High threshold (PASS4_THRESHOLD=0.90).  Allows any product_type
+    combination EXCEPT branded↔own_brand (those are intentionally separate).
+    All existing hard constraints + hard conflict checks apply.
+    """
+    if row_a['supermarket'] == row_b['supermarket']:
+        return False, 0.0
+
+    # Skip branded↔own_brand cross-matching — they're legitimately different tiers
+    pt_a = str(row_a.get('product_type', '') or '').lower()
+    pt_b = str(row_b.get('product_type', '') or '').lower()
+    if (pt_a == 'branded') != (pt_b == 'branded'):
+        if 'own_brand' in (pt_a, pt_b):
+            return False, 0.0
+
+    if not _unit_type_compatible(row_a.get('unit_type'), row_b.get('unit_type')):
+        return False, 0.0
+    if not _unit_value_compatible(
+            row_a.get('unit_value'), row_b.get('unit_value'), UNIT_TOLERANCE_BRANDED,
+            pq_a=row_a.get('pack_quantity'), pq_b=row_b.get('pack_quantity')):
+        return False, 0.0
+    if not _pack_compatible(row_a.get('pack_quantity'), row_b.get('pack_quantity')):
+        return False, 0.0
+
+    name_a = str(row_a.get('normalized_name', '') or '')
+    name_b = str(row_b.get('normalized_name', '') or '')
+
+    # v10: both names empty → nothing to compare; reject (prevents empty-brand FP)
+    if not name_a and not name_b:
+        return False, 0.0
+
+    if _hard_conflict_check(name_a, name_b):
+        return False, 0.0
+
+    penalty = _attribute_penalty(
+        row_a.get('attributes_keywords'), row_b.get('attributes_keywords'),
+        name_a=name_a, name_b=name_b
+    )
+    if penalty >= 0.25:   # strong attribute mismatch → skip
+        return False, 0.0
+
+    token_sort = fuzz.token_sort_ratio(name_a, name_b) / 100.0
+    token_set  = fuzz.token_set_ratio(name_a, name_b) / 100.0
+    score = 0.55 * token_sort + 0.45 * token_set - penalty
+
+    return score >= PASS4_THRESHOLD, score
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: clustering/__init__.py
+----------------------------
+"""
+Cluster products into cross-retailer equivalence groups (v5/v10).
+
+Submodules: ``config``, ``similarity``, ``blocking``, ``data_prep``, ``pipeline``.
+Use :func:`main` from ``shopwiser.clustering.main`` for the full run.
+"""
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: clustering/data_prep.py
+-----------------------------
+"""Load normalized CSV and derive columns used by clustering passes."""
+
+import re
+
+import numpy as np
+import pandas as pd
+
+from shopwiser.paths import normalized_products_path
+
+from .config import BRAND_EXCLUSIONS, CATEGORY_ALIASES
+
+# v8: normalise synonym spellings in normalized_name so that fuzzy matching
+#     can score them well (e.g. "decaffeinated" and "decaff" are the same thing).
+_NAME_SYNONYM_RE = [
+    # Coffee
+    (re.compile(r'\bdecaffeinated\b'),          'decaff'),
+    (re.compile(r'\bdecafinated\b'),            'decaff'),   # common misspelling
+    # Grains / milk
+    (re.compile(r'\bwhole[\s\-]+grain\b'),      'wholegrain'),
+    (re.compile(r'\bsemi[\s\-]+skimmed\b'),     'semiskimmed'),
+    # Yogurt spelling (UK vs US)
+    (re.compile(r'\byoghurt\b'),                'yogurt'),
+    (re.compile(r'\byoghurts\b'),               'yogurts'),
+    # Flavour/fiber spelling (UK vs US)
+    (re.compile(r'\bflavour\b'),                'flavor'),
+    (re.compile(r'\bflavours\b'),               'flavors'),
+    (re.compile(r'\bflavoured\b'),              'flavored'),
+    (re.compile(r'\bfibre\b'),                  'fiber'),
+    # Beanz vs Beans (Heinz specific, but safe broadly)
+    (re.compile(r'\bbeanz\b'),                  'beans'),
+    # UK/US colour spelling — "food colouring" vs "food coloring" across SMs
+    (re.compile(r'\bcolouring\b'),              'coloring'),
+    (re.compile(r'\bcolourings\b'),             'colorings'),
+    (re.compile(r'\bcolour\b'),                 'color'),
+    (re.compile(r'\bcolours\b'),                'colors'),
+]
+
+
+def apply_name_synonyms(s: str) -> str:
+    if not isinstance(s, str):
+        return s
+    for pat, repl in _NAME_SYNONYM_RE:
+        s = pat.sub(repl, s)
+    return s
+
+
+def load_prepared_dataframe(*, sample: bool = False) -> pd.DataFrame:
+    path = normalized_products_path(sample=sample)
+    df = pd.read_csv(path, low_memory=False)
+    print(f'\nLoaded {len(df):,} products from {path.name}, {df.shape[1]} columns')
+
+    REQUIRED_COLS = [
+        'supermarket', 'names', 'category', 'own_brand',
+        'supermarket_brand', 'tier_type', 'known_brand',
+        'pack_quantity', 'unit_value', 'unit_type',
+        'attributes_keywords', 'core_product_name', 'normalized_name',
+    ]
+    missing = [c for c in REQUIRED_COLS if c not in df.columns]
+    assert not missing, f'Missing columns: {missing}'
+
+    df = df.reset_index(drop=True)
+    df['product_idx'] = df.index
+
+    df['known_brand_clean'] = df['known_brand'].where(
+        ~df['known_brand'].fillna('').str.lower().isin(BRAND_EXCLUSIONS), other=None
+    )
+
+    df['product_type'] = np.where(
+        df['known_brand_clean'].notna(), 'branded',
+        np.where(df['own_brand'].astype(str).str.lower().isin(['true', '1', 'yes']), 'own_brand', 'unbranded')
+    )
+
+    df['has_unit']     = df['unit_value'].notna() & (df['unit_value'] > 0)
+    df['has_pack']     = df['pack_quantity'].notna() & (df['pack_quantity'] > 0)
+    df['supermarket']  = df['supermarket'].str.strip()
+    df['is_truncated'] = df.get('is_truncated', pd.Series(False, index=df.index)).astype(bool)
+
+    df['cat_norm'] = df['category'].str.lower().map(CATEGORY_ALIASES).fillna(df['category'].str.lower())
+
+    df['normalized_name'] = df['normalized_name'].apply(apply_name_synonyms)
+
+    print(f'\nSupermarket distribution:\n{df["supermarket"].value_counts().to_string()}')
+    print(f'\nProduct type:\n{df["product_type"].value_counts().to_string()}')
+    print(f'\nCategory (normalised) distribution:\n{df["cat_norm"].value_counts().to_string()}')
+    print(f'\nUnit type distribution:\n{df["unit_type"].value_counts().to_string()}')
+    print(f'\nUnit coverage: {df["has_unit"].sum():,}/{len(df):,} ({df["has_unit"].mean()*100:.1f}%)')
+    print(f'Truncated names: {df["is_truncated"].sum():,}')
+    return df
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: clustering/pipeline.py
+----------------------------
+"""Clustering passes: blocking, union-find, completion, export."""
+
+from collections import defaultdict
+from itertools import combinations
+
+import numpy as np
+import pandas as pd
+from rapidfuzz import fuzz
+from tqdm import tqdm
+
+from .blocking import _get_tokens, _unit_bucket, build_multi_blocks, run_pass
+from . import config
+from .config import *
+from .similarity import _hard_conflict_check, _strip_brand, compute_similarity, compute_similarity_pass4
+from .union_find import UnionFind
+
+
+def run_clustering(df: pd.DataFrame) -> None:
+    # ============================================================
+    # PASS 1 — BRANDED
+    # ============================================================
+
+    branded_df = df[df['product_type'] == 'branded'].copy()
+    print(f'\nPass 1 — Branded: {len(branded_df):,} products')
+
+    def _branded_key_a(row):
+        brand = str(row['known_brand_clean']).lower().strip()
+        cat   = str(row['cat_norm']).lower().strip()
+        utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        return f'{brand}||{cat}||{utype}'
+
+    def _branded_key_b(row):
+        brand = str(row['known_brand_clean']).lower().strip()
+        cat   = str(row['cat_norm']).lower().strip()
+        return f'{brand}||{cat}'
+
+    def _branded_key_c(row):
+        brand = str(row['known_brand_clean']).lower().strip()
+        utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        return f'{brand}||{utype}'
+
+    print('Building multi-key blocks for branded...')
+    pairs_branded = build_multi_blocks(branded_df, [_branded_key_a, _branded_key_b, _branded_key_c])
+    print('Running comparisons...')
+    matches_branded = run_pass(branded_df, pairs_branded, 'branded', UNIT_TOLERANCE_BRANDED)
+    print(f'Pass 1 complete: {len(matches_branded):,} matches')
+
+    # ============================================================
+    # PASS 2 — OWN-BRAND
+    # ============================================================
+
+    own_brand_df = df[df['product_type'] == 'own_brand'].copy()
+    print(f'\nPass 2 — Own-brand: {len(own_brand_df):,} products')
+
+    def _own_key_a(row):
+        tier  = str(row['tier_type'] or 'standard').lower().strip()
+        cat   = str(row['cat_norm']).lower().strip()
+        utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        toks  = _get_tokens(row['normalized_name'])
+        tok1  = toks[0] if toks else 'unknown'
+        return f'{tier}||{cat}||{utype}||{tok1}'
+
+    def _own_key_b(row):
+        tier = str(row['tier_type'] or 'standard').lower().strip()
+        cat  = str(row['cat_norm']).lower().strip()
+        toks = _get_tokens(row['normalized_name'])
+        tok1 = toks[0] if toks else 'unknown'
+        return f'{tier}||{cat}||{tok1}'
+
+    def _own_key_c(row):
+        tier  = str(row['tier_type'] or 'standard').lower().strip()
+        cat   = str(row['cat_norm']).lower().strip()
+        utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        toks  = _get_tokens(row['normalized_name'])
+        tok2  = toks[1] if len(toks) > 1 else (toks[0] if toks else 'unknown')
+        return f'{tier}||{cat}||{utype}||{tok2}'
+
+    def _own_key_d(row):
+        tier = str(row['tier_type'] or 'standard').lower().strip()
+        cat  = str(row['cat_norm']).lower().strip()
+        toks = _get_tokens(row['normalized_name'])
+        tok2 = toks[1] if len(toks) > 1 else (toks[0] if toks else 'unknown')
+        return f'{tier}||{cat}||{tok2}'
+
+    def _own_key_e(row):
+        """v7: no-tier key — catches products where tier classification differs between stores."""
+        cat   = str(row['cat_norm']).lower().strip()
+        utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        ubucket = _unit_bucket(row['unit_value'], bucket_size=100)
+        toks  = _get_tokens(row['normalized_name'])
+        tok1  = toks[0] if toks else 'unknown'
+        return f'{cat}||{utype}||{ubucket}||{tok1}'
+
+    def _own_key_f(row):
+        """v9: no-tier, no-bucket key — relies on sub-blocking (500/1000g) for wider unit coverage.
+        Helps when unit values differ slightly between SMs for the same product."""
+        cat   = str(row['cat_norm']).lower().strip()
+        utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        toks  = _get_tokens(row['normalized_name'])
+        tok1  = toks[0] if toks else 'unknown'
+        return f'{cat}||{utype}||{tok1}'
+
+    def _own_key_g(row):
+        """v9: no-tier, no-bucket, tok2 — covers products where first token differs but second matches."""
+        cat   = str(row['cat_norm']).lower().strip()
+        utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        toks  = _get_tokens(row['normalized_name'])
+        tok2  = toks[1] if len(toks) > 1 else (toks[0] if toks else 'unknown')
+        return f'{cat}||{utype}||{tok2}'
+
+    print('Building multi-key blocks for own-brand...')
+    pairs_own = build_multi_blocks(own_brand_df, [_own_key_a, _own_key_b, _own_key_c, _own_key_d, _own_key_e, _own_key_f, _own_key_g])
+    print('Running comparisons...')
+    matches_own = run_pass(own_brand_df, pairs_own, 'own_brand', UNIT_TOLERANCE_OWN_BRAND)
+    print(f'Pass 2 complete: {len(matches_own):,} matches')
+
+    # ============================================================
+    # PASS 3 — UNBRANDED
+    # ============================================================
+
+    unbranded_df = df[df['product_type'] == 'unbranded'].copy()
+    print(f'\nPass 3 — Unbranded: {len(unbranded_df):,} products')
+
+    def _unb_key_a(row):
+        cat   = str(row['cat_norm']).lower().strip()
+        utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        toks  = _get_tokens(row['normalized_name'])
+        sig   = sorted(toks[:2])
+        tok_key = '_'.join(sig) if sig else 'unknown'
+        return f'{cat}||{utype}||{tok_key}'
+
+    def _unb_key_b(row):
+        cat  = str(row['cat_norm']).lower().strip()
+        toks = _get_tokens(row['normalized_name'])
+        sig  = sorted(toks[:2])
+        tok_key = '_'.join(sig) if sig else 'unknown'
+        return f'{cat}||{tok_key}'
+
+    def _unb_key_c(row):
+        cat   = str(row['cat_norm']).lower().strip()
+        utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        toks  = _get_tokens(row['normalized_name'])
+        picks = [toks[0]] if toks else []
+        if len(toks) > 2:
+            picks.append(toks[2])
+        elif len(toks) > 1:
+            picks.append(toks[1])
+        tok_key = '_'.join(sorted(picks)) if picks else 'unknown'
+        return f'{cat}||{utype}||{tok_key}'
+
+    def _unb_key_d(row):
+        cat   = str(row['cat_norm']).lower().strip()
+        utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        toks  = _get_tokens(row['normalized_name'])
+        picks = []
+        if len(toks) > 1:
+            picks.append(toks[1])
+        if len(toks) > 2:
+            picks.append(toks[2])
+        tok_key = '_'.join(sorted(picks)) if picks else 'unknown'
+        return f'{cat}||{utype}||{tok_key}'
+
+    def _unb_key_e(row):
+        """
+        v5: Cross-token-window key — cat + utype + unit_bucket(25g) + tok3.
+        Catches products whose tok1/tok2 differ but share a later token
+        (e.g. 'jacket potato' vs 'baking potato' — both have 'potato' but at
+        different positions; key_c/d don't help because tok3 is also absent).
+        Using 25g buckets + tok3 keeps blocks small.
+        """
+        cat    = str(row['cat_norm']).lower().strip()
+        utype  = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        ubucket = _unit_bucket(row['unit_value'], bucket_size=25)
+        toks   = _get_tokens(row['normalized_name'])
+        # Prefer tok2 (index 1) — most products have ≥2 tokens
+        tok2 = toks[1] if len(toks) > 1 else (toks[0] if toks else 'unknown')
+        return f'{cat}||{utype}||{ubucket}||{tok2}'
+
+    def _unb_key_f(row):
+        """
+        v7: tok3-based key — catches products where tok1/tok2 are category descriptors
+        (e.g. 'thick cut' / 'oven ready') but the core product word is tok3
+        (e.g. 'chips' / 'burgers').  Using a 50g bucket keeps block sizes manageable.
+        """
+        cat    = str(row['cat_norm']).lower().strip()
+        utype  = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        ubucket = _unit_bucket(row['unit_value'], bucket_size=50)
+        toks   = _get_tokens(row['normalized_name'])
+        tok3   = toks[2] if len(toks) > 2 else (toks[-1] if toks else 'unknown')
+        return f'{cat}||{utype}||{ubucket}||{tok3}'
+
+    print('Building multi-key blocks for unbranded (keys a–f)...')
+    pairs_unbranded_all = build_multi_blocks(
+        unbranded_df, [_unb_key_a, _unb_key_b, _unb_key_c, _unb_key_d, _unb_key_e, _unb_key_f]
+    )
+
+    print('Running comparisons...')
+    matches_unbranded = run_pass(unbranded_df, pairs_unbranded_all, 'unbranded', UNIT_TOLERANCE_UNBRANDED)
+    print(f'Pass 3 complete: {len(matches_unbranded):,} matches')
+
+    # ============================================================
+    # PASS 4 — CROSS-BUCKET CATCH-ALL (v5 new)
+    # ============================================================
+
+    # Tentative singletons: products with no direct match in passes 1–3
+    matched_idx_so_far = set()
+    for ia, ib, _ in matches_branded + matches_own + matches_unbranded:
+        matched_idx_so_far.add(ia)
+        matched_idx_so_far.add(ib)
+
+    singleton_df = df[~df.index.isin(matched_idx_so_far)].copy()
+    print(f'\nPass 4 — Cross-bucket: {len(singleton_df):,} tentative singletons')
+
+    def _pass4_key_a(row):
+        """First significant token key — catches direct brand-detection failures."""
+        cat    = str(row['cat_norm']).lower().strip()
+        utype  = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        ubucket = _unit_bucket(row['unit_value'], bucket_size=100)
+        toks = _get_tokens(row['normalized_name'])
+        tok1 = toks[0] if toks else 'unknown'
+        return f'{cat}||{utype}||{ubucket}||{tok1}'
+
+    def _pass4_key_b(row):
+        """Second token key — catches tok1-differs but tok2-matches cases."""
+        cat    = str(row['cat_norm']).lower().strip()
+        utype  = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        ubucket = _unit_bucket(row['unit_value'], bucket_size=100)
+        toks = _get_tokens(row['normalized_name'])
+        tok2 = toks[1] if len(toks) > 1 else (toks[0] if toks else 'unknown')
+        return f'{cat}||{utype}||{ubucket}||{tok2}'
+
+    print('Building blocks for pass 4...')
+    pairs_pass4 = build_multi_blocks(singleton_df, [_pass4_key_a, _pass4_key_b], max_block_size=80)
+
+    print('Running comparisons...')
+    matches_pass4 = []
+    for ia, ib in tqdm(pairs_pass4, desc='  Pass=cross_bucket', leave=True):
+        is_match, score = compute_similarity_pass4(singleton_df.loc[ia], singleton_df.loc[ib])
+        if is_match:
+            matches_pass4.append((ia, ib, score))
+    print(f'Pass 4 complete: {len(matches_pass4):,} matches')
+
+    # ============================================================
+    # UNION-FIND ASSEMBLY
+    # ============================================================
+
+    print('\nAssembling Union-Find...')
+    uf = UnionFind(len(df))
+
+    pair_scores = {}
+    all_matches = (
+        [('branded',      m) for m in matches_branded] +
+        [('own_brand',    m) for m in matches_own] +
+        [('unbranded',    m) for m in matches_unbranded] +
+        [('cross_bucket', m) for m in matches_pass4]
+    )
+
+    for _pass, (ia, ib, score) in all_matches:
+        uf.union(ia, ib)
+        pair_scores[(min(ia, ib), max(ia, ib))] = score
+
+    df['raw_cluster_id'] = df['product_idx'].apply(uf.find)
+    raw_cluster_sizes = df.groupby('raw_cluster_id')['product_idx'].count()
+    n_raw = df['raw_cluster_id'].nunique()
+    print(f'Raw clusters: {n_raw:,}  singletons: {(raw_cluster_sizes==1).sum():,}  multi: {(raw_cluster_sizes>1).sum():,}')
+
+    # ============================================================
+    # PASS 5 — CLUSTER COMPLETION (v8)
+    # ============================================================
+    # Many 3-way clusters exist because the 4th supermarket's matching product
+    # was never placed in the same blocking bucket (blocking miss).  This pass
+    # bypasses blocking entirely: for every 3-way cluster we directly compare
+    # against same-brand / tier+category products from the missing SM.
+
+    _ALL_SMS_COMPLETION = {'ASDA', 'Tesco', 'Sains', 'Morrisons'}
+    _COMPLETION_MAX_CANDS = {'branded': 200, 'own_brand': 80, 'unbranded': 50}
+
+
+    def _get_completion_candidates(members: pd.DataFrame, df_full: pd.DataFrame,
+                                   missing_sm: str):
+        """Return (candidates_df, pass_type) for a 3-way cluster's missing SM."""
+        ptype = members['product_type'].mode()[0]
+        pool  = df_full[df_full['supermarket'] == missing_sm]
+
+        if ptype == 'branded':
+            brand = members['known_brand_clean'].dropna()
+            if brand.empty:
+                return pd.DataFrame(), ptype
+            cands = pool[
+                (pool['product_type'] == 'branded') &
+                (pool['known_brand_clean'] == brand.iloc[0])
+            ]
+
+        elif ptype == 'own_brand':
+            cands = pool[pool['product_type'] == 'own_brand']
+            tier  = members['tier_type'].dropna()
+            cat   = members['cat_norm'].dropna()
+            if not tier.empty:
+                cands = cands[cands['tier_type'] == tier.iloc[0]]
+            if not cat.empty:
+                cands = cands[cands['cat_norm'] == cat.iloc[0]]
+            # v10: apply frozen/fresh_food storage-condition guard
+            # (same logic as compute_similarity own_brand guard)
+            _member_cats = members['category'].dropna().str.lower()
+            _cluster_frozen = any('frozen' in c for c in _member_cats)
+            if _cluster_frozen:
+                cands = cands[cands['category'].str.lower().str.contains('frozen', na=False)]
+            else:
+                cands = cands[~cands['category'].str.lower().str.contains('frozen', na=True)]
+
+        else:  # unbranded
+            cands = pool[pool['product_type'].isin(['unbranded', 'branded'])]
+            cat   = members['cat_norm'].dropna()
+            utype = members['unit_type'].dropna()
+            if not cat.empty:
+                cands = cands[cands['cat_norm'] == cat.iloc[0]]
+            if not utype.empty:
+                cands = cands[cands['unit_type'] == utype.iloc[0]]
+            avg_uv = members['unit_value'].mean()
+            if pd.notna(avg_uv) and avg_uv > 0:
+                lo, hi = avg_uv * 0.80, avg_uv * 1.25
+                cands = cands[
+                    cands['unit_value'].isna() |
+                    ((cands['unit_value'] >= lo) & (cands['unit_value'] <= hi))
+                ]
+
+        return cands, ptype
+
+
+    # Identify 3-way clusters using current UF state
+    df['_comp_rc'] = df['product_idx'].apply(uf.find)
+    _rc_sms   = df.groupby('_comp_rc')['supermarket'].agg(frozenset)
+    _rc_sizes = df.groupby('_comp_rc').size()
+    _three_way_roots = [
+        root for root in _rc_sizes.index
+        if _rc_sizes[root] == 3 and len(_rc_sms[root]) == 3
+    ]
+    print(f'\nPass 5 — Cluster completion: {len(_three_way_roots):,} 3-way clusters to extend')
+
+    matches_completion: list = []
+    _n_upgraded = 0
+
+    for root in tqdm(_three_way_roots, desc='  Pass=completion', leave=True):
+        members   = df[df['_comp_rc'] == root]
+        present   = set(members['supermarket'])
+        missing_l = list(_ALL_SMS_COMPLETION - present)
+        if not missing_l:
+            continue
+        missing_sm = missing_l[0]
+
+        cands, pass_type = _get_completion_candidates(members, df, missing_sm)
+        if cands.empty:
+            continue
+        if len(cands) > _COMPLETION_MAX_CANDS.get(pass_type, 25):
+            continue
+
+        best_score = 0.0
+        best_pair: tuple | None = None
+
+        _unit_tol = {
+            'branded':   UNIT_TOLERANCE_BRANDED,
+            'own_brand': UNIT_TOLERANCE_OWN_BRAND,
+            'unbranded': UNIT_TOLERANCE_UNBRANDED,
+        }.get(pass_type, UNIT_TOLERANCE_BRANDED)
+
+        for member_idx in members.index:
+            m_row = members.loc[member_idx]
+            for cand_idx in cands.index:
+                if uf.find(member_idx) == uf.find(cand_idx):
+                    continue  # already merged
+                is_match, score = compute_similarity(m_row, cands.loc[cand_idx],
+                                                     pass_type=pass_type,
+                                                     unit_tolerance=_unit_tol)
+                if is_match and score > best_score:
+                    best_score = score
+                    best_pair  = (member_idx, cand_idx)
+
+        if best_pair:
+            ia, ib = best_pair
+            uf.union(ia, ib)
+            matches_completion.append((ia, ib, best_score))
+            pair_scores[(min(ia, ib), max(ia, ib))] = best_score
+            _n_upgraded += 1
+
+    df.drop(columns=['_comp_rc'], inplace=True, errors='ignore')
+    print(f'Pass 5 complete: {len(matches_completion):,} new matches  ({_n_upgraded:,} clusters extended)')
+
+    # ============================================================
+    # POST-CLUSTER VALIDATION — prevent transitive-link artifacts
+    # ============================================================
+
+    print('\nPost-cluster validation (direct-edge rebuild)...')
+
+    direct_pair_set = set(pair_scores.keys())
+    validated_clusters = []
+    transitive_breaks  = 0
+
+    uf_components = uf.components()
+
+    for raw_root, members in tqdm(uf_components.items(), desc='  Validating', leave=True):
+        if len(members) == 1:
+            validated_clusters.append(members)
+            continue
+
+        adj = defaultdict(set)
+        for i in range(len(members)):
+            for j in range(i + 1, len(members)):
+                ia, ib = members[i], members[j]
+                key = (min(ia, ib), max(ia, ib))
+                if key in direct_pair_set:
+                    adj[ia].add(ib)
+                    adj[ib].add(ia)
+
+        visited = set()
+        n_before, n_after = 1, 0
+        for start in members:
+            if start in visited:
+                continue
+            comp, queue = [], [start]
+            while queue:
+                node = queue.pop()
+                if node in visited:
+                    continue
+                visited.add(node)
+                comp.append(node)
+                queue.extend(adj[node] - visited)
+            validated_clusters.append(comp)
+            n_after += 1
+
+        if n_after > n_before:
+            transitive_breaks += 1
+
+    print(f'  Transitive links broken: {transitive_breaks:,}')
+    print(f'  Validated clusters: {len(validated_clusters):,}')
+
+    # ============================================================
+    # POST-PROCESSING — same-SM and cross-tier violations
+    # ============================================================
+
+    def fix_same_supermarket_violation(group_df, pair_scores):
+        """
+        v5 SCORE-BASED fix (replaces v4 greedy iteration).
+
+        For clusters with multiple products from the same supermarket:
+        - For each duplicate SM, keep the product with the highest
+          max cross-SM pair score as the representative.
+        - Excluded products are recycled into sub-clusters if they have
+          direct pairs between them; otherwise they become singletons.
+
+        This preserves genuine 4-way clusters that the greedy approach
+        destroyed by arbitrary iteration-order selection.
+        """
+        by_sm = {sm: list(g.index) for sm, g in group_df.groupby('supermarket')}
+
+        # Fast path: no duplicate SMs
+        if not any(len(idxs) > 1 for idxs in by_sm.values()):
+            return [group_df]
+
+        indices = list(group_df.index)
+
+        def best_cross_sm_score(idx, my_sm):
+            """Max pair score from this product to any product from a different SM."""
+            best = 0.0
+            for other in indices:
+                if group_df.loc[other, 'supermarket'] == my_sm:
+                    continue
+                key = (min(idx, other), max(idx, other))
+                s = pair_scores.get(key, 0.0)
+                if s > best:
+                    best = s
+            return best
+
+        primary_indices  = []
+        excluded_indices = []
+
+        for sm, idxs in by_sm.items():
+            if len(idxs) == 1:
+                primary_indices.append(idxs[0])
+            else:
+                # Pick the representative with the highest cross-SM score
+                ranked = sorted(idxs, key=lambda x: best_cross_sm_score(x, sm), reverse=True)
+                primary_indices.append(ranked[0])
+                excluded_indices.extend(ranked[1:])
+
+        result = [group_df.loc[primary_indices]]
+
+        if not excluded_indices:
+            return result
+
+        # Try to form valid sub-clusters from excluded products
+        if len(excluded_indices) >= 2:
+            excl_df = group_df.loc[excluded_indices]
+            excl_by_sm = excl_df.groupby('supermarket').size()
+            if len(excl_by_sm) >= 2:
+                # Only form a sub-cluster if there are direct cross-SM pairs
+                has_valid_pair = any(
+                    (min(ia, ib), max(ia, ib)) in pair_scores
+                    for ia, ib in combinations(excluded_indices, 2)
+                    if excl_df.loc[ia, 'supermarket'] != excl_df.loc[ib, 'supermarket']
+                )
+                if has_valid_pair:
+                    # Recurse to handle any remaining SM duplicates in the sub-group
+                    result.extend(fix_same_supermarket_violation(excl_df, pair_scores))
+                    return result
+
+        # No valid sub-clusters — excluded become singletons
+        for idx in excluded_indices:
+            result.append(group_df.loc[[idx]])
+
+        return result
+
+
+    def fix_cross_tier_violation(group_df):
+        own = group_df[group_df['product_type'] == 'own_brand']
+        if own.empty or own['tier_type'].nunique() <= 1:
+            return [group_df]
+        sub_clusters = []
+        non_own = group_df[group_df['product_type'] != 'own_brand']
+        for tier, tier_group in own.groupby('tier_type'):
+            sub_clusters.append(pd.concat([tier_group, non_own]))
+        return sub_clusters
+
+
+    def fix_unit_type_violation(group_df):
+        uts = group_df['unit_type'].dropna().unique()
+        if len(uts) <= 1:
+            return [group_df]
+        no_unit = group_df[group_df['unit_type'].isna()]
+        sub_clusters = []
+        for ut in uts:
+            sub = group_df[group_df['unit_type'] == ut]
+            if not no_unit.empty:
+                sub = pd.concat([sub, no_unit])
+            sub_clusters.append(sub)
+        return sub_clusters
+
+
+    def _purge_hard_conflicts(group_df):
+        """
+        v5.2: Post-cluster hard-conflict purge.
+
+        Transitive union-find chains can link products via a "bridge" product that
+        has no flavor/packaging tokens, creating a cluster where two members would
+        directly fail _hard_conflict_check (e.g. 'caramel' product bridged to a
+        'chilli' product through a plain 'milk chocolate bar').
+
+        Greedily removes the member with the most pairwise hard-conflicts until the
+        cluster is internally consistent.  Removed products are returned as a list of
+        product indices (each will become a singleton or seed a new sub-cluster).
+        """
+        indices = list(group_df.index)
+        names   = {idx: str(group_df.loc[idx, 'normalized_name'] or '') for idx in indices}
+        removed = []
+
+        changed = True
+        while changed and len(indices) >= 2:
+            changed = False
+            conflict_counts: dict = defaultdict(int)
+            for ia, ib in combinations(indices, 2):
+                if _hard_conflict_check(names[ia], names[ib]):
+                    conflict_counts[ia] += 1
+                    conflict_counts[ib] += 1
+            if conflict_counts:
+                # Remove the product with the most conflicts; tiebreak by higher idx
+                # (later-indexed product is typically the "intruder" in most cases)
+                worst = max(conflict_counts, key=lambda x: (conflict_counts[x], x))
+                indices.remove(worst)
+                removed.append(worst)
+                changed = True
+
+        return group_df.loc[indices], removed
+
+
+    print('\nRunning violation fixes...')
+    final_clusters        = []
+    sm_violations_fixed   = 0
+    tier_violations_fixed = 0
+
+    for members in tqdm(validated_clusters, desc='  Post-processing', leave=True):
+        group = df.loc[members]
+        if len(group) == 1:
+            final_clusters.append(group)
+            continue
+        sub_clusters = fix_same_supermarket_violation(group, pair_scores)
+        if len(sub_clusters) > 1:
+            sm_violations_fixed += 1
+        for sc in sub_clusters:
+            ut_subs = fix_unit_type_violation(sc)
+            for ut_sc in ut_subs:
+                tier_subs = fix_cross_tier_violation(ut_sc)
+                if len(tier_subs) > 1:
+                    tier_violations_fixed += 1
+                final_clusters.extend(tier_subs)
+
+    unit_type_violations_fixed = sum(
+        1 for members in validated_clusters
+        if len(members) > 1 and df.loc[members, 'unit_type'].dropna().nunique() > 1
+    )
+    print(f'  Same-SM violations fixed:      {sm_violations_fixed:,}')
+    print(f'  Unit-type violations fixed:    {unit_type_violations_fixed:,}')
+    print(f'  Cross-tier violations fixed:   {tier_violations_fixed:,}')
+
+    # v5.2: Post-cluster hard-conflict purge — split clusters where a transitive
+    # union-find bridge created internally inconsistent flavor/packaging pairs.
+    print('Running post-cluster hard-conflict purge...')
+    purge_products_removed = 0
+    purged_clusters: list = []
+    for cl in final_clusters:
+        if len(cl) <= 1:
+            purged_clusters.append(cl)
+            continue
+        clean_cl, conflict_idxs = _purge_hard_conflicts(cl)
+        purged_clusters.append(clean_cl)
+        for bad_idx in conflict_idxs:
+            purged_clusters.append(cl.loc[[bad_idx]])   # singleton
+        purge_products_removed += len(conflict_idxs)
+
+    final_clusters = purged_clusters
+    print(f'  Products purged from clusters: {purge_products_removed:,}')
+    print(f'  Final cluster count:           {len(final_clusters):,}')
+
+    # ============================================================
+    # PASS 5B — POST-PROCESSING CLUSTER COMPLETION (v8)
+    # ============================================================
+    # The raw-cluster completion pass (Pass 5) misses 3-way clusters that
+    # emerge from splitting larger raw clusters during post-processing.
+    # This pass operates on the FINAL cluster list and merges qualifying
+    # singletons into 3-way clusters, bypassing blocking misses entirely.
+    #
+    # Optimisation: pre-build candidate lookup dicts so that per-cluster
+    # filtering is an O(1) dict look-up instead of an O(N) row-scan.
+    print('\nPass 5B — Post-processing cluster completion...')
+
+    # Index singletons: product_idx → position in final_clusters
+    _sing_pos: dict = {}     # product_idx → index in final_clusters list
+    for _i, _cl in enumerate(final_clusters):
+        if len(_cl) == 1:
+            _sing_pos[_cl.index[0]] = _i
+
+    print(f'  Available singletons: {len(_sing_pos):,}')
+
+    # ── Pre-build candidate dicts from the singleton pool ──────────────────
+    # Key = (supermarket, ...) → list of product_idx
+    # Only singletons are eligible candidates; pre-filter by product_type.
+
+    _branded_idx:   dict = defaultdict(list)  # (sm, brand_lower)    → [idx]
+    _own_brand_idx: dict = defaultdict(list)  # (sm, tier, cat)       → [idx]
+    _unbranded_idx: dict = defaultdict(list)  # (sm, cat, unit_type)  → [idx]
+
+    _sing_df = df.loc[list(_sing_pos.keys())]   # one DataFrame of all singletons
+
+    for _pidx, _row in _sing_df.iterrows():
+        _sm   = _row['supermarket']
+        _pt   = _row['product_type']
+        _cat  = _row['cat_norm']
+        if _pt == 'branded':
+            _brand_l = str(_row['known_brand_clean'] or '').lower()
+            if _brand_l:
+                _branded_idx[(_sm, _brand_l)].append(_pidx)
+        elif _pt == 'own_brand':
+            _tier = _row['tier_type']
+            _own_brand_idx[(_sm, _tier, _cat)].append(_pidx)
+        else:
+            _ut = _row['unit_type'] if pd.notna(_row['unit_type']) else ''
+            _unbranded_idx[(_sm, _cat, _ut)].append(_pidx)
+            _unbranded_idx[(_sm, _cat, '')].append(_pidx)   # loose key (any unit_type)
+
+    # Remove duplicates in the loose key
+    for _k in _unbranded_idx:
+        _unbranded_idx[_k] = list(dict.fromkeys(_unbranded_idx[_k]))
+
+    # ── Shared state used across Pass 5C and Pass 5B ───────────────────────
+    _sing_used: set = set()   # product_idxs consumed by completion passes
+
+
+    _P5_PRE_UV_TOL = 0.30   # coarse pre-filter — exact check happens in compute_similarity
+
+
+    def _p5_uv_prefilter(filt, uv3):
+        """Keep candidates whose unit_value is within _P5_PRE_UV_TOL of uv3, or is NaN."""
+        if not (pd.notna(uv3) and uv3 > 0) or not filt:
+            return filt
+        kept = [p for p in filt
+                if not pd.notna(df.at[p, 'unit_value'])
+                or (max(df.at[p, 'unit_value'], uv3) / min(df.at[p, 'unit_value'], uv3)
+                    <= 1.0 + _P5_PRE_UV_TOL)]
+        return kept if kept else filt   # fall back to unfiltered if over-aggressive
+
+
+    def _p5_lookup(ptype, miss_sm, brand3, tier3, cat3, ut3, uv3, used):
+        """Return candidate product_idx list for a completion pass lookup."""
+        if ptype == 'branded':
+            if brand3.empty:
+                return []
+            brand_l = str(brand3.iloc[0]).lower()
+            filt = [p for p in _branded_idx.get((miss_sm, brand_l), []) if p not in used]
+            filt = _p5_uv_prefilter(filt, uv3)
+        elif ptype == 'own_brand':
+            tier_v = tier3.iloc[0] if not tier3.empty else np.nan
+            cat_v  = cat3.iloc[0]  if not cat3.empty  else np.nan
+            filt = [p for p in _own_brand_idx.get((miss_sm, tier_v, cat_v), []) if p not in used]
+            if not filt and not cat3.empty:
+                _fb = [p for p in _own_brand_idx.get((miss_sm, np.nan, cat_v), []) if p not in used]
+                for _tb in ['standard', 'value', 'premium']:
+                    _fb.extend(p for p in _own_brand_idx.get((miss_sm, _tb, cat_v), []) if p not in used)
+                filt = list(dict.fromkeys(_fb))
+            filt = _p5_uv_prefilter(filt, uv3)
+        else:
+            cat_v = cat3.iloc[0] if not cat3.empty else np.nan
+            ut_v  = ut3.iloc[0]  if not ut3.empty  else ''
+            filt  = [p for p in _unbranded_idx.get((miss_sm, cat_v, ut_v), []) if p not in used]
+            if pd.notna(uv3) and uv3 > 0 and filt:
+                filt = [p for p in filt
+                        if not pd.notna(df.at[p, 'unit_value']) or
+                           (1.0 / (1.0 + _P5_PRE_UV_TOL)
+                            <= df.at[p, 'unit_value'] / uv3
+                            <= 1.0 + _P5_PRE_UV_TOL)]
+        return filt
+
+
+    def _p5_name_trim(cl_df, filt, hard_cap):
+        """
+        When the candidate list exceeds hard_cap, pre-sort by name similarity
+        against the cluster's first member and take the top hard_cap candidates.
+        This replaces the old "skip entirely" logic and gives the best-scoring
+        names a fair chance even in large brand blocks.
+        """
+        if len(filt) <= hard_cap:
+            return filt
+        rep = str(cl_df['normalized_name'].iloc[0])
+        filt_sorted = sorted(
+            filt,
+            key=lambda p: -fuzz.token_sort_ratio(rep, str(df.at[p, 'normalized_name']))
+        )
+        return filt_sorted[:hard_cap]
+
+
+    _p5_score_diag = {'hard_zero': 0, 'low_score': 0, 'max_low': 0.0}
+
+
+    def _p5_best_match(cl_df, filt, ptype, unit_tol):
+        """Return (best_cand_idx, best_score, best_mem_idx) over all members × candidates.
+
+        v9: When compute_similarity gives a non-zero score that still falls below _comp_thresh,
+        we try a token_set_ratio blended fallback.  In the completion-pass context the
+        brand/category/unit constraints are already very tight, so a partial-token overlap
+        (e.g. "Cream of Tomato Soup" vs "Tomato Soup") is usually a valid match.
+        Hard-conflict checks (FLAVOR_NAMED_TOKENS, ONE_SIDED_CONFLICT_TOKENS, …) have
+        already fired and returned score=0 for genuine variant mismatches, so only
+        same-category pairs enter this path.
+        """
+        _comp_thresh = COMPLETION_THRESHOLD.get(ptype, FUZZY_THRESHOLD_COMPLETION)
+        best_score = 0.0
+        best_cand  = None
+        best_mem   = None
+        cluster_max_score = 0.0
+        cluster_all_zero  = True
+        for _m in cl_df.index:
+            _mr = cl_df.loc[_m]
+            for _cidx in filt:
+                _cr = df.loc[_cidx]
+                _ok, _s = compute_similarity(_mr, _cr, pass_type=ptype, unit_tolerance=unit_tol)
+                if _s > 0:
+                    cluster_all_zero = False
+                    cluster_max_score = max(cluster_max_score, _s)
+                if not _ok and _s >= _comp_thresh * 0.80:
+                    # Token-sort fallback for pairs that narrowly miss the threshold.
+                    # Requirements:
+                    #   • Base score ≥ 80% of threshold (not low-confidence pairs).
+                    #   • Uses token_sort_ratio (NOT token_set_ratio) — token_set
+                    #     gives ~100% when one name is a subset of the other (e.g.
+                    #     "Tomato Soup" ⊂ "Cream of Tomato Soup"), creating false
+                    #     positives.  token_sort_ratio is length-sensitive.
+                    _na = str(_mr.get('normalized_name', ''))
+                    _nb = str(_cr.get('normalized_name', ''))
+                    if ptype == 'branded':
+                        _brand = str(_mr.get('known_brand_clean', '') or '').lower()
+                        _na = _strip_brand(_na, _brand)
+                        _nb = _strip_brand(_nb, _brand)
+                    _tsort = fuzz.token_sort_ratio(_na, _nb) / 100.0
+                    _s2 = 0.55 * _s + 0.45 * _tsort
+                    if _s2 >= _comp_thresh:
+                        _ok = True; _s = _s2
+                # Direct acceptance: score already at or above completion threshold
+                # (compute_similarity used the stricter main threshold internally).
+                if not _ok and _s >= _comp_thresh:
+                    _ok = True
+                if _ok and _s > best_score:
+                    best_score = _s
+                    best_cand  = _cidx
+                    best_mem   = _m
+        if best_cand is None:
+            if cluster_all_zero:
+                _p5_score_diag['hard_zero'] += 1
+            else:
+                _p5_score_diag['low_score'] += 1
+                _p5_score_diag['max_low'] = max(_p5_score_diag['max_low'], cluster_max_score)
+        return best_cand, best_score, best_mem
+
+
+    # ============================================================
+    # PASS 5C — 2-WAY CLUSTER EXTENSION
+    # ============================================================
+    # Extend 2-way clusters to 3-way or 4-way by finding singletons
+    # from the 2 missing supermarkets (or just 1).  Newly created
+    # 3-way clusters will be picked up by Pass 5B below.
+    print('\nPass 5C — 2-way cluster extension...')
+
+    _final_2way = [
+        (i, cl) for i, cl in enumerate(final_clusters)
+        if len(cl) == 2 and cl['supermarket'].nunique() == 2
+    ]
+    print(f'  2-way final clusters: {len(_final_2way):,}')
+
+    _p5c_to4 = 0; _p5c_to3 = 0
+    _p5c_old: set = set(); _p5c_sing: set = set(); _p5c_new: list = []
+
+    for _2pos, _cl2 in tqdm(_final_2way, desc='  Pass=5C', leave=True):
+        _present2 = set(_cl2['supermarket'])
+        _miss2    = list(_ALL_SMS_COMPLETION - _present2)   # exactly 2 SMs
+        if len(_miss2) != 2:
+            continue
+
+        _ptype2 = _cl2['product_type'].mode()[0]
+        _brand2 = _cl2['known_brand_clean'].dropna()
+        _tier2  = _cl2['tier_type'].dropna()
+        _cat2   = _cl2['cat_norm'].dropna()
+        _ut2    = _cl2['unit_type'].dropna()
+        _uv2    = _cl2['unit_value'].mean()
+
+        _utol2 = COMPLETION_UNIT_TOL.get(_ptype2, UNIT_TOLERANCE_BRANDED)
+
+        _res = {}  # sm → (cand_idx, score, mem_idx)
+        for _msm in _miss2:
+            _filt = _p5_lookup(_ptype2, _msm, _brand2, _tier2, _cat2, _ut2, _uv2, _sing_used)
+            if not _filt:
+                continue
+            _hard_cap = _COMPLETION_MAX_CANDS.get(_ptype2, 200) * 3
+            _filt = _p5_name_trim(_cl2, _filt, _hard_cap)
+            _bc, _bs, _bm = _p5_best_match(_cl2, _filt, _ptype2, _utol2)
+            if _bc is not None:
+                _res[_msm] = (_bc, _bs, _bm)
+
+        if not _res:
+            continue
+
+        if len(_res) == 2:
+            # Try to build a 4-way cluster
+            _cands = [_res[sm][0] for sm in _miss2]
+            _cl4 = pd.concat([_cl2, df.loc[_cands]])
+            _cl4_clean, _ = _purge_hard_conflicts(_cl4)
+            if len(_cl4_clean) == 4:
+                # Check the 2 new candidates are mutually compatible too
+                _ca, _cb = _cands
+                _ra, _rb = df.loc[_ca], df.loc[_cb]
+                _ok_ab, _ = compute_similarity(_ra, _rb, pass_type=_ptype2, unit_tolerance=_utol2)
+                if _ok_ab:
+                    # Both new candidates must be mutually compatible; if not,
+                    # fall through to the single-best-SM path below.
+                    for _cidx in _cands:
+                        _sing_used.add(_cidx)
+                        _p5c_sing.add(_sing_pos[_cidx])
+                    for _bm, _cidx, _bs in [(_res[sm][2], _res[sm][0], _res[sm][1]) for sm in _miss2]:
+                        matches_completion.append((_bm, _cidx, _bs))
+                        pair_scores[(min(_bm, _cidx), max(_bm, _cidx))] = _bs
+                    _p5c_old.add(_2pos)
+                    _p5c_new.append(_cl4_clean)
+                    _p5c_to4 += 1
+                    continue
+
+        # Fall through: try to add just one (best-scoring) missing SM
+        _best_sm = max(_res.keys(), key=lambda sm: _res[sm][1])
+        _bc, _bs, _bm = _res[_best_sm]
+        _cl3 = pd.concat([_cl2, df.loc[[_bc]]])
+        _cl3_clean, _ = _purge_hard_conflicts(_cl3)
+        if len(_cl3_clean) >= 3:
+            _sing_used.add(_bc)
+            _p5c_sing.add(_sing_pos[_bc])
+            matches_completion.append((_bm, _bc, _bs))
+            pair_scores[(min(_bm, _bc), max(_bm, _bc))] = _bs
+            _p5c_old.add(_2pos)
+            _p5c_new.append(_cl3_clean)
+            _p5c_to3 += 1
+
+    # Rebuild final_clusters after Pass 5C
+    _p5c_remove = _p5c_old | _p5c_sing
+    final_clusters = [cl for i, cl in enumerate(final_clusters) if i not in _p5c_remove]
+    final_clusters.extend(_p5c_new)
+    print(f'Pass 5C complete: {_p5c_to4:,} to 4-way, {_p5c_to3:,} to 3-way')
+
+    # IMPORTANT: rebuild _sing_pos after Pass 5C mutates final_clusters
+    # (Pass 5B uses _sing_pos to locate singletons for removal)
+    _sing_pos = {_cl.index[0]: _i
+                 for _i, _cl in enumerate(final_clusters) if len(_cl) == 1}
+
+    # ── Collect final 3-way clusters ───────────────────────────────────────
+    _final_3way = [
+        (i, cl) for i, cl in enumerate(final_clusters)
+        if len(cl) == 3 and cl['supermarket'].nunique() == 3
+    ]
+    print(f'  3-way final clusters: {len(_final_3way):,}')
+
+    _p5b_new_pairs:    list = []
+    _p5b_old_positions: set = set()
+    _p5b_sing_positions: set = set()
+    _p5b_new_clusters:  list = []
+    _p5b_upgraded = 0
+    # _sing_used is shared with Pass 5C (declared above)
+
+    # Debug counters
+    _p5b_dbg = {'no_brand': 0, 'no_cand': 0, 'too_many': 0,
+                 'sim_checked': 0, 'sim_fail': 0, 'conflict_purge': 0}
+
+    for _3pos, _cl3 in tqdm(_final_3way, desc='  Pass=5B', leave=True):
+        _present3 = set(_cl3['supermarket'])
+        _miss_list = list(_ALL_SMS_COMPLETION - _present3)
+        if not _miss_list:
+            continue
+        _miss_sm = _miss_list[0]
+
+        _ptype3  = _cl3['product_type'].mode()[0]
+        _brand3  = _cl3['known_brand_clean'].dropna()
+        _tier3   = _cl3['tier_type'].dropna()
+        _cat3    = _cl3['cat_norm'].dropna()
+        _ut3     = _cl3['unit_type'].dropna()
+        _uv3     = _cl3['unit_value'].mean()
+
+        # ── Look up pre-built index (shared helper) ──────────────────────
+        if _ptype3 == 'branded' and _brand3.empty:
+            _p5b_dbg['no_brand'] += 1
+            continue
+        _filt = _p5_lookup(_ptype3, _miss_sm, _brand3, _tier3, _cat3, _ut3, _uv3, _sing_used)
+
+        if not _filt:
+            _p5b_dbg['no_cand'] += 1
+            continue
+        _hard_cap = _COMPLETION_MAX_CANDS.get(_ptype3, 200) * 3
+        if len(_filt) > _hard_cap:
+            _p5b_dbg['too_many'] += 1
+            _filt = _p5_name_trim(_cl3, _filt, _hard_cap)
+
+        _unit_tol3 = COMPLETION_UNIT_TOL.get(_ptype3, UNIT_TOLERANCE_BRANDED)
+
+        _p5b_dbg['sim_checked'] += 1
+        _best3_cand, _best3_score, _best3_mem = _p5_best_match(_cl3, _filt, _ptype3, _unit_tol3)
+
+        if _best3_cand is None:
+            _p5b_dbg['sim_fail'] += 1
+            continue
+
+        if _best3_cand is not None:
+            _cl4 = pd.concat([_cl3, df.loc[[_best3_cand]]])
+            _cl4_clean, _bad_idxs = _purge_hard_conflicts(_cl4)
+            if len(_cl4_clean) < 4:
+                _p5b_dbg['conflict_purge'] += 1
+                continue
+
+            _p5b_new_pairs.append((_best3_mem, _best3_cand, _best3_score))
+            _p5b_old_positions.add(_3pos)
+            _p5b_sing_positions.add(_sing_pos[_best3_cand])
+            _p5b_new_clusters.append(_cl4_clean)
+            _sing_used.add(_best3_cand)
+            pair_scores[(min(_best3_mem, _best3_cand), max(_best3_mem, _best3_cand))] = _best3_score
+            _p5b_upgraded += 1
+
+    # Rebuild final_clusters
+    _remove_positions = _p5b_old_positions | _p5b_sing_positions
+    final_clusters = [cl for i, cl in enumerate(final_clusters) if i not in _remove_positions]
+    final_clusters.extend(_p5b_new_clusters)
+    matches_completion.extend(_p5b_new_pairs)
+
+    print(f'Pass 5B complete: {_p5b_upgraded:,} clusters extended to 4-way')
+    print(f'  no_brand={_p5b_dbg["no_brand"]}  no_cand={_p5b_dbg["no_cand"]}  '
+          f'too_many={_p5b_dbg["too_many"]}  sim_checked={_p5b_dbg["sim_checked"]}  '
+          f'sim_fail={_p5b_dbg["sim_fail"]}  conflict_purge={_p5b_dbg["conflict_purge"]}')
+    print(f'  sim_fail breakdown: hard_zero={_p5_score_diag["hard_zero"]}  '
+          f'low_score={_p5_score_diag["low_score"]}  '
+          f'max_low_score={_p5_score_diag["max_low"]:.3f}')
+
+    # ============================================================
+    # PASS 5D — 2-WAY × 2-WAY MERGE  +  3-WAY ABSORBS 2-WAY
+    # ============================================================
+    # Passes 5B/5C only consume singletons.  Many potential 4-way clusters
+    # have their 3rd or 4th SM product already in a 2-way cluster — not a
+    # singleton — so they were invisible to prior completion passes.
+    #
+    # Sub-pass A: For each remaining 3-way cluster find the missing SM's
+    #   product inside a 2-way cluster; absorb the whole 2-way → resolve
+    #   any same-SM dup → 4-way.
+    # Sub-pass B: Pair complementary 2-way clusters that together cover all
+    #   4 SMs (e.g. {ASDA|Sains} + {Morrisons|Tesco}) → direct 4-way merge.
+
+    print('\nPass 5D — 2-way absorption (sub-A: 3w+2w, sub-B: 2w+2w)...')
+
+    # ── Build index over current 2-way cluster members ─────────────────────
+    _p2_branded_idx: dict = defaultdict(list)   # (sm, brand_lower) → [(pidx, cl_pos)]
+    _p2_own_idx:    dict = defaultdict(list)    # (sm, tier, cat)   → [(pidx, cl_pos)]
+    _p2_unb_idx:    dict = defaultdict(list)    # (sm, cat, ut)     → [(pidx, cl_pos)]
+    _p2_cl_of:      dict = {}                  # pidx → cluster position
+
+    for _i, _cl in enumerate(final_clusters):
+        if len(_cl) != 2 or _cl['supermarket'].nunique() != 2:
+            continue
+        for _pidx in _cl.index:
+            _r    = _cl.loc[_pidx]
+            _sm   = _r['supermarket']
+            _pt   = _r['product_type']
+            _cat  = _r['cat_norm']
+            _p2_cl_of[_pidx] = _i
+            if _pt == 'branded':
+                _bl = str(_r['known_brand_clean'] or '').lower()
+                if _bl:
+                    _p2_branded_idx[(_sm, _bl)].append((_pidx, _i))
+            elif _pt == 'own_brand':
+                _p2_own_idx[(_sm, _r['tier_type'], _cat)].append((_pidx, _i))
+            else:
+                _ut = _r['unit_type'] if pd.notna(_r['unit_type']) else ''
+                _p2_unb_idx[(_sm, _cat, _ut)].append((_pidx, _i))
+
+    _p5d_cl_used: set = set()   # cluster positions already consumed by 5D
+
+    def _p2_lookup(ptype, miss_sm, brand3, tier3, cat3, ut3, uv3):
+        """Return (pidx, cl_pos) pairs for 2-way cluster members matching the missing SM."""
+        if ptype == 'branded':
+            if brand3.empty:
+                return []
+            bl = str(brand3.iloc[0]).lower()
+            raw = _p2_branded_idx.get((miss_sm, bl), [])
+        elif ptype == 'own_brand':
+            tv = tier3.iloc[0] if not tier3.empty else np.nan
+            cv = cat3.iloc[0]  if not cat3.empty  else np.nan
+            raw = _p2_own_idx.get((miss_sm, tv, cv), [])
+            if not raw and not cat3.empty:
+                # Tier fallback: try all tiers for this category
+                cv = cat3.iloc[0]
+                raw = []
+                for _tb in [np.nan, 'standard', 'value', 'premium', 'dietary']:
+                    raw.extend(_p2_own_idx.get((miss_sm, _tb, cv), []))
+                raw = list(dict.fromkeys(raw))
+        else:
+            cv = cat3.iloc[0] if not cat3.empty else np.nan
+            uv = ut3.iloc[0]  if not ut3.empty  else ''
+            raw = _p2_unb_idx.get((miss_sm, cv, uv), [])
+        # Filter: skip already-consumed 2-way clusters
+        raw = [(p, cp) for p, cp in raw if cp not in _p5d_cl_used]
+        # Unit pre-filter
+        if pd.notna(uv3) and uv3 > 0:
+            raw = [(p, cp) for p, cp in raw
+                   if not pd.notna(df.at[p, 'unit_value'])
+                   or max(df.at[p, 'unit_value'], uv3) / min(df.at[p, 'unit_value'], uv3)
+                   <= 1.0 + _P5_PRE_UV_TOL * 2]
+        return raw
+
+    # ── Sub-pass A: 3-way + 2-way → 4-way ─────────────────────────────────
+    _rebuild_3way = [
+        (i, cl) for i, cl in enumerate(final_clusters)
+        if len(cl) == 3 and cl['supermarket'].nunique() == 3
+    ]
+    print(f'  Sub-A: {len(_rebuild_3way):,} remaining 3-way clusters')
+
+    _p5d_old_pos:  set  = set()
+    _p5d_new_cls:  list = []
+    _p5da_upgraded = 0
+
+    for _3pos, _cl3 in tqdm(_rebuild_3way, desc='  Pass=5D-A', leave=True):
+        _miss = list(_ALL_SMS_COMPLETION - set(_cl3['supermarket']))[0]
+        _pt3  = _cl3['product_type'].mode()[0]
+        _b3   = _cl3['known_brand_clean'].dropna()
+        _ti3  = _cl3['tier_type'].dropna()
+        _ca3  = _cl3['cat_norm'].dropna()
+        _ut3  = _cl3['unit_type'].dropna()
+        _uv3  = _cl3['unit_value'].mean()
+        _utol = COMPLETION_UNIT_TOL.get(_pt3, UNIT_TOLERANCE_BRANDED)
+
+        raw_cands = _p2_lookup(_pt3, _miss, _b3, _ti3, _ca3, _ut3, _uv3)
+        if not raw_cands:
+            continue
+
+        # Name-trim the candidate list
+        filt_pidxs = [p for p, _ in raw_cands]
+        filt_pidxs = _p5_name_trim(_cl3, filt_pidxs, _COMPLETION_MAX_CANDS.get(_pt3, 200))
+        raw_cands  = [(p, _p2_cl_of[p]) for p in filt_pidxs]
+
+        best_score = 0.0; best_cand = None; best_mem = None
+        for _m in _cl3.index:
+            for _cp, _cp_pos in raw_cands:
+                if _cp_pos in _p5d_cl_used:
+                    continue
+                _ok, _s = compute_similarity(_cl3.loc[_m], df.loc[_cp],
+                                             pass_type=_pt3, unit_tolerance=_utol)
+                if _ok and _s > best_score:
+                    best_score = _s; best_cand = _cp; best_mem = _m
+
+        if best_cand is None:
+            continue
+
+        _2pos = _p2_cl_of[best_cand]
+        _cl2  = final_clusters[_2pos]
+
+        # "Extract D only": add the missing-SM member (best_cand) directly to the
+        # 3-way. The 2-way's other member (which overlaps with a SM already in the
+        # 3-way) is released back as a singleton — avoids the messy 5-product merge
+        # that fix_same_supermarket_violation struggles to clean cleanly.
+        _cl4 = pd.concat([_cl3, df.loc[[best_cand]]])
+        _cl4_clean, _ = _purge_hard_conflicts(_cl4)
+
+        if len(_cl4_clean) == 4 and _cl4_clean['supermarket'].nunique() == 4:
+            _p5d_old_pos.add(_3pos)
+            _p5d_old_pos.add(_2pos)
+            _p5d_cl_used.add(_2pos)
+            _p5d_new_cls.append(_cl4_clean)
+            # Orphan the 2-way's other member as a singleton so it can be
+            # picked up by Sub-B or a subsequent pass.
+            _other = [i for i in _cl2.index if i != best_cand]
+            for _oi in _other:
+                _p5d_new_cls.append(df.loc[[_oi]])
+            pair_scores[(min(best_mem, best_cand), max(best_mem, best_cand))] = best_score
+            matches_completion.append((best_mem, best_cand, best_score))
+            _p5da_upgraded += 1
+
+    print(f'  Sub-A complete: {_p5da_upgraded:,} 3-way → 4-way')
+
+    # ── Sub-pass B: complementary 2-way + 2-way → 4-way ───────────────────
+    # E.g. {ASDA|Sains} cluster finds a matching {Morrisons|Tesco} cluster.
+    _COMP_PAIRS = [
+        (frozenset({'ASDA', 'Sains'}),      frozenset({'Morrisons', 'Tesco'})),
+        (frozenset({'ASDA', 'Tesco'}),      frozenset({'Morrisons', 'Sains'})),
+        (frozenset({'ASDA', 'Morrisons'}),  frozenset({'Sains', 'Tesco'})),
+    ]
+
+    # Index 2-way clusters by SM pair + blocking key
+    _p2_by_pair: dict = defaultdict(list)
+    # key: (sm_pair_frozen, ptype, lookup_key) → list of cluster positions
+    for _i, _cl in enumerate(final_clusters):
+        if len(_cl) != 2 or _cl['supermarket'].nunique() != 2 or _i in _p5d_cl_used:
+            continue
+        _smp  = frozenset(_cl['supermarket'])
+        _ptb  = _cl['product_type'].mode()[0]
+        for _pidx in _cl.index:
+            _r = _cl.loc[_pidx]
+            if _ptb == 'branded':
+                _bk = str(_r['known_brand_clean'] or '').lower()
+                if _bk:
+                    _p2_by_pair[(_smp, _ptb, _bk)].append(_i)
+                    break
+            elif _ptb == 'own_brand':
+                _ck = (_r['tier_type'], _r['cat_norm'])
+                _p2_by_pair[(_smp, _ptb, _ck)].append(_i)
+                break
+            else:
+                _uk = (_r['cat_norm'], _r['unit_type'] if pd.notna(_r['unit_type']) else '')
+                _p2_by_pair[(_smp, _ptb, _uk)].append(_i)
+                break
+    # Deduplicate (same cluster could be inserted multiple times)
+    for _k in _p2_by_pair:
+        _p2_by_pair[_k] = list(dict.fromkeys(_p2_by_pair[_k]))
+
+    _p5db_upgraded = 0
+    _p5db_old: set = set()
+    _p5db_new: list = []
+
+    for _sm_pair_a, _sm_pair_b in _COMP_PAIRS:
+        # Iterate over all 2-way clusters in pair_a
+        _pair_a_entries = [
+            (_i, _cl) for _i, _cl in enumerate(final_clusters)
+            if len(_cl) == 2 and _cl['supermarket'].nunique() == 2
+            and frozenset(_cl['supermarket']) == _sm_pair_a
+            and _i not in _p5d_cl_used and _i not in _p5db_old
+        ]
+
+        for _apos, _cla in tqdm(_pair_a_entries, desc=f'  Pass=5D-B {"|".join(sorted(_sm_pair_a))}', leave=False):
+            _pta  = _cla['product_type'].mode()[0]
+            _uva  = _cla['unit_value'].mean()
+            _utol = COMPLETION_UNIT_TOL.get(_pta, UNIT_TOLERANCE_BRANDED)
+
+            # Build lookup key for pair_b
+            _rep = _cla.iloc[0]
+            if _pta == 'branded':
+                _lk = str(_rep['known_brand_clean'] or '').lower()
+                if not _lk:
+                    continue
+                _bpos_list = list(dict.fromkeys(
+                    _p2_by_pair.get((_sm_pair_b, _pta, _lk), [])
+                ))
+            elif _pta == 'own_brand':
+                _lk = (_rep['tier_type'], _rep['cat_norm'])
+                _bpos_list = list(dict.fromkeys(
+                    _p2_by_pair.get((_sm_pair_b, _pta, _lk), [])
+                ))
+                if not _bpos_list:
+                    # Tier fallback
+                    for _tb in [np.nan, 'standard', 'value', 'premium', 'dietary']:
+                        _bpos_list.extend(
+                            _p2_by_pair.get((_sm_pair_b, _pta, (_tb, _rep['cat_norm'])), [])
+                        )
+                    _bpos_list = list(dict.fromkeys(_bpos_list))
+            else:
+                _lk = (_rep['cat_norm'],
+                       _rep['unit_type'] if pd.notna(_rep['unit_type']) else '')
+                _bpos_list = list(dict.fromkeys(
+                    _p2_by_pair.get((_sm_pair_b, _pta, _lk), [])
+                ))
+
+            _bpos_list = [bp for bp in _bpos_list
+                          if bp not in _p5d_cl_used and bp not in _p5db_old]
+            if not _bpos_list:
+                continue
+
+            # Unit pre-filter on pair_b candidates
+            if pd.notna(_uva) and _uva > 0:
+                _bpos_list = [
+                    bp for bp in _bpos_list
+                    if final_clusters[bp]['unit_value'].dropna().empty
+                    or (abs(final_clusters[bp]['unit_value'].mean() - _uva) / _uva
+                        <= _P5_PRE_UV_TOL * 2)
+                ]
+            if not _bpos_list:
+                continue
+
+            best_score = 0.0; best_bpos = None
+            for _bpos in _bpos_list[:_COMPLETION_MAX_CANDS.get(_pta, 200)]:
+                _clb = final_clusters[_bpos]
+                # Compare best member of A vs best member of B
+                for _ai in _cla.index:
+                    for _bi in _clb.index:
+                        _ok, _s = compute_similarity(
+                            _cla.loc[_ai], _clb.loc[_bi],
+                            pass_type=_pta, unit_tolerance=_utol)
+                        if _ok and _s > best_score:
+                            best_score = _s
+                            best_bpos  = _bpos
+
+            if best_bpos is None:
+                continue
+
+            _clb     = final_clusters[best_bpos]
+            _merged  = pd.concat([_cla, _clb])
+            _merged, _ = _purge_hard_conflicts(_merged)
+            if len(_merged) < 4 or _merged['supermarket'].nunique() < 4:
+                continue
+
+            _p5db_old.add(_apos)
+            _p5db_old.add(best_bpos)
+            _p5d_cl_used.add(_apos)
+            _p5d_cl_used.add(best_bpos)
+            _p5db_new.append(_merged)
+            _p5db_upgraded += 1
+
+    print(f'  Sub-B complete: {_p5db_upgraded:,} 2-way × 2-way → 4-way')
+
+    # Rebuild final_clusters after Pass 5D
+    _p5d_all_old = _p5d_old_pos | _p5db_old
+    final_clusters = [cl for i, cl in enumerate(final_clusters) if i not in _p5d_all_old]
+    final_clusters.extend(_p5d_new_cls)
+    final_clusters.extend(_p5db_new)
+    print(f'Pass 5D complete: {_p5da_upgraded + _p5db_upgraded:,} new 4-way clusters')
+
+    # Assign sequential cluster IDs (largest first)
+    final_clusters.sort(key=lambda g: -len(g))
+    cluster_id_map = {}
+    match_type_map = {}
+
+    # Build Pass-4 / Pass-5 pair key sets for diagnostic tracking
+    pass4_pair_keys      = {(min(ia, ib), max(ia, ib)) for ia, ib, _ in matches_pass4}
+    completion_pair_keys = {(min(ia, ib), max(ia, ib)) for ia, ib, _ in matches_completion}
+
+    for cid, group in enumerate(final_clusters):
+        for idx in group.index:
+            cluster_id_map[idx] = cid
+        types = group['product_type'].value_counts()
+        match_type_map[cid] = types.index[0] if len(types) else 'unknown'
+
+    # Override match_type to 'cross_bucket' or 'completion' where applicable
+    for cid, group in enumerate(final_clusters):
+        idxs = list(group.index)
+        for ia, ib in combinations(idxs, 2):
+            key = (min(ia, ib), max(ia, ib))
+            if key in completion_pair_keys:
+                match_type_map[cid] = 'completion'
+                break
+            if key in pass4_pair_keys:
+                match_type_map[cid] = 'cross_bucket'
+                break
+
+    df['cluster_id'] = df.index.map(cluster_id_map)
+
+    final_sizes = df.groupby('cluster_id')['product_idx'].count()
+    print(f'\nFinal size distribution:')
+    for size, count in final_sizes.value_counts().sort_index().items():
+        if size <= 8:
+            print(f'  size {size}: {count:,}')
+
+    # ============================================================
+    # OUTPUT GENERATION
+    # ============================================================
+
+    config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    cluster_avg_scores = defaultdict(list)
+    for (ia, ib), score in pair_scores.items():
+        cid_a = cluster_id_map.get(ia)
+        cid_b = cluster_id_map.get(ib)
+        if cid_a == cid_b and cid_a is not None:
+            cluster_avg_scores[cid_a].append(score)
+
+    avg_score_map = {cid: np.mean(scores) for cid, scores in cluster_avg_scores.items()}
+    min_score_map = {cid: np.min(scores)  for cid, scores in cluster_avg_scores.items()}
+
+    clusters_df = df[[
+        'cluster_id', 'product_idx', 'supermarket', 'names', 'category',
+        'known_brand_clean', 'own_brand', 'tier_type', 'unit_value', 'unit_type',
+        'pack_quantity', 'core_product_name', 'normalized_name',
+        'prices_(£)', 'prices_unit_(£)', 'product_type',
+    ]].copy()
+
+    clusters_df['cluster_size']       = df.groupby('cluster_id')['product_idx'].transform('count')
+    clusters_df['n_supermarkets']     = df.groupby('cluster_id')['supermarket'].transform('nunique')
+    clusters_df['match_type']         = clusters_df['cluster_id'].map(match_type_map)
+    clusters_df['avg_pairwise_score'] = clusters_df['cluster_id'].map(avg_score_map)
+
+    clusters_df.to_csv(config.OUTPUT_DIR / 'clusters.csv', index=False)
+    print(f'\nSaved clusters.csv  ({len(clusters_df):,} rows)')
+
+    # Cluster summary
+    summary_rows = []
+    for cid, group in tqdm(clusters_df.groupby('cluster_id'), desc='Building summary'):
+        names_avail = group['core_product_name'].dropna()
+        if len(names_avail) == 0:
+            consensus = ''
+        else:
+            # Prefer the most-common name; when all names are unique fall back to
+            # the median-length name (avoids the over-stripped shortest-name bug
+            # where "Chai" was chosen over "Masala Chai Tea").
+            vc = names_avail.value_counts()
+            if vc.iloc[0] > 1:
+                consensus = vc.index[0]
+            else:
+                by_len = names_avail.sort_values(key=lambda s: s.str.len())
+                consensus = by_len.iloc[len(by_len) // 2]
+        summary_rows.append({
+            'cluster_id':                  cid,
+            'cluster_size':                len(group),
+            'n_supermarkets':              group['supermarket'].nunique(),
+            'supermarkets_present':        '|'.join(sorted(group['supermarket'].unique())),
+            'category':                    group['category'].mode()[0] if len(group) else None,
+            'match_type':                  match_type_map.get(cid, 'unknown'),
+            'known_brand':                 group['known_brand_clean'].dropna().iloc[0] if group['known_brand_clean'].notna().any() else None,
+            'tier_type':                   group['tier_type'].dropna().iloc[0] if group['tier_type'].notna().any() else None,
+            'unit_value':                  group['unit_value'].dropna().mean() if group['unit_value'].notna().any() else None,
+            'unit_type':                   group['unit_type'].dropna().iloc[0] if group['unit_type'].notna().any() else None,
+            'pack_quantity':               group['pack_quantity'].dropna().mean() if group['pack_quantity'].notna().any() else None,
+            'core_product_name_consensus': consensus,
+            'avg_pairwise_score':          avg_score_map.get(cid),
+            'min_pairwise_score':          min_score_map.get(cid),
+        })
+
+    cluster_summary = pd.DataFrame(summary_rows)
+    cluster_summary.to_csv(config.OUTPUT_DIR / 'cluster_summary.csv', index=False)
+    print(f'Saved cluster_summary.csv  ({len(cluster_summary):,} rows)')
+
+    singletons = clusters_df[clusters_df['cluster_size'] == 1]
+    singletons.to_csv(config.OUTPUT_DIR / 'singletons.csv', index=False)
+    print(f'Saved singletons.csv  ({len(singletons):,} rows)')
+
+    # Audit sample
+    multi = cluster_summary[cluster_summary['cluster_size'] >= 2]
+    bp    = multi[multi['match_type'] == 'branded']
+    op    = multi[multi['match_type'] == 'own_brand']
+    up    = multi[multi['match_type'] == 'unbranded']
+    xp    = multi[multi['match_type'] == 'cross_bucket']
+
+    audit_ids = pd.concat([
+        bp.sample(min(20, len(bp)), random_state=RANDOM_SEED),
+        op.sample(min(15, len(op)), random_state=RANDOM_SEED),
+        up.sample(min(10, len(up)), random_state=RANDOM_SEED),
+        xp.sample(min(5,  len(xp)), random_state=RANDOM_SEED) if len(xp) else pd.DataFrame(),
+    ])['cluster_id'].tolist()
+
+    audit_df = clusters_df[clusters_df['cluster_id'].isin(audit_ids)].copy()
+    audit_df = audit_df.sort_values(['cluster_id', 'supermarket'])
+    audit_df['AUDIT_same_core_product'] = ''
+    audit_df['AUDIT_weight_ok']         = ''
+    audit_df['AUDIT_tier_ok']           = ''
+    audit_df['AUDIT_notes']             = ''
+    audit_df.to_csv(config.OUTPUT_DIR / 'audit_sample_50.csv', index=False)
+    print(f'Saved audit_sample_50.csv  ({len(audit_df)} rows, {len(audit_ids)} clusters)')
+
+    # ============================================================
+    # DIAGNOSTIC REPORT
+    # ============================================================
+
+    non_singleton = cluster_summary[cluster_summary['cluster_size'] >= 2]
+    n_multi = len(non_singleton)
+
+    print('\n' + '=' * 60)
+    print('DIAGNOSTIC REPORT v10')
+    print('=' * 60)
+    print(f'Total clusters (incl singletons): {len(cluster_summary):,}')
+    print(f'Singletons:                       {(cluster_summary["cluster_size"]==1).sum():,}')
+    print(f'Multi-product clusters (≥2):      {n_multi:,}')
+    print(f'  4-way: {(non_singleton["n_supermarkets"]==4).sum():,}')
+    print(f'  3-way: {(non_singleton["n_supermarkets"]==3).sum():,}')
+    print(f'  2-way: {(non_singleton["n_supermarkets"]==2).sum():,}')
+
+    print(f'\nBy match type:')
+    for mt in ['branded', 'own_brand', 'unbranded', 'cross_bucket']:
+        n = (non_singleton['match_type'] == mt).sum()
+        if n:
+            print(f'  {mt:14s}: {n:,}')
+
+    print(f'\nPass 4 contribution:')
+    print(f'  Cross-bucket matches found:  {len(matches_pass4):,}')
+    print(f'  Cross-bucket clusters:       {(non_singleton["match_type"]=="cross_bucket").sum():,}')
+
+    print(f'\nProduct coverage:')
+    in_cluster = clusters_df[clusters_df['cluster_size'] >= 2]
+    for sm in sorted(df['supermarket'].unique()):
+        total   = len(df[df['supermarket'] == sm])
+        matched = len(in_cluster[in_cluster['supermarket'] == sm])
+        print(f'  {sm:12s}: {matched:,}/{total:,} = {matched/total*100:.1f}%')
+
+    print(f'\nQuality scores (avg_pairwise_score):')
+    scores_avail = non_singleton.dropna(subset=['avg_pairwise_score'])
+    for mt in ['branded', 'own_brand', 'unbranded', 'cross_bucket']:
+        sub = scores_avail[scores_avail['match_type'] == mt]['avg_pairwise_score']
+        if len(sub):
+            print(f'  {mt:14s}: mean={sub.mean():.3f}  p5={sub.quantile(0.05):.3f}  p25={sub.quantile(0.25):.3f}')
+
+    print(f'\nAutomated validation checks:')
+    violations = {'same_sm': 0, 'unit_type_mixed': 0, 'tier_mixed': 0, 'weight_high': 0, 'score_low': 0}
+    for cid, group in clusters_df[clusters_df['cluster_size'] >= 2].groupby('cluster_id'):
+        if group['supermarket'].value_counts().max() > 1:
+            violations['same_sm'] += 1
+        if group['unit_type'].dropna().nunique() > 1:
+            violations['unit_type_mixed'] += 1
+        own = group[group['product_type'] == 'own_brand']
+        if len(own) >= 2 and own['tier_type'].nunique() > 1:
+            violations['tier_mixed'] += 1
+        uv = group['unit_value'].dropna()
+        if len(uv) >= 2 and uv.min() > 0 and uv.max() / uv.min() > 1.10:
+            violations['weight_high'] += 1
+        avg_s = avg_score_map.get(cid)
+        if avg_s is not None and avg_s < 0.75:
+            violations['score_low'] += 1
+
+    print(f'  Same-SM violations:     {violations["same_sm"]:,}  (should be 0)')
+    print(f'  Mixed unit type:        {violations["unit_type_mixed"]:,}  (should be 0)')
+    print(f'  Tier mixing:            {violations["tier_mixed"]:,}  (should be 0)')
+    print(f'  Weight variance >10%:   {violations["weight_high"]:,}  (flag)')
+    print(f'  Score below 0.75:       {violations["score_low"]:,}  (flag)')
+
+    print(f'\nTarget range: 10,000–20,000 multi-clusters')
+    print(f'Actual:       {n_multi:,}')
+    print(f'In range:     {"YES ✓" if 10_000 <= n_multi <= 20_000 else "NO — review thresholds"}')
+    print('=' * 60)
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: clustering/blocking.py
+----------------------------
+"""Blocking keys and candidate pair generation for clustering passes."""
+
+from collections import defaultdict
+from itertools import combinations
+
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
+
+from .config import *  # noqa: F403
+from .similarity import compute_similarity
+
+# ============================================================
+# BLOCKING
+# ============================================================
+
+STOPWORDS = {'the', 'a', 'an', 'of', 'and', 'with', 'in', 'for', 'to', 'by', '&', 'or', 'no'}
+
+
+def _unit_bucket(uv, bucket_size=50):
+    if pd.isna(uv) or uv <= 0:
+        return 'no_unit'
+    return str(round(float(uv) / bucket_size) * bucket_size)
+
+
+def _get_tokens(norm_name: str) -> list:
+    return [t for t in str(norm_name or '').lower().split() if t not in STOPWORDS]
+
+
+def build_blocks(sub_df, key_fn, max_block_size=MAX_BLOCK_SIZE):
+    raw_blocks = defaultdict(list)
+    for idx, row in sub_df.iterrows():
+        raw_blocks[key_fn(row)].append(idx)
+
+    blocks = []
+    total_pairs = 0
+    for key, indices in raw_blocks.items():
+        block_df = sub_df.loc[indices]
+        if block_df['supermarket'].nunique() < 2:
+            continue
+        if len(indices) > max_block_size:
+            # Use TWO bucket sizes (500g and 1000g) so products near a 500g
+            # boundary aren't siloed into non-overlapping sub-blocks.
+            sub_raw: dict = defaultdict(list)
+            for idx in indices:
+                uv = sub_df.loc[idx, 'unit_value']
+                b500  = key + '||' + _unit_bucket(uv, bucket_size=500)
+                b1000 = key + '||' + _unit_bucket(uv, bucket_size=1000)
+                sub_raw[b500].append(idx)
+                if b500 != b1000:   # only add second bucket when they differ
+                    sub_raw[b1000].append(idx)
+            seen_in_sub = set()
+            for sub_key, sub_idx in sub_raw.items():
+                # dedup seen pairs within the same parent block
+                if sub_df.loc[sub_idx, 'supermarket'].nunique() < 2:
+                    continue
+                blocks.append((sub_key, sub_idx))
+                n = len(sub_idx)
+                total_pairs += n * (n - 1) // 2
+        else:
+            blocks.append((key, indices))
+            n = len(indices)
+            total_pairs += n * (n - 1) // 2
+
+    block_sizes = [len(b[1]) for b in blocks]
+    print(f'    Blocks: {len(blocks):,}  |  Pairs: {total_pairs:,}')
+    if block_sizes:
+        print(f'    Size — mean: {np.mean(block_sizes):.1f}, max: {max(block_sizes)}, median: {int(np.median(block_sizes))}')
+    return blocks
+
+
+def build_multi_blocks(sub_df, key_fns, max_block_size=MAX_BLOCK_SIZE):
+    seen_pairs = set()
+    all_pairs  = []
+    for key_fn in key_fns:
+        blocks = build_blocks(sub_df, key_fn, max_block_size)
+        for _key, indices in blocks:
+            for ia, ib in combinations(sorted(indices), 2):
+                pair = (min(ia, ib), max(ia, ib))
+                if pair not in seen_pairs:
+                    seen_pairs.add(pair)
+                    all_pairs.append((ia, ib))
+    print(f'    Total unique pairs after dedup: {len(all_pairs):,}')
+    return all_pairs
+
+
+def run_pass(sub_df, pairs, pass_type, unit_tolerance):
+    matches = []
+    for ia, ib in tqdm(pairs, desc=f'  Pass={pass_type}', leave=True):
+        is_match, score = compute_similarity(sub_df.loc[ia], sub_df.loc[ib], pass_type, unit_tolerance)
+        if is_match:
+            matches.append((ia, ib, score))
+    return matches
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: clustering/main.py
+------------------------
+"""CLI entry: load data, optional self-tests, run clustering passes."""
+
+import sys
+
+import pandas as pd
+
+
+def run_similarity_self_tests() -> None:
+    from shopwiser.paths import ensure_repo_on_syspath
+
+    ensure_repo_on_syspath()
+    from tests.test_similarity import run_tests as _run_tests
+
+    from .config import (
+        UNIT_TOLERANCE_BRANDED,
+        UNIT_TOLERANCE_OWN_BRAND,
+        UNIT_TOLERANCE_UNBRANDED,
+    )
+    from .similarity import compute_similarity
+
+    print('\nRunning similarity self-tests...')
+    _all_pass = _run_tests(
+        compute_similarity,
+        tol_branded=UNIT_TOLERANCE_BRANDED,
+        tol_own=UNIT_TOLERANCE_OWN_BRAND,
+        tol_unbranded=UNIT_TOLERANCE_UNBRANDED,
+    )
+    print(f'\nAll tests passed: {_all_pass}')
+    if not _all_pass:
+        print('WARNING: some tests failed — review thresholds before proceeding')
+        sys.exit(1)
+
+
+def main(*, sample: bool = False) -> None:
+    from shopwiser.paths import cluster_outputs_path
+
+    from . import config as cluster_config
+    from .config import print_config_banner
+    from .data_prep import load_prepared_dataframe
+    from .pipeline import run_clustering
+
+    cluster_config.OUTPUT_DIR = cluster_outputs_path(sample=sample)
+    print_config_banner()
+    df: pd.DataFrame = load_prepared_dataframe(sample=sample)
+    run_similarity_self_tests()
+    run_clustering(df)
+
+
+if __name__ == '__main__':
+    import argparse
+
+    _p = argparse.ArgumentParser(description='Run ShopWiser clustering on normalized products CSV.')
+    _p.add_argument(
+        '--sample',
+        action='store_true',
+        help='Use normalized_products_sample.csv and write outputs under data/outputs/clusters_sample/',
+    )
+    _args = _p.parse_args()
+    main(sample=_args.sample)
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: clustering/union_find.py
+------------------------------
+"""Disjoint-set for merging product indices into clusters."""
+
+from collections import defaultdict
+
+
+class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank   = [0] * n
+
+    def find(self, x):
+        while self.parent[x] != x:
+            self.parent[x] = self.parent[self.parent[x]]
+            x = self.parent[x]
+        return x
+
+    def union(self, x, y):
+        rx, ry = self.find(x), self.find(y)
+        if rx == ry:
+            return
+        if self.rank[rx] < self.rank[ry]:
+            rx, ry = ry, rx
+        self.parent[ry] = rx
+        if self.rank[rx] == self.rank[ry]:
+            self.rank[rx] += 1
+
+    def components(self):
+        groups = defaultdict(list)
+        for i in range(len(self.parent)):
+            groups[self.find(i)].append(i)
+        return groups
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: preprocess/units.py
+-------------------------
+"""Multipack patterns, unit standardisation (g/ml), price-based inference, vape guard."""
+
+import re
+from typing import Dict, Optional, Tuple
+
+from .grocery_vocab import _VAPE_KEYWORDS
+
+_PACK_UNIT_MULTIPLIER: Dict[str, Tuple[float, str]] = {
+    'g':  (1.0,    'g'),
+    'kg': (1000.0, 'g'),
+    'mg': (0.001,  'g'),
+    'ml': (1.0,    'ml'),
+    'cl': (10.0,   'ml'),
+    'l':  (1000.0, 'ml'),
+}
+
+
+def _is_vape_name(name: str) -> bool:
+    name_lower = name.lower()
+    return any(kw in name_lower for kw in _VAPE_KEYWORDS)
+
+
+def extract_multipack(name: str) -> Tuple[Optional[int], Optional[str], str, Optional[float], Optional[str]]:
+    """Return (pack_quantity, pack_pattern, remaining_name, pack_unit_val, pack_unit_type).
+
+    For the ``count_x_size`` pattern (e.g. "5 x 19.9g", "6x330ml") the per-unit
+    size is converted to standardised g/ml and returned as *pack_unit_val* /
+    *pack_unit_type*; the size token is NOT re-injected into the remaining string.
+    The caller is responsible for computing the total unit_value as
+    ``pack_unit_val * pack_quantity`` when no explicit total is found in step 4.
+    All other patterns return ``None`` for the last two fields.
+    """
+    if not isinstance(name, str):
+        return None, None, '', None, None
+    name_str = name.strip()
+    patterns = [
+        (r'(\d+)\s*[xX]\s*(\d+(?:\.\d+)?)\s*(mg|g|kg|ml|cl|l\b)', 'count_x_size'),
+        (r'\s[xX]\s*(\d+)\b', 'x_count'),
+        (r'(\d+)\s*pack\b', 'count_pack'),
+        (r'pack\s*of\s*(\d+)', 'pack_of_count'),
+        (r'(\d+)\s*pk\b', 'count_pk'),
+        (r'multipack\s*(\d+)', 'multipack'),
+        (r'\b(\d+)\s+tea\s*bags?\b', 'bag_count'),
+        (r'\b(\d+)\s+(?:portions?|sticks?|pieces?)\b', 'bag_count'),
+        (r'\b(\d+)\s*(?:bags?|sachets?|tabs?|pods?|capsules?)\b', 'bag_count'),
+        (r'(\d+)\s*pcs?\b', 'count_pcs'),
+    ]
+    for pattern, pattern_type in patterns:
+        match = re.search(pattern, name_str, re.IGNORECASE)
+        if match:
+            quantity = int(match.group(1))
+            pack_unit_val: Optional[float] = None
+            pack_unit_type: Optional[str] = None
+            if pattern_type == 'count_x_size':
+                raw_val  = float(match.group(2))
+                raw_unit = match.group(3).lower().rstrip()
+                factor, base = _PACK_UNIT_MULTIPLIER.get(raw_unit, (1.0, 'g'))
+                pack_unit_val  = round(raw_val * factor, 3)
+                pack_unit_type = base
+                remaining = name_str[:match.start()] + name_str[match.end():]
+            else:
+                remaining = name_str[:match.start()] + name_str[match.end():]
+            remaining = re.sub(r'\s+', ' ', remaining).strip()
+            return quantity, pattern_type, remaining, pack_unit_val, pack_unit_type
+    bag_s = re.search(r'\b(\d{1,3})s\b', name_str, re.IGNORECASE)
+    if bag_s:
+        qty = int(bag_s.group(1))
+        if 2 <= qty <= 500:
+            remaining = name_str[:bag_s.start()] + name_str[bag_s.end():]
+            remaining = re.sub(r'\s+', ' ', remaining).strip()
+            return qty, 'count_s', remaining, None, None
+
+    # Leading item count: "4 Pork Sausage Rolls" / "12 Chicken Wings"
+    # Guard: quantity 2–40, followed by a capitalised word (real product noun),
+    # and NOT a year (>1900), weight-like number, or pure-digit string.
+    leading = re.match(r'^(\d{1,2})\s+([A-Z][a-zA-Z])', name_str)
+    if leading:
+        qty = int(leading.group(1))
+        if 2 <= qty <= 40:
+            remaining = name_str[leading.end(1):].strip()
+            remaining = re.sub(r'\s+', ' ', remaining).strip()
+            return qty, 'leading_count', remaining, None, None
+
+    return None, None, name_str, None, None
+
+
+def extract_and_standardize_unit(name: str) -> Tuple[Optional[float], Optional[str], str]:
+    if not isinstance(name, str):
+        return None, None, ''
+    name_str = name.strip()
+
+    unit_patterns = [
+        (r'\((\d+(?:\.\d+)?)\s*kg\)',  1000,     'g'),
+        (r'\((\d+(?:\.\d+)?)\s*g\)',   1,        'g'),
+        (r'\((\d+(?:\.\d+)?)\s*l(?:tr|itre|iter)?\)',  1000, 'ml'),
+        (r'\((\d+(?:\.\d+)?)\s*cl\)',  10,       'ml'),
+        (r'\((\d+(?:\.\d+)?)\s*ml\)',  1,        'ml'),
+        (r'(\d+(?:\.\d+)?)\s*pints?\b', 568.261, 'ml'),
+        (r'(\d+(?:\.\d+)?)\s*kg\b',   1000,     'g'),
+        (r'(\d+(?:\.\d+)?)\s*g\b',    1,        'g'),
+        (r'(\d+(?:\.\d+)?)\s*l(?:tr|itre|iter)?\b', 1000, 'ml'),
+        (r'(\d+(?:\.\d+)?)\s*cl\b',   10,       'ml'),
+        (r'(\d+(?:\.\d+)?)\s*ml\b',   1,        'ml'),
+    ]
+
+    is_vape = _is_vape_name(name_str)
+
+    for pattern, factor, base_unit in unit_patterns:
+        if base_unit == 'g' and factor == 0.001 and is_vape:
+            continue
+        match = re.search(pattern, name_str, re.IGNORECASE)
+        if match:
+            value = float(match.group(1)) * factor
+            remaining = re.sub(pattern, '', name_str, flags=re.IGNORECASE)
+            remaining = re.sub(r'\s+', ' ', remaining).strip()
+            return round(value, 3), base_unit, remaining
+
+    if not is_vape:
+        mg_match = re.search(r'(\d+(?:\.\d+)?)\s*mg\b', name_str, re.IGNORECASE)
+        if mg_match:
+            value = float(mg_match.group(1)) * 0.001
+            remaining = re.sub(r'(\d+(?:\.\d+)?)\s*mg\b', '', name_str, flags=re.IGNORECASE)
+            remaining = re.sub(r'\s+', ' ', remaining).strip()
+            return round(value, 6), 'g', remaining
+
+    return None, None, name_str
+
+
+_COMMON_ML = [
+    25, 35, 50, 70, 75, 100, 125, 150, 175, 187, 200, 250, 275, 284, 300,
+    330, 355, 375, 400, 440, 450, 473, 500, 568, 600, 650, 700, 710, 750,
+    800, 850, 900, 946, 1000, 1136, 1500, 1750, 2000, 2250, 3000, 4000, 5000,
+]
+_COMMON_G = [
+    10, 20, 25, 30, 40, 50, 60, 75, 80, 90, 100, 110, 120, 125, 130, 140,
+    150, 160, 170, 175, 180, 190, 200, 210, 220, 225, 240, 250, 270, 280,
+    300, 320, 340, 350, 360, 375, 400, 425, 450, 454, 475, 500, 510, 530,
+    550, 600, 625, 650, 680, 700, 750, 800, 850, 900, 907, 950, 1000, 1100,
+    1200, 1250, 1360, 1500, 1800, 2000, 2270, 2500, 3000, 4000, 5000,
+]
+_SNAP_THRESHOLD = 0.03  # snap if within 3% of a standard size
+
+# Drink-bottle sizes eligible for the ×10 ppu-unit correction (see below).
+# Only include sizes that are unambiguously drink containers (not small extracts).
+_DRINK_BOTTLE_ML = frozenset([350, 355, 375, 440, 473, 500, 568, 700, 710, 750, 800])
+
+
+def _snap_to_standard(value: float, standards: list) -> float:
+    """Round *value* to the nearest standard size if within _SNAP_THRESHOLD, else return as-is."""
+    for s in standards:
+        if abs(value - s) / s <= _SNAP_THRESHOLD:
+            return float(s)
+    return value
+
+
+def infer_unit_from_price(price_str, price_per_unit_str, unit_col: str) -> Tuple[Optional[float], Optional[str]]:
+    """Derive product size from price ÷ price-per-unit (used as fallback when name extraction fails).
+
+    Snaps the computed value to the nearest common package size (within 3%) to
+    avoid fractional artefacts like 751.9 ml that diverge from the 750 ml
+    extracted from a matching product's name, causing spurious cluster misses.
+    """
+    try:
+        price = float(price_str)
+        ppu   = float(price_per_unit_str)
+    except (ValueError, TypeError):
+        return None, None
+    if ppu <= 0 or price <= 0:
+        return None, None
+    unit_col = str(unit_col).strip().lower()
+    if unit_col == 'kg':
+        grams = (price / ppu) * 1000
+        if 5 <= grams <= 25000:
+            return _snap_to_standard(round(grams, 1), _COMMON_G), 'g'
+    elif unit_col in ('l', 'litre', 'liter'):
+        ml = (price / ppu) * 1000
+        if 10 <= ml <= 25000:
+            snapped = _snap_to_standard(round(ml, 1), _COMMON_ML)
+            # Some retailers (e.g. ASDA) report ppu in pence/100ml but label
+            # the unit column as 'l'.  This yields an inferred value ~10× too
+            # small (e.g. 75ml instead of 750ml for a standard wine bottle).
+            # Heuristic: the only legitimate grocery liquid in the 50–100ml
+            # range is a 75ml mini-bottle, which is vanishingly rare.  If the
+            # snapped value sits in that band, try ×10 and prefer the scaled
+            # result when it snaps cleanly to a known bottle size.
+            if 50 <= snapped <= 100:
+                ml_scaled = round(ml * 10, 1)
+                snapped_scaled = _snap_to_standard(ml_scaled, _COMMON_ML)
+                if snapped_scaled != ml_scaled:  # ×10 landed on a standard size
+                    return snapped_scaled, 'ml'
+            return snapped, 'ml'
+    return None, None
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: preprocess/attributes.py
+------------------------------
+"""Product attributes and non-removing descriptor tags from vocabulary."""
+
+import re
+from typing import Dict, List, Tuple
+
+from .grocery_vocab import ATTRIBUTES, DESCRIPTORS
+
+
+def extract_attributes(name: str) -> Tuple[List[str], List[str], str]:
+    if not isinstance(name, str):
+        return [], [], ''
+    name_str = name.strip()
+    found_types, found_keywords = [], []
+    remaining = name_str
+    for attr_type, keywords in ATTRIBUTES.items():
+        for kw in sorted(keywords, key=len, reverse=True):
+            pat = re.compile(r'\b' + re.escape(kw) + r'\b', re.IGNORECASE)
+            if pat.search(remaining):
+                found_types.append(attr_type)
+                found_keywords.append(kw)
+                remaining = pat.sub('', remaining)
+                remaining = re.sub(r'\s+', ' ', remaining).strip()
+                # NOTE: no `break` — continue to catch all matching keywords
+                # for this type (e.g. "Fat Free" AND "No Added Sugar" are
+                # both `diet` and both should be stripped from the name).
+    return found_types, found_keywords, remaining
+
+
+def extract_descriptors(name: str) -> Dict[str, List[str]]:
+    if not isinstance(name, str):
+        return {}
+    name_str = name.strip()
+    found = {}
+    for desc_type, keywords in DESCRIPTORS.items():
+        hits = []
+        for kw in sorted(keywords, key=len, reverse=True):
+            if re.search(r'\b' + re.escape(kw) + r'\b', name_str, re.IGNORECASE):
+                hits.append(kw)
+        if hits:
+            found[desc_type] = hits
+    return found
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: preprocess/__init__.py
+----------------------------
+"""
+Cleaning, normalisation, and feature extraction for raw product rows.
+
+- ``grocery_vocab`` — lists and maps shared by extractors
+- ``cleaning`` — accents, parenthetical cleanup
+- ``brand`` — supermarket own-label, tier, ABV, known brands
+- ``units`` — multipack and g/ml extraction, price fallback
+- ``attributes`` — attribute keywords and descriptors
+- ``normalise`` — ``normalize_product_name`` (per row) and ``main`` (CSV CLI)
+"""
+
+from .normalise import main, normalize_product_name
+
+__all__ = ['main', 'normalize_product_name']
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: preprocess/normalise.py
+-----------------------------
+"""
+Per-row normalisation pipeline and CSV driver.
+
+Reads data/raw/raw.csv → writes data/processed/normalized_products.csv (26 columns).
+
+Split across ``cleaning`` (accents, parentheticals), ``brand`` (own-label, tier, ABV,
+known brands), ``units`` (multipack, g/ml, price inference), and ``attributes``
+(keywords + descriptors). Same behaviour as the prior monolithic module.
+
+Enhancements (unchanged):
+  Expanded supermarket brand prefixes; pint→ml; price-based unit inference;
+  mg guard for vape products; brand only at string start; truncation flag;
+  tea/bags count patterns; expanded KNOWN_BRANDS.
+"""
+
+import re
+import warnings
+
+import pandas as pd
+
+from shopwiser.paths import normalized_products_path, raw_csv_path
+
+# ── Non-food / non-drink keyword exclusion ────────────────────────────────────
+# Products whose names contain any of these tokens (whole-word, case-insensitive)
+# are excluded from the output — they are non-food items miscategorised by
+# retailer scrapers (tobacco, vaping hardware, kitchenware, candles, etc.).
+_NON_FOOD_PATTERN = re.compile(
+    r'\b(?:'
+    # Tobacco & smoking
+    r'cigarette|tobacco|cigars?|rolling\s+tobacco|pipe\s+tobacco'
+    r'|cigarette\s+papers?|filter\s+tips?|rolling\s+paper'
+    # Vaping hardware (not nicotine pouches which are borderline)
+    r'|e-?liquid|vape\s+kit|vaping\s+device|starter\s+kit'
+    r'|disposable\s+vape|vape\s+pen|vape\s+bar'
+    # Kitchenware / housewares
+    r'|whisk|spatula|colander|peeler|grater|strainer|ladle'
+    r'|chopping\s+board|cutting\s+board|mixing\s+bowl|baking\s+tray'
+    r'|cake\s+tin|baking\s+sheet|oven\s+glove|kitchen\s+towel'
+    # Non-food containers & accessories
+    r'|hot\s+water\s+bottle|reusable\s+bottle|water\s+bottle'
+    r'|flask|thermos|travel\s+mug'
+    # Candles & party items
+    r'|birthday\s+candles?|candle\s+holder|wax\s+melts?'
+    r'|party\s+bag|party\s+supplies'
+    r')s?\b',
+    re.IGNORECASE,
+)
+
+from .attributes import extract_attributes, extract_descriptors
+from .brand import (
+    extract_abv, extract_known_brand, extract_supermarket_brand,
+    extract_tier, strip_trailing_tier,
+)
+from .cleaning import clean_parenthetical_notes, normalize_accents
+from .units import extract_and_standardize_unit, extract_multipack, infer_unit_from_price
+
+warnings.filterwarnings('ignore')
+
+
+_VAPE_CATEGORY_PATTERN = re.compile(
+    r'\b(?:vap(?:e|ing|our)|e-?cig|nicotine|tobacco|hookah|shisha)\b',
+    re.IGNORECASE,
+)
+
+
+def normalize_product_name(row: pd.Series) -> dict:
+    original_name = row['names']
+    supermarket   = str(row.get('supermarket', '')).strip()
+    price_val     = row.get('prices_(£)')
+    price_per_unit= row.get('prices_unit_(£)')
+    unit_col      = str(row.get('unit', '')).strip().lower()
+    category_col  = str(row.get('category', '') or '').strip()
+
+    result = {
+        'original_name':        original_name,
+        'supermarket_brand':    None,
+        'tier_type':            None,
+        'tier_keyword':         None,
+        'known_brand':          None,
+        'pack_quantity':        None,
+        'pack_pattern':         None,
+        'unit_value':           None,
+        'unit_type':            None,
+        'abv_percentage':       None,
+        'unit_inferred':        False,
+        'attributes_types':     [],
+        'attributes_keywords':  [],
+        'descriptors':          {},
+        'core_product_name':    '',
+        'normalized_name':      '',
+    }
+
+    current = clean_parenthetical_notes(original_name)
+    current = current.replace('&', ' and ').replace('’', "'")
+
+    sm_brand, current = extract_supermarket_brand(current, supermarket)
+    result['supermarket_brand'] = sm_brand
+
+    tier_type, tier_kw = extract_tier(sm_brand)
+
+    # Strip trailing tier keyword (e.g. Sainsbury's "Camembert, Taste the Difference")
+    # and promote it to tier if no tier was found from the prefix alone.
+    current, trailing_tier_type, trailing_tier_kw = strip_trailing_tier(current)
+    if trailing_tier_type and tier_type in (None, 'standard'):
+        tier_type = trailing_tier_type
+        tier_kw   = trailing_tier_kw
+
+    result['tier_type']    = tier_type
+    result['tier_keyword'] = tier_kw
+
+    pack_qty, pack_pat, current, pack_unit_val, pack_unit_type = extract_multipack(current)
+    result['pack_quantity'] = pack_qty
+    result['pack_pattern']  = pack_pat
+
+    unit_val, unit_type, current = extract_and_standardize_unit(current)
+    result['unit_value'] = unit_val
+    result['unit_type']  = unit_type
+
+    if unit_val is None and pack_unit_val is not None and pack_qty:
+        result['unit_value'] = round(pack_unit_val * pack_qty, 3)
+        result['unit_type']  = pack_unit_type
+        unit_val  = result['unit_value']
+        unit_type = result['unit_type']
+
+    abv_val, current = extract_abv(current)
+    result['abv_percentage'] = abv_val
+
+    # Guard: nullify mg-derived unit values for vape/tobacco products whose brand
+    # keyword wasn't caught by _is_vape_name().  mg→g conversion yields tiny values
+    # like 0.02 g (= 20 mg nicotine strength) which are meaningless for clustering.
+    # Trigger: unit came from mg conversion (value < 0.1 g) AND the product category
+    # column (or unit column) signals a non-food context.
+    if (unit_type == 'g' and unit_val is not None and unit_val < 0.1
+            and (_VAPE_CATEGORY_PATTERN.search(category_col)
+                 or _VAPE_CATEGORY_PATTERN.search(unit_col))):
+        result['unit_value'] = None
+        result['unit_type']  = None
+        unit_val  = None
+        unit_type = None
+
+    if unit_val is None:
+        inferred_val, inferred_type = infer_unit_from_price(price_val, price_per_unit, unit_col)
+        if inferred_val is not None:
+            result['unit_value']   = inferred_val
+            result['unit_type']    = inferred_type
+            result['unit_inferred'] = True
+
+    attr_types, attr_kws, current = extract_attributes(current)
+    result['attributes_types']    = attr_types
+    result['attributes_keywords'] = attr_kws
+
+    known_brand, current = extract_known_brand(current)
+    result['known_brand'] = known_brand
+
+    result['descriptors'] = extract_descriptors(current)
+
+    core = re.sub(r'\s+', ' ', current).strip()
+    core = re.sub(r'^[\s\-,\.]+|[\s\-,\.]+$', '', core)
+    core = re.sub(r'\(\s*\)|\[\s*\]', '', core)
+    core = re.sub(r'\s*\*\s*$', '', core).strip()
+    result['core_product_name'] = core
+
+    # For branded products, prepend known_brand so that e.g. "Fanta Orange"
+    # normalises to "fanta orange" rather than just "orange".  Without this,
+    # single-flavor cores like "orange", "lemon", or "sugar" from different
+    # brands appear identical and cause false-positive clustering.
+    known_brand = result['known_brand']
+    name_for_norm = f"{known_brand} {core}".strip() if known_brand else core
+    normalized = normalize_accents(name_for_norm).lower()
+    normalized = normalized.replace("'", ' ')
+    normalized = re.sub(r'[^a-z0-9\s]', ' ', normalized)
+    normalized = re.sub(r'\s+', ' ', normalized).strip()
+    result['normalized_name'] = normalized
+
+    return result
+
+
+def main(*, sample: bool = False) -> None:
+    """Run CSV normalisation. ``sample=True`` uses ``data/raw/raw_1000.csv`` and writes ``normalized_products_sample.csv``."""
+    INPUT_PATH = raw_csv_path(sample=sample)
+    OUTPUT_PATH = normalized_products_path(sample=sample)
+
+    print('=' * 70)
+    print('ShopWiser Normalisation Pipeline')
+    print('=' * 70)
+    print(f'  Mode:   {"sample (~1000 rows)" if sample else "full dataset"}')
+    print(f'  Input:  {INPUT_PATH}')
+    print(f'  Output: {OUTPUT_PATH}')
+
+    df = pd.read_csv(INPUT_PATH, low_memory=False)
+    initial_count = len(df)
+    df = df[df['names'].notna() & (df['names'].str.strip() != '')].reset_index(drop=True)
+    print(f'\nLoaded {initial_count:,} rows, removed {initial_count - len(df):,} empty names')
+
+    # Filter out non-food / non-drink items
+    non_food_mask = df['names'].str.contains(_NON_FOOD_PATTERN, na=False)
+    n_non_food = non_food_mask.sum()
+    if n_non_food:
+        print(f'Excluded {n_non_food:,} non-food/non-drink items')
+        df = df[~non_food_mask].reset_index(drop=True)
+
+    print(f'Processing {len(df):,} products...')
+
+    df['is_truncated'] = df['names'].str.contains(r'[…]|\.{3}', regex=True, na=False)
+    n_trunc = df['is_truncated'].sum()
+    print(f'Flagged {n_trunc:,} truncated names ({n_trunc/len(df)*100:.1f}%)')
+
+    try:
+        from tqdm import tqdm
+        tqdm.pandas(desc='Normalising')
+        normalized_results = df.progress_apply(normalize_product_name, axis=1)
+    except ImportError:
+        print('(tqdm not available — running without progress bar)')
+        normalized_results = df.apply(normalize_product_name, axis=1)
+
+    normalized_df = pd.DataFrame(normalized_results.tolist())
+    df_out = pd.concat([df.reset_index(drop=True), normalized_df], axis=1)
+
+    n = len(df_out)
+    print(f'\n=== Extraction Statistics ===')
+    print(f'  Supermarket brand extracted : {df_out["supermarket_brand"].notna().sum():>7,}  ({df_out["supermarket_brand"].notna().mean()*100:.1f}%)')
+    print(f'  Tier extracted              : {df_out["tier_keyword"].notna().sum():>7,}  ({df_out["tier_keyword"].notna().mean()*100:.1f}%)')
+    print(f'  Known brand detected        : {df_out["known_brand"].notna().sum():>7,}  ({df_out["known_brand"].notna().mean()*100:.1f}%)')
+    print(f'  Pack quantity extracted     : {df_out["pack_quantity"].notna().sum():>7,}  ({df_out["pack_quantity"].notna().mean()*100:.1f}%)')
+    unit_any  = df_out["unit_value"].notna().sum()
+    unit_name = (df_out["unit_value"].notna() & ~df_out["unit_inferred"]).sum()
+    unit_inf  = df_out["unit_inferred"].sum()
+    print(f'  Unit extracted (name)       : {unit_name:>7,}  ({unit_name/n*100:.1f}%)')
+    print(f'  Unit inferred (price)      : {unit_inf:>7,}  ({unit_inf/n*100:.1f}%)')
+    print(f'  Unit total                  : {unit_any:>7,}  ({unit_any/n*100:.1f}%)')
+    print(f'  No unit at all              : {n - unit_any:>7,}  ({(n-unit_any)/n*100:.1f}%)')
+    attr_n = df_out['attributes_keywords'].apply(lambda x: len(x) if isinstance(x, list) else 0).gt(0).sum()
+    desc_n = df_out['descriptors'].apply(lambda x: len(x) if isinstance(x, dict) else 0).gt(0).sum()
+    print(f'  Attributes extracted        : {attr_n:>7,}  ({attr_n/n*100:.1f}%)')
+    print(f'  Descriptors detected        : {desc_n:>7,}  ({desc_n/n*100:.1f}%)')
+    print(f'  Truncated names flagged     : {n_trunc:>7,}  ({n_trunc/n*100:.1f}%)')
+
+    print(f'\n  Unit type distribution:')
+    for ut, cnt in df_out['unit_type'].value_counts().items():
+        print(f'    {str(ut):<6} {cnt:>7,}  ({cnt/n*100:.1f}%)')
+
+    df_export = df_out.copy()
+    df_export['attributes_types']    = df_export['attributes_types'].apply(lambda x: ','.join(x) if isinstance(x, list) else '')
+    df_export['attributes_keywords'] = df_export['attributes_keywords'].apply(lambda x: ','.join(x) if isinstance(x, list) else '')
+    df_export['descriptors']         = df_export['descriptors'].apply(lambda x: str(x) if isinstance(x, dict) and x else '')
+
+    df_export.to_csv(OUTPUT_PATH, index=False)
+    print(f'\n✓ Saved {len(df_export):,} rows × {df_export.shape[1]} columns → {OUTPUT_PATH}')
+    print(f'  Columns: {list(df_export.columns)}')
+
+
+if __name__ == '__main__':
+    import argparse
+
+    _p = argparse.ArgumentParser(description='Normalise raw product CSV → processed features.')
+    _p.add_argument(
+        '--sample',
+        action='store_true',
+        help='Use data/raw/raw_1000.csv and write data/processed/normalized_products_sample.csv',
+    )
+    _args = _p.parse_args()
+    main(sample=_args.sample)
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: preprocess/grocery_vocab.py
+---------------------------------
+from typing import List, Dict
+
+# ============================================================
+# VOCABULARY & PATTERN DICTIONARIES
+# ============================================================
+
+SUPERMARKET_BRANDS: Dict[str, List[str]] = {
+    'Tesco': [
+        'Tesco Finest', 'Tesco Everyday Value', 'Tesco Free From', 'Tesco Organic',
+        'Hearty Food Co.', 'Tesco Plant Chef', 'Stockwell & Co', 'Ms Molly\'s', 
+        'Eastmans', 'Creamfields', 'Grower\'s Harvest', 'Tesco'
+    ],
+    'ASDA': [
+        'ASDA Extra Special', 'Asda Extra Special', 'ASDA Smart Price', 
+        'Just Essentials by ASDA', 'Just Essentials', 'ASDA Plant Based', 
+        'ASDA Chosen By You', 'ASDA Free From', 'COOK by ASDA', 'BAKE by ASDA', 
+        'The BAKERY at ASDA', 'OMV! by Asda', 'OMV!', 'George Home', 'George', 'ASDA', 'Asda'
+    ],
+    'Morrisons': [
+        'Morrisons The Best', 'Morrisons Savers', 'Morrisons Free From', 
+        'Morrisons Organic', 'Morrisons Market Street', 'Market Street', 
+        'Morrisons Plant Revolution', 'Morrisons For Farmers', 'M Kitchen', 
+        'Savers', 'Morrisons', 'Morrison',  # Added to catch typos in raw data
+    ],
+    'Sains': [
+        "Sainsbury's Taste the Difference", "Taste the Difference",
+        "Sainsbury's Basics", "Stamford Street Co.", "Stamford Street",
+        "Sainsbury's Free From", "Sainsbury's SO Organic", 'SO Organic',
+        "Sainsbury's Plant Pioneers",
+        "Sainsbury's Inspired to Cook", "Inspired to Cook",
+        "Sainsbury's Be Good to Yourself", "Be Good to Yourself",
+        'JS', "Sainsbury's", "Sainsburys"
+    ],
+}
+
+# Map supermarket brand prefix → tier
+TIER_MAP = {
+    # Premium
+    'finest': 'premium', 'extra special': 'premium', 'taste the difference': 'premium',
+    'the best': 'premium', 'market street': 'premium', 'no.1': 'premium', 
+    'specially selected': 'premium', 'deluxe': 'premium', 'irresistible': 'premium',
+    
+    # Value (Tertiary / Farm brands)
+    'hearty food co': 'value', 'stockwell': 'value', 'ms molly': 'value', 
+    'eastmans': 'value', 'creamfields': 'value', 'grower\'s harvest': 'value',
+    'just essentials': 'value', 'smart price': 'value', 'everyday value': 'value', 
+    'savers': 'value', 'basics': 'value', 'stamford street': 'value', 
+    'everyday essentials': 'value', 'simply': 'value', 'honest value': 'value',
+    
+    # Dietary / Specialty
+    'plant chef': 'dietary', 'plant based': 'dietary', 'omv!': 'dietary',
+    'plant pioneers': 'dietary', 'plant menu': 'dietary', 'vemondo': 'dietary',
+    'plant revolution': 'dietary', 'gro': 'dietary', 'free from': 'dietary',
+    'so organic': 'dietary', 'organic': 'dietary',
+    'be good to yourself': 'dietary',   # Sainsbury's healthier-eating range
+    'inspired to cook': 'dietary',      # Sainsbury's recipe kit range
+}
+
+
+# Comprehensive list of known commercial brands
+KNOWN_BRANDS: List[str] = [
+    # Soft drinks, water, juice
+    'coca-cola', 'coca cola', 'pepsi', 'fanta', 'sprite', 'dr pepper', '7up', 'schweppes',
+    'ribena', 'robinsons', 'tropicana', 'innocent', 'capri sun', 'vimto', 'lucozade',
+    'red bull', 'monster', 'relentless', 'rockstar', 'boost',
+    'irn bru', 'irn-bru', 'oasis', 'rubicon', 'tango', 'ocean spray',
+    'san pellegrino', 'sanpellegrino', 'evian', 'volvic', 'buxton', 'highland spring',
+    'mountain dew', 'fever-tree', 'fever tree', 'britvic', 'j2o', 'fruit shoot',
+    'barr', 'shloer', 'belvoir', 'cawston press', 'the london essence co',
+    'long tail mixers', 'bottlegreen',
+    'diet coke', 'coca-cola zero', 'coca cola zero',
+    'naked juice', 'naked',
+    'grace', 'ktc', 'regal',
+
+    # Coffee & Tea
+    'nescafe', 'nescafé', 'twinings', 'tetley', 'pg tips', 'yorkshire tea', 'clipper',
+    'pukka', 'costa', 'starbucks', 'lavazza', 'illy', 'kenco', 'douwe egberts', 'tassimo',
+    'nespresso', 'dolce gusto', 'taylors of harrogate', 'taylors', 'cafe direct', 'cafedirect',
+    'maxwell house', 'l\'or', 'lor', 'leon', 'bird & blend', 'teapigs',
+
+    # Dairy, chilled & plant-based
+    'anchor', 'lurpak', 'flora', 'benecol', 'philadelphia', 'dairylea', 'babybel',
+    'muller', 'müller', 'yoplait', 'activia', 'danone', 'alpro', 'oatly',
+    'cathedral city', 'yeo valley', 'country life', 'clover', 'kerrygold',
+    'cravendale', 'elmlea', 'president', 'président', 'castello', 'onken',
+    'glenisk', 'violife', 'follow your heart', 'almond breeze', 'rude health',
+    'arla', 'delamere', 'rachel\'s', 'chobani', 'fage', 'galbani',
+    'light & free', 'yams', 'yamas',
+    'actimel', 'petits filous', 'pilgrims choice', 'seriously',
+
+    # Breakfast & cereals
+    'weetabix', 'oatibix', 'alpen', 'jordans', 'ready brek', 'shreddies',
+    'cheerios', 'shredded wheat', 'special k', 'corn flakes', 'rice krispies',
+    'coco pops', 'frosties', 'nature valley', 'belvita', 'nakd', 'trek', 'kind',
+    'kellogg\'s', 'kelloggs', 'nestle', 'quaker', 'scotts', 'flahavan\'s',
+    'nesquik',
+
+    # Bread, bakery, cakes
+    'warburtons', 'hovis', 'kingsmill', 'allinson', 'soreen', 'jus-rol',
+    'mcvitie\'s', 'mcvities', 'jacob\'s', 'jacobs', 'fox\'s', 'foxs',
+    'mr kipling', 'border biscuits', 'border', 'tunnock\'s', 'tunnocks',
+    'maryland', 'go ahead', 'go-ahead', 'lotus biscoff', 'biscoff',
+    'carr\'s', 'carrs', 'pop tarts', 'pop-tarts', 'graze', 'higgidy',
+    'miss molly\'s', 'finsbury food',
+    'ryvita', 'nairn\'s', 'nairns', 'genius', 'schar', 'schär',
+    'kallo', 'eat natural', 'nakd',
+
+    # Biscuits, sweets, chocolate
+    "cadbury's", 'cadbury', 'mars', 'snickers', 'galaxy', 'lindt', 'thorntons',
+    'green & black\'s', 'green and blacks', 'ferrero rocher', 'ferrero',
+    'toblerone', 'after eight', 'after eights', 'maltesers', 'm&ms', 'm&m\'s',
+    'bounty', 'milky way', 'twix', 'kit kat', 'kitkat',
+    'rowntree\'s', 'rowntrees', 'haribo', 'maynards bassetts', 'maynards', 'bassetts',
+    'swizzels', 'swizzels matlow', 'kinder', 'kinder bueno', 'werther\'s', 'werthers',
+    'tic tac', 'mentos', 'skittles', 'starburst', 'polo', 'chupa chups',
+    'reese\'s', 'reeses', 'hershey\'s', 'hersheys', 'terry\'s', 'terrys',
+    'kp', 'kp nuts', 'nobby\'s', 'nobbys', 'planters',
+    'gü', 'gu', 'gu puds',
+    'aero', 'milkybar', 'lion bar',
+
+    # Crisps & savoury snacks
+    'walkers', 'pringles', 'doritos', 'mccoys', 'quavers', 'wotsits',
+    'kettle', 'kettle chips', 'tyrrells', 'seabrook', 'pom-bear', 'pombear',
+    'hula hoops', 'hulahoops', 'skips', 'discos', 'nik naks', 'niknaks',
+    'frazzles', 'monster munch', 'popchips', 'sunbites',
+    'propercorn', 'properchips', 'metcalfe\'s', 'metcalfes',
+    'snack a jacks', 'snackajacks', 'mini cheddars', 'cofresh', 'cheetos',
+
+    # Rice, grains, pasta, noodles
+    'ben\'s original', 'bens original', 'uncle ben\'s', 'uncle bens',
+    'tilda', 'laila', 'merchant gourmet', 'barilla', 'de cecco', 'dececco',
+    'napolina', 'batchelors', 'itsu', 'yutaka', 'amoy', 'nissin', 'kohinoor',
+    'dolmio', 'loyd grossman',
+
+    # Tins, jars, sauces, condiments
+    'heinz', 'branston', 'colman\'s', 'colmans', 'marmite', 'bovril', 'oxo', 'bisto',
+    'paxo', 'knorr', 'maggi', 'hellmann\'s', 'hellmanns',
+    'hp sauce', 'hp', 'lea & perrins', 'lea and perrins',
+    'frank\'s redhot', 'franks redhot', 'tabasco', 'encona', 'cholula',
+    'sriracha', 'flying goose', 'kikkoman', 'lee kum kee', 'blue dragon',
+    'old el paso', 'santa maria', 'geeta\'s', 'geetas', 'rajah',
+    'sharwood\'s', 'sharwoods', 'pataks', 'patak\'s', 'the spice tailor',
+    'schwartz', 'bart', 'maldon', 'saxa', 'sarson\'s', 'sarsons',
+    'haywards', 'whitworths', 'filippo berio', 'bertolli',
+    'green giant', 'cirio', 'mutti', 'sacla', 'fray bentos', 'princes',
+    'baxters', 'hartley\'s', 'hartleys', 'tiptree', 'robertson\'s', 'robertsons',
+    'duerr\'s', 'duerrs', 'bonne maman', 'rowse', 'nutella', 'sun-pat', 'sun pat',
+    'tracklements', 'encona', 'potts', 'lea & perrins',
+
+    # Frozen foods & ready meals (incl. ice cream)
+    'mccain', 'goodfella\'s', 'goodfellas', 'dr oetker', 'dr. oetker',
+    'chicago town', 'rustlers', 'birdseye', 'birds eye',
+    'aunt bessie\'s', 'aunt bessies', 'findus',
+    'strong roots', 'cauldron', 'tofoo', 'the tofoo co',
+    'beyond meat', 'moving mountains', 'vivera', 'meatless farm', 'cook',
+    'magnum', 'haagen-dazs', 'haagen dazs', 'ben & jerry\'s', 'ben and jerrys',
+    'carte d\'or', 'cornetto', 'solero', 'walls',
+
+    # Chilled meat, fish, pies
+    'wall\'s', 'heck', 'herta', 'bernard matthews', 'mattessons',
+    'ginsters', 'pukka pies', 'quorn', 'linda mccartney', 'richmond',
+    'john west', 'youngs', 'young\'s', 'glenryck',
+    'peperami', 'fridge raiders',
+
+    # Beer & Cider
+    'stella artois', 'stella', 'budweiser', 'bud', 'heineken', 'carlsberg',
+    'foster\'s', 'fosters', 'carling', 'kronenbourg', '1664',
+    'peroni', 'birra moretti', 'moretti', 'san miguel', 'estrella', 'estrella damm',
+    'guinness', 'john smith\'s', 'john smiths', 'boddingtons',
+    'brewdog', 'camden town', 'camden hells', 'beavertown', 'neck oil',
+    'strongbow', 'thatchers', 'kopparberg', 'magners', 'bulmers', 'old mout',
+    'corona', 'desperados', 'beck\'s', 'becks',
+    'old speckled hen', 'old crafty hen', 'spitfire', 'hobgoblin',
+    'birra peroni', 'bavaria', 'amstel', 'leffe',
+
+    # Spirits
+    'smirnoff', 'absolut', 'grey goose', 'glen\'s', 'glens',
+    'gordon\'s', 'gordons', 'bombay sapphire', 'tanqueray', 'hendrick\'s', 'hendricks',
+    'beefeater', 'edinburgh gin', 'brockmans', 'ciroc',
+    'jack daniel\'s', 'jack daniels', 'jim beam', 'maker\'s mark',
+    'jameson', 'famous grouse', 'bell\'s', 'bells', 'johnnie walker',
+    'glenfiddich', 'glenlivet', 'cardhu', 'highland park', 'macallan',
+    'captain morgan', 'bacardi', 'havana club', 'malibu', 'kraken',
+    'baileys', 'tia maria', 'kahlua', 'disaronno', 'southern comfort',
+    'pimms', 'pimm\'s', 'martini', 'aperol', 'campari',
+    'courvoisier', 'hennessy', 'courvoisier',
+    'warninks', 'advocaat',
+
+    # Wine & Champagne
+    'hardys', 'blossom hill', 'yellow tail', 'casillero del diablo',
+    'campo viejo', 'villa maria', 'oyster bay', '19 crimes', 'jam shed',
+    'barefoot', 'mcguigan', 'jacob\'s creek', 'jacobs creek',
+    'lindeman\'s', 'lindemans', 'wolf blass', 'errazuriz', 'trapiche',
+    'freixenet', 'moët', 'moet', 'veuve clicquot', 'bollinger', 'lanson', 'pommery',
+    'squealing pig', 'wollemi', 'giesen',
+
+    # Health, protein, wellness
+    'fulfil', 'phd nutrition', 'phd smart bar', 'the skinny food co',
+    'getpro', 'nakd', 'trek', 'kind', 'graze', 'nature valley',
+    'phd', 'optimum nutrition', 'myprotein', 'up&go', 'weetabix on the go',
+    'grenade',
+
+    # Baby & toddler
+    'cow & gate', 'cow and gate', 'aptamil', 'hipp', 'hipp organic',
+    'ella\'s kitchen', 'ellas kitchen', 'organix', 'kiddylicious',
+    'heinz by nature', 'piccolo', 'little freddie',
+
+    # Home baking
+    'tate & lyle', 'tate and lyle', 'silver spoon', 'billington\'s',
+    'allinson\'s', 'allinsons', 'homepride', 'betty crocker', 'doves farm',
+    'dr. oetker', 'silver spoon',
+
+    # Dairy-free
+    'oatly', 'alpro', 'provamil', 'koko', 'nutpods',
+
+    # Tins & specialist food brands
+    'east end', 'fudco', 'natco', 'ktc', 'indus', 'indus foods',
+    'new covent garden',
+
+    # Misc
+    'ambrosia', 'crosta & mollica', 'prymat', 'felix', 'soreen',
+    'express cuisine', 'staveley',
+    'nando\'s', 'nandos',
+
+    # Soft drinks, water, juice
+    'lipton', 'appletiser', 'smartwater', 'vittel', 'strathmore', 'kia-ora', 'kia ora',
+    'miwadi', 'drench', 'ballygowan', 'calypso', 'snapple', 'remedy', 'mogu mogu',
+    'vithit', 'vit hit', 'plenish', 'purdey\'s', 'purdeys',
+
+    # Coffee & Tea
+    'typhoo', 'carte noire', 'tazo', 'punjana', 'barry\'s tea', 'barrys tea', 'barry\'s', 
+    'beanies', 'camp coffee', 'puro', 'tick tock', 'teapigs', 'whittard', 'ilou', 
+    'milano', 'blue tokai',
+
+    # Dairy, chilled & plant-based
+    'i can\'t believe it\'s not butter', 'utterly butterly', 'stork', 'the laughing cow',
+    'laughing cow', 'boursin', 'cheestrings', 'frubes', 'munch bunch', 'ski', 'yakult',
+    'biomel', 'nurishh', 'primula', 'puck', 'dairygold', 'golden cow', 'applewood',
+    'mexicana', 'ilchester', 'wensleydale', 'norseland', 'actimel',
+    'galbani', 'nomadic', 'lindahls', 'nush',
+
+    # Breakfast & cereals
+    'honey monster', 'krave', 'dorset cereals', 'fuel10k', 'moma', 'crunchy nut',
+    'chex', 'bear', 'surreal', 'all-bran', 'all bran', 'cheerios', 'milo',
+
+    # Bread, bakery, cakes
+    'roberts bakery', 'roberts', 'new york bakery co', 'mission', 'mission deli', 
+    'wallaces', 'wenzel\'s', 'brace\'s', 'braces', 'peter\'s', 'peters', 'baker street',
+    'biona', 'st pierre', 'brioche pasquier', 'crosta & mollica',
+    'wafflemeister', 'bfree', 'b-free', 'cranks',
+
+    # Biscuits, sweets, chocolate
+    'oreo', 'jammie dodgers', 'wagon wheels', 'penguin', 'milka', 'daim', 'quality street',
+    'roses', 'celebrations', 'heroes', 'smarties', 'rolo', 'matchmakers', 'crawford\'s',
+    'crawfords', 'bahlsen', 'loacker', 'kinder surprise', 'kinder joy', 'fruit pastilles',
+    'jelly tots', 'toffee crisp', 'munchies', 'yorkie', 'twirl', 'wispa', 'crunchie',
+    'double decker', 'flake', 'curly wurly', 'chomps', 'fudge', 'bournville', 'topic', 
+    'picnic', 'boost', 'starbar', 'ritter sport', 'montezuma\'s', 'montezumas', 'ombar',
+    'the natural confectionery company', 'natural confectionery co',
+
+    # Crisps & savoury snacks
+    'space raiders', 'wheat crunchies', 'roysters', 'pipers', 'burts', 'eat real', 
+    'hippeas', 'smiths', 'squares', 'sensations', 'walkers sensations',
+    'real crisps', 'tayto', 'taytos', 'golden wonder', 'pringles', 'walkers',
+    'wild trail', 'sunbites', 'ryvita', 'ritz', 'tuc', 'cheddars', 'jacob\'s cream crackers',
+
+    # Rice, grains, pasta, noodles
+    'pot noodle', 'koka', 'indomie', 'nongshim', 'mug shot', 'buitoni', 'garofalo', 
+    'rummo', 'sunrice', 'veetee', 'soba', 'mama', 'samyang', 'kabuto', 'kabuto noodles',
+    'biona organic', 'seeds of change',
+
+    # Tins, jars, sauces, condiments
+    'daddies', 'newman\'s own', 'crosse & blackwell', 'crosse and blackwell', 'campbell\'s',
+    'campbells', 'bicks', 'mary berry', 'pizza express', 'wagamama', 'wasabi', 'maille',
+    'kewpie', 'mae ploy', 'vegemite', 'branstons', 'hp', 'nandos', 'heinz',
+    'stokes', 'stokes sauces', 'chef', 'willy\'s', 'willys', 'fajita magic',
+    'nissin', 'kikkoman', 'bisto', 'oxo',
+    'mizkan', 'nakano', 'leon', 'pizzaexpress',
+
+    # Frozen foods & ready meals (incl. ice cream)
+    'breyers', 'kelly\'s', 'kellys', 'mackie\'s', 'mackies', 'halo top', 'jude\'s', 
+    'judes', 'northern bloc', 'glorious', 'auntys', 'dalepak', 'iceland', 'farmfoods',
+    'charlotte\'s', 'charlottes', 'green\'s', 'greens', 'snax', 'yumnut', 'oppo', 
+    'oppo brothers', 'little moons', 'røar', 'roar',
+
+    # Chilled meat, fish, pies
+    'denny', 'galtee', 'finnebrogue', 'simon howie', 'edwards of conwy', 'unearthed',
+    'gosh!', 'gosh', 'squeaky bean', 'charlie bigham\'s', 'charlie bighams', 'mains',
+    'cockburns', 'macsween', 'heck', 'richmond',
+    'deli kitchen', 'savoury bakes', 'rollo', 'bighams', 'mighty',
+
+    # Beer & Cider
+    'doom bar', 'cruzcampo', 'madri', 'madrí', 'tiger', 'cobra', 'singha', 'asahi', 
+    'sapporo', 'tsingtao', 'innis & gunn', 'stowford press', 'westons', 'henry westons', 
+    'rekorderlig', 'brothers', 'tuborg', 'tennent\'s', 'tennents', 'hoegaarden', 
+    'blue moon', 'coors', 'coors light', 'sharps', 'sharp\'s', 'brewdog', 'camden',
+    'beavertown', 'goose island', 'lagunitas', 'brooklyn brewery', 'tiny rebel',
+
+    # Spirits
+    'russian standard', 'stolichnaya', 'stoli', 'ketel one', 'belvedere', 'sailor jerry',
+    'dead man\'s fingers', 'mount gay', 'appleton estate', 'wray & nephew', 'wray and nephew',
+    'glenmorangie', 'talisker', 'laphroaig', 'lagavulin', 'ardbeg', 'woodford reserve', 
+    'bulleit', 'remy martin', 'rémy martin', 'martell', 'cointreau', 'grand marnier',
+    'passoa', 'passoã', 'chambord', 'archers', 'havana club', 'malibu',
+    'jura', 'bowmore', 'auchentoshan', 'sipsmith', 'tanqueray ten', 'malfy',
+
+    # Wine & Champagne
+    'echo falls', 'gallo', 'dark horse', 'apothic', 'black tower', 'blue nun', 
+    'jp chenet', 'mateus', 'laurent-perrier', 'laurent perrier', 'dom perignon', 
+    'dom pérignon', 'piper-heidsieck', 'cinzano', 'croft', 'harveys', 'taylor\'s', 
+    'kumala', 'concha y toro', 'brancott estate', 'trivento', 'mud house', 'i heart',
+    'frescobaldi', 'antinori',
+
+    # Health, protein, wellness
+    'huel', 'soylent', 'slimfast', 'yfood', 'protein works', 'bulk', 'maxinutrition',
+    'maximuscle', 'usn', 'sci-mx', 'scimx', 'nutramino', 'misFits', 'misfits health',
+    'barebells', 'uFit', 'ufit drinks',
+
+    # Fresh Produce & Meat brands
+    'pink lady', 'albert bartlett', 'florette', 'tenderstem', 'driscoll\'s', 'driscolls', 
+    'berry gardens', 'mushrooms', 'gressingham', 'mowi', 'saucy fish co', 'heck', 
+    'peperami', 'rustlers', 'mattessons', 'richmond', 'walls', 'wall\'s',
+
+    # Brands pulled from dataset analysis
+    'scrumpy jack', 'mazzetti', 'buttermilk', 'blue riband', 'sheldon\'s', 'sheldons', 
+    'skinny whip', 'chicken tonight', 'old jamaica', 'kubus', 'al fez', 'al\'fez', 
+    'idahoan', 'popworks', 'ainsley harriott', 'timothy taylor\'s', 'timothy taylors', 
+    'bio&me', 'bio & me', 'pek', 'aashirvaad', 'simply cook', 'discover-in', 'contigo', 
+    'mother africa', 'holy cow!', 'optibac', 'science in sport', 'nomo', 'oshee', 
+    'vifon', 'cantu', 'wrigley\'s', 'wrigleys', 'sistema', 'scoville', 'weight watchers'
+]
+
+# Attributes (remove from name after detection)
+ATTRIBUTES: Dict[str, List[str]] = {
+    'organic': ['organic', 'bio', 'soil association'],
+    'free_from': [
+        'gluten free', 'gluten-free', 'dairy free', 'dairy-free', 'lactose free',
+        'lactose-free', 'wheat free', 'wheat-free', 'nut free', 'nut-free',
+        'soya free', 'soya-free', 'caffeine free', 'free from'
+        # NOTE: 'decaf' intentionally NOT listed here — it must stay in normalized_name
+        # so that ONE_SIDED_CONFLICT_TOKENS can hard-reject decaf vs non-decaf pairs.
+    ],
+    'diet': [
+        'vegan', 'vegetarian', 'plant-based', 'plant based', 'low fat', 'reduced fat',
+        'fat free', 'fat-free', 'sugar free', 'sugar-free', 'no added sugar',
+        'low sugar', 'keto', 'halal', 'kosher'
+        # NOTE: 'light' and 'lite' intentionally NOT listed here — they must stay in
+        # normalized_name so ONE_SIDED_CONFLICT_TOKENS can hard-reject light vs regular.
+    ],
+    'ethical': [
+        'fairtrade', 'fair trade', 'free range', 'freedom food', 'rspca assured', 
+        'msc certified', 'red tractor', 'rainforest alliance', 'sustainable'
+    ],
+    'preparation': [
+        'ready to eat', 'ready to cook', 'ready meal', 'meal for one',
+        'microwaveable', 'oven ready', 'pre-cooked', 'part baked', 'parbaked'
+    ],
+    'alcohol_marker': ['alcohol free', 'alcohol-free', 'non-alcoholic', '0% alcohol', 'low alcohol']
+}
+
+
+# Descriptors (detected but NOT removed from name)
+DESCRIPTORS: Dict[str, List[str]] = {
+    'cooking_method': ['roasted', 'grilled', 'baked', 'fried', 'smoked', 'steamed', 'poached', 'bbq', 'barbecue', 'chargrilled'],
+    'flavor':         ['mild', 'medium', 'hot', 'spicy', 'sweet', 'savoury', 'salty', 'tangy', 'sour', 'bitter', 'unsmoked'],
+    'form':           ['sliced', 'diced', 'chopped', 'whole', 'halved', 'quartered', 'peeled', 'shredded', 'grated', 'ground', 'crushed', 'powder', 'paste', 'puree', 'concentrate'],
+    'texture':        ['crunchy', 'crispy', 'smooth', 'chunky', 'creamy', 'thick', 'thin', 'soft', 'breaded', 'battered', 'coated', 'crumb'],
+    'cut_meat':       ['mince', 'minced', 'breast', 'thigh', 'drumstick', 'fillet', 'steak', 'joint', 'chop', 'sausage', 'meatballs', 'burgers', 'kebabs', 'kebab', 'shanks', 'pancetta', 'gammon', 'brisket'],
+    
+    # NEW: Grocery-specific preparation states
+    'prep_meat_fish': ['boneless', 'bone-in', 'bone in', 'skinless', 'skin-on', 'skin on', 'deboned', 'line caught', 'farmed'],
+    'prep_produce':   ['seedless', 'pitted', 'stoned', 'unwaxed', 'unpitted', 'washed', 'unwashed'],
+    'bakery_type':    ['wholemeal', 'wholegrain', 'sourdough', 'seeded', 'white', 'brown', 'crusty', 'multigrain', 'brioche'],
+    
+    'maturity':       ['mild', 'mature', 'extra mature', 'vintage', 'aged'],
+    # Added "loose" to packaging (very common for UK fruit/veg e.g. "Bananas Loose")
+    'packaging':      ['can', 'cans', 'tin', 'tins', 'bottle', 'bottles', 'pouch', 'tub', 'jar', 'carton', 'multipack', 'loose'] 
+}
+
+
+# Keywords that indicate the mg value is nicotine strength, not product weight
+_VAPE_KEYWORDS = frozenset([
+    'e-liquid', 'e liquid', 'eliquid', 'vape', 'vaping', 'pod', 'pods',
+    'nicotine', 'tobacco', 'cigarette', 'e-cig', 'ecig', 'juul', 'elf bar',
+    'disposable', 'menthol e', 'nic salt',
+    'vuse', 'velo', 'nordic spirit', 'ske crystal', 'carlton', 'vampire vape', 'aqua vape', 'vapes bars',
+    # Additional vape device brands observed in dataset
+    'ignite', 'slix', 'found mary', 'geek bar', 'nasty bar', 'lost mary',
+    'randm', 'r and m', 'vozol', 'hayati', 'crystal bar', 'elux', 'nerd bar',
+    'frunk bar', 'aroma king', 'riot bar', 'hyde', 'puff bar',
+])
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: preprocess/brand.py
+-------------------------
+"""Supermarket own-label, tier, ABV, and known-brand extraction."""
+
+import re
+from typing import Optional, Tuple
+
+from .grocery_vocab import SUPERMARKET_BRANDS, TIER_MAP, KNOWN_BRANDS
+
+# All tier keywords sorted longest-first for trailing-tier detection.
+_TIER_KWS_SORTED = sorted(TIER_MAP.keys(), key=len, reverse=True)
+
+
+def _title_case(s: str) -> str:
+    """Title-case that handles apostrophes correctly.
+
+    Python's ``str.title()`` turns ``"I can't believe it"`` into
+    ``"I Can'T Believe It"`` because it capitalises any letter after a
+    non-letter character, including apostrophes.  This version splits on
+    whitespace only.
+    """
+    return ' '.join(word[0].upper() + word[1:].lower() if word else word for word in s.split(' '))
+
+
+def _norm_prefix(prefix: str) -> str:
+    """Normalise a brand prefix so it matches names that have been pre-processed
+    (``&`` → ``and``, curly-apostrophe → straight, trailing dot stripped).
+    """
+    p = prefix.replace('&', ' and ').replace('\u2019', "'")
+    p = re.sub(r'\s+', ' ', p).strip()
+    # Strip trailing dot (e.g. "Hearty Food Co." → "Hearty Food Co")
+    p = p.rstrip('.')
+    return p
+
+
+def extract_supermarket_brand(name: str, supermarket: str) -> Tuple[Optional[str], str]:
+    """Strip a supermarket own-label prefix from *name* and return
+    (matched_prefix, remaining_name).
+
+    Fixes vs prior version:
+    * Normalise the prefix the same way the name is pre-processed
+      (``&``→``and``, curly apostrophe, trailing dot) so that e.g.
+      ``"Stockwell & Co"`` matches ``"Stockwell and Co …"``.
+    * After prefix stripping, remove any *trailing* tier keyword that
+      appears after a comma (Sainsbury's pattern:
+      ``"Sainsbury's Camembert, Taste the Difference"`` → core =
+      ``"Camembert"``, tier detected from trailing fragment).
+    """
+    if not isinstance(name, str):
+        return None, ''
+    # Collapse multi-space runs so "Stockwell  and  Co" (from "Stockwell & Co"
+    # after & → ' and ' replacement with surrounding spaces) matches the
+    # single-spaced _norm_prefix output.
+    name_str = re.sub(r'\s+', ' ', name.strip())
+    for prefix in SUPERMARKET_BRANDS.get(supermarket, []):
+        norm = _norm_prefix(prefix)
+        # Build pattern: use (?:\s|,) instead of [\b\s,] — \b inside a
+        # character class is a literal backspace (0x08), not a word boundary.
+        pattern = re.compile(r'^' + re.escape(norm) + r'(?:\s|,)?', re.IGNORECASE)
+        if pattern.match(name_str):
+            remaining = pattern.sub('', name_str).strip().lstrip(',').strip()
+            return prefix, remaining
+    return None, name_str
+
+
+def strip_trailing_tier(remaining: str) -> Tuple[str, Optional[str], Optional[str]]:
+    """Remove a trailing tier keyword that follows a comma.
+
+    Handles the Sainsbury's format where the tier appears *after* the product
+    name: ``"Camembert, Taste the Difference"`` → ``("Camembert", "premium",
+    "Taste the Difference")``.
+
+    Returns ``(cleaned_name, tier_type, tier_keyword)``.  If no trailing tier
+    is found all three values are unchanged / ``None``.
+    """
+    if not isinstance(remaining, str) or ',' not in remaining:
+        return remaining, None, None
+
+    # Work on the fragment after the last comma
+    last_comma = remaining.rfind(',')
+    after_comma = remaining[last_comma + 1:].strip()
+
+    for kw in _TIER_KWS_SORTED:
+        # The tier keyword must cover most of the post-comma fragment
+        # (allow trailing weight tokens like "250g" that weren't stripped yet)
+        pat = re.compile(r'^\s*' + re.escape(kw) + r'[\s\w]*$', re.IGNORECASE)
+        if pat.match(after_comma):
+            cleaned = remaining[:last_comma].strip()
+            tier_type = TIER_MAP[kw]
+            return cleaned, tier_type, kw.title()
+
+    # Special case: bare "SO" after a comma is Sainsbury's SO Organic shorthand
+    # (the "(Colours May Vary)" parenthetical was stripped first, leaving ", SO").
+    if re.fullmatch(r'so', after_comma, re.IGNORECASE):
+        cleaned = remaining[:last_comma].strip()
+        return cleaned, 'dietary', 'SO Organic'
+
+    return remaining, None, None
+
+
+def extract_abv(name: str) -> Tuple[Optional[float], str]:
+    """Extract alcohol-by-volume percentage.
+
+    ``abv`` or ``vol`` marker is now **required** so that non-alcohol
+    percentages (``"100% Prune Juice"``, ``"5% Fat Mince"``) are not
+    incorrectly captured and stripped from the name.
+    """
+    if not isinstance(name, str):
+        return None, ''
+    pattern = r'(\d+(?:\.\d+)?)\s*%\s*(?:abv|vol)\b'
+    match = re.search(pattern, name, re.IGNORECASE)
+    if match:
+        abv = float(match.group(1))
+        remaining = re.sub(pattern, '', name, flags=re.IGNORECASE)
+        remaining = re.sub(r'\s+', ' ', remaining).strip()
+        return abv, remaining
+    return None, name
+
+
+def extract_tier(supermarket_brand: Optional[str]) -> Tuple[Optional[str], Optional[str]]:
+    if not supermarket_brand:
+        return None, None
+    brand_lower = str(supermarket_brand).lower()
+    for keyword, tier in TIER_MAP.items():
+        if keyword in brand_lower:
+            return tier, keyword.title()
+    return 'standard', None
+
+
+def extract_known_brand(name: str) -> Tuple[Optional[str], str]:
+    """
+    Detect a known commercial brand at the START of the product name only.
+    Returns (brand_title, name_with_brand_stripped).
+    Mid-string brand hits are intentionally ignored to prevent false
+    classification of own-brand or unbranded products.
+    """
+    if not isinstance(name, str):
+        return None, ''
+    name_str = name.strip()
+    sorted_brands = sorted(KNOWN_BRANDS, key=len, reverse=True)
+    for brand in sorted_brands:
+        pattern = re.compile(r'^' + re.escape(brand) + r'\b', re.IGNORECASE)
+        if pattern.match(name_str):
+            remaining = pattern.sub('', name_str).strip()
+            remaining = re.sub(r'\s+', ' ', remaining)
+            return _title_case(brand), remaining
+    return None, name_str
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: preprocess/cleaning.py
+----------------------------
+"""Lightweight string cleanup before extraction."""
+
+import re
+import unicodedata
+
+
+def normalize_accents(text: str) -> str:
+    nfd = unicodedata.normalize('NFD', text)
+    return ''.join(c for c in nfd if unicodedata.category(c) != 'Mn')
+
+
+def clean_parenthetical_notes(name) -> str:
+    if not isinstance(name, str):
+        return ''
+    # Specific short patterns known to add noise to core_product_name
+    name = re.sub(r'\(\s*serves?\s*\d+\s*\)', '', name, flags=re.IGNORECASE)
+    name = re.sub(r'\(\s*colou?rs?\s+(?:may\s+)?vary[^)]*\)', '', name, flags=re.IGNORECASE)
+    name = re.sub(r'\(\s*min\s+\d+\s*\)', '', name, flags=re.IGNORECASE)
+    name = re.sub(r'\(\s*sugar\s+levy[^)]*\)', '', name, flags=re.IGNORECASE)
+    name = re.sub(r'\(\s*food\s+pack\s*\)', '', name, flags=re.IGNORECASE)
+    name = re.sub(r'\(\s*\d+\s*g\s*\*\s*\)', '', name, flags=re.IGNORECASE)
+    # Generic: any parenthetical ≥30 chars or containing 'order by'
+    name = re.sub(r'\([^)]{30,}\)', '', name)
+    name = re.sub(r'\(order by[^)]*\)', '', name, flags=re.IGNORECASE)
+    return name.strip()
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: utils/sample_normalized_products.py
+-----------------------------------------
+"""
+Create a sample CSV from the already-normalised products dataset.
+
+Reads:  data/processed/normalized_products.csv
+Writes: data/processed/normalized_products_sample.csv
+"""
+
+from __future__ import annotations
+
+import argparse
+
+import pandas as pd
+
+from shopwiser.paths import normalized_products_path
+
+
+def main(*, n: int = 1000, seed: int = 42) -> None:
+    input_path = normalized_products_path(sample=False)
+    output_path = normalized_products_path(sample=True)
+
+    print("=" * 70)
+    print("ShopWiser Normalised Products Sampler")
+    print("=" * 70)
+    print(f"  Input:  {input_path}")
+    print(f"  Output: {output_path}")
+    print(f"  Sample: {n} rows (seed={seed})")
+
+    df = pd.read_csv(input_path, low_memory=False)
+    total = len(df)
+
+    if total == 0:
+        raise RuntimeError(f"Input CSV has no rows: {input_path}")
+
+    if total <= n:
+        sample_df = df
+    else:
+        sample_df = df.sample(n=n, random_state=seed)
+        # Keep the original CSV row order for easier diffs/inspection.
+        sample_df = sample_df.sort_index()
+
+    sample_df.to_csv(output_path, index=False)
+    print(f"\n✓ Wrote {len(sample_df):,} rows → {output_path}")
+
+
+if __name__ == "__main__":
+    p = argparse.ArgumentParser(description="Sample normalized_products.csv → normalized_products_sample.csv")
+    p.add_argument("--n", type=int, default=1000, help="Number of rows to sample (default: 1000)")
+    p.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility (default: 42)")
+    args = p.parse_args()
+
+    main(n=args.n, seed=args.seed)
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: audit/v5.py
+-----------------
+"""
+LLM cluster audit (Claude): evaluates ``audit_sample_50.csv`` per cluster.
+
+Run via: ``uv run python main.py audit [--sample]`` (requires ``ANTHROPIC_API_KEY``).
+"""
+
+import json
+import time
+
+import pandas as pd
+from anthropic import Anthropic
+
+from shopwiser.paths import cluster_outputs_path
+
+MODEL = 'claude-sonnet-4-5'
+PASS_THRESHOLD = 0.90
+
+SYSTEM_PROMPT = """You are a grocery product matching expert.
+Your job is to review a set of product listings from different UK supermarkets
+and decide whether they all represent the SAME core product.
+
+Rules:
+- Same core product = same brand (if branded), same flavour/variety, same weight/volume, same pack count
+- Minor name differences between retailers are fine (abbreviations, punctuation)
+- DIFFERENT product = different flavour, different variety, different weight, or different core product altogether
+- Own-brand vs branded = DIFFERENT (unless explicitly asked to allow)
+- If ANY product in the cluster is clearly a different product, the cluster FAILS
+
+Respond ONLY with valid JSON, no markdown, no explanation outside the JSON:
+{
+  "verdict": "PASS" or "FAIL",
+  "confidence": 0.0-1.0,
+  "reason": "one sentence explanation"
+}"""
+
+
+def build_prompt(cluster_df: pd.DataFrame) -> str:
+    lines = []
+    for _, row in cluster_df.iterrows():
+        brand = row.get('known_brand_clean', '')
+        brand_str = f" [{brand}]" if pd.notna(brand) and brand else ''
+        weight = f"{row['unit_value']}{row['unit_type']}" if pd.notna(row.get('unit_value')) else 'unknown weight'
+        pack = f" x{int(row['pack_quantity'])}" if pd.notna(row.get('pack_quantity')) and row['pack_quantity'] > 1 else ''
+        tier = row.get('tier_type', '')
+        tier_str = f" ({tier})" if pd.notna(tier) and tier else ''
+        lines.append(
+            f"  • {row['supermarket']}: {row['names']}{brand_str} — {weight}{pack}{tier_str}"
+        )
+    products_block = '\n'.join(lines)
+    cluster_id = cluster_df['cluster_id'].iloc[0]
+    match_type  = cluster_df['match_type'].iloc[0]
+    avg_score   = cluster_df['avg_pairwise_score'].iloc[0]
+    return (
+        f"Cluster {cluster_id} ({match_type}, avg_score={avg_score:.3f}, "
+        f"{len(cluster_df)} products from {cluster_df['supermarket'].nunique()} supermarkets):\n"
+        f"{products_block}\n\n"
+        f"Are ALL of these the same core grocery product?"
+    )
+
+
+def run_audit(*, sample: bool = False) -> None:
+    """Read ``audit_sample_50.csv`` from full or sample cluster output dir."""
+    out_root = cluster_outputs_path(sample=sample)
+    input_csv = out_root / 'audit_sample_50.csv'
+    output_csv = out_root / 'audit_results_v5.csv'
+    client = Anthropic()
+
+    print(f'Audit: {"sample" if sample else "full"} → {out_root}')
+    df = pd.read_csv(input_csv)
+    cluster_ids = sorted(df['cluster_id'].unique())
+    print(f'Loaded {len(df)} rows, {len(cluster_ids)} clusters')
+
+    results = []
+    passes  = 0
+    fails   = 0
+    errors  = 0
+
+    for i, cid in enumerate(cluster_ids):
+        cluster_df = df[df['cluster_id'] == cid].copy()
+        prompt = build_prompt(cluster_df)
+
+        try:
+            response = client.messages.create(
+                model=MODEL,
+                max_tokens=256,
+                system=SYSTEM_PROMPT,
+                messages=[{'role': 'user', 'content': prompt}]
+            )
+            raw = response.content[0].text.strip()
+            if raw.startswith('```'):
+                raw = raw.split('```')[1]
+                if raw.startswith('json'):
+                    raw = raw[4:]
+                raw = raw.strip()
+            parsed = json.loads(raw)
+            verdict    = parsed.get('verdict', 'ERROR').upper()
+            confidence = float(parsed.get('confidence', 0.0))
+            reason     = parsed.get('reason', '')
+        except Exception as e:
+            verdict    = 'ERROR'
+            confidence = 0.0
+            reason     = str(e)
+            errors    += 1
+
+        if verdict == 'PASS':
+            passes += 1
+        elif verdict == 'FAIL':
+            fails += 1
+
+        for idx in cluster_df.index:
+            results.append({
+                'cluster_id':   cid,
+                'product_idx':  df.loc[idx, 'product_idx'],
+                'supermarket':  df.loc[idx, 'supermarket'],
+                'names':        df.loc[idx, 'names'],
+                'unit_value':   df.loc[idx, 'unit_value'],
+                'unit_type':    df.loc[idx, 'unit_type'],
+                'match_type':   df.loc[idx, 'match_type'],
+                'avg_pairwise_score': df.loc[idx, 'avg_pairwise_score'],
+                'cluster_size': df.loc[idx, 'cluster_size'],
+                'verdict':      verdict,
+                'confidence':   confidence,
+                'reason':       reason,
+            })
+
+        status_icon = '✓' if verdict == 'PASS' else ('✗' if verdict == 'FAIL' else '?')
+        print(f'[{i+1:2d}/{len(cluster_ids)}] Cluster {cid:5d} {status_icon}  conf={confidence:.2f}  {reason[:80]}')
+
+        time.sleep(0.3)
+
+    total_scored = passes + fails
+    pass_rate    = passes / total_scored if total_scored else 0.0
+
+    print('\n' + '='*60)
+    print('AUDIT RESULTS')
+    print('='*60)
+    print(f'  Clusters evaluated : {len(cluster_ids)}')
+    print(f'  PASS               : {passes}')
+    print(f'  FAIL               : {fails}')
+    print(f'  ERROR              : {errors}')
+    print(f'  Pass rate          : {pass_rate*100:.1f}%  (target ≥{PASS_THRESHOLD*100:.0f}%)')
+    print(f'  Result             : {"✅ TARGET MET" if pass_rate >= PASS_THRESHOLD else "❌ BELOW TARGET"}')
+    print('='*60)
+
+    if fails:
+        print('\nFailed clusters:')
+        fail_rows = [r for r in results if r['verdict'] == 'FAIL']
+        seen = set()
+        for r in fail_rows:
+            if r['cluster_id'] not in seen:
+                seen.add(r['cluster_id'])
+                print(f"  Cluster {r['cluster_id']:5d} ({r['match_type']:12s} score={r['avg_pairwise_score']:.3f}): {r['reason']}")
+
+    out_df = pd.DataFrame(results)
+    out_df.to_csv(output_csv, index=False)
+    print(f'\nSaved detailed results → {output_csv}')
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FILE: audit/__init__.py
+-----------------------
+"""LLM cluster auditing (Claude)."""
+
+from .v5 import run_audit
+
+__all__ = ["run_audit"]
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

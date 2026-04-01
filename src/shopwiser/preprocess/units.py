@@ -41,7 +41,7 @@ def extract_multipack(name: str) -> Tuple[Optional[int], Optional[str], str, Opt
         (r'(\d+)\s*pk\b', 'count_pk'),
         (r'multipack\s*(\d+)', 'multipack'),
         (r'\b(\d+)\s+tea\s*bags?\b', 'bag_count'),
-        (r'\b(\d+)\s+(?:portions?|sticks?|pieces?|slices?)\b', 'bag_count'),
+        (r'\b(\d+)\s+(?:portions?|sticks?|pieces?)\b', 'bag_count'),
         (r'\b(\d+)\s*(?:bags?|sachets?|tabs?|pods?|capsules?)\b', 'bag_count'),
         (r'(\d+)\s*pcs?\b', 'count_pcs'),
     ]
@@ -69,6 +69,18 @@ def extract_multipack(name: str) -> Tuple[Optional[int], Optional[str], str, Opt
             remaining = name_str[:bag_s.start()] + name_str[bag_s.end():]
             remaining = re.sub(r'\s+', ' ', remaining).strip()
             return qty, 'count_s', remaining, None, None
+
+    # Leading item count: "4 Pork Sausage Rolls" / "12 Chicken Wings"
+    # Guard: quantity 2–40, followed by a capitalised word (real product noun),
+    # and NOT a year (>1900), weight-like number, or pure-digit string.
+    leading = re.match(r'^(\d{1,2})\s+([A-Z][a-zA-Z])', name_str)
+    if leading:
+        qty = int(leading.group(1))
+        if 2 <= qty <= 40:
+            remaining = name_str[leading.end(1):].strip()
+            remaining = re.sub(r'\s+', ' ', remaining).strip()
+            return qty, 'leading_count', remaining, None, None
+
     return None, None, name_str, None, None
 
 
@@ -114,8 +126,40 @@ def extract_and_standardize_unit(name: str) -> Tuple[Optional[float], Optional[s
     return None, None, name_str
 
 
+_COMMON_ML = [
+    25, 35, 50, 70, 75, 100, 125, 150, 175, 187, 200, 250, 275, 284, 300,
+    330, 355, 375, 400, 440, 450, 473, 500, 568, 600, 650, 700, 710, 750,
+    800, 850, 900, 946, 1000, 1136, 1500, 1750, 2000, 2250, 3000, 4000, 5000,
+]
+_COMMON_G = [
+    10, 20, 25, 30, 40, 50, 60, 75, 80, 90, 100, 110, 120, 125, 130, 140,
+    150, 160, 170, 175, 180, 190, 200, 210, 220, 225, 240, 250, 270, 280,
+    300, 320, 340, 350, 360, 375, 400, 425, 450, 454, 475, 500, 510, 530,
+    550, 600, 625, 650, 680, 700, 750, 800, 850, 900, 907, 950, 1000, 1100,
+    1200, 1250, 1360, 1500, 1800, 2000, 2270, 2500, 3000, 4000, 5000,
+]
+_SNAP_THRESHOLD = 0.03  # snap if within 3% of a standard size
+
+# Drink-bottle sizes eligible for the ×10 ppu-unit correction (see below).
+# Only include sizes that are unambiguously drink containers (not small extracts).
+_DRINK_BOTTLE_ML = frozenset([350, 355, 375, 440, 473, 500, 568, 700, 710, 750, 800])
+
+
+def _snap_to_standard(value: float, standards: list) -> float:
+    """Round *value* to the nearest standard size if within _SNAP_THRESHOLD, else return as-is."""
+    for s in standards:
+        if abs(value - s) / s <= _SNAP_THRESHOLD:
+            return float(s)
+    return value
+
+
 def infer_unit_from_price(price_str, price_per_unit_str, unit_col: str) -> Tuple[Optional[float], Optional[str]]:
-    """Derive product size from price ÷ price-per-unit (used as fallback when name extraction fails)."""
+    """Derive product size from price ÷ price-per-unit (used as fallback when name extraction fails).
+
+    Snaps the computed value to the nearest common package size (within 3%) to
+    avoid fractional artefacts like 751.9 ml that diverge from the 750 ml
+    extracted from a matching product's name, causing spurious cluster misses.
+    """
     try:
         price = float(price_str)
         ppu   = float(price_per_unit_str)
@@ -127,9 +171,22 @@ def infer_unit_from_price(price_str, price_per_unit_str, unit_col: str) -> Tuple
     if unit_col == 'kg':
         grams = (price / ppu) * 1000
         if 5 <= grams <= 25000:
-            return round(grams, 1), 'g'
+            return _snap_to_standard(round(grams, 1), _COMMON_G), 'g'
     elif unit_col in ('l', 'litre', 'liter'):
         ml = (price / ppu) * 1000
         if 10 <= ml <= 25000:
-            return round(ml, 1), 'ml'
+            snapped = _snap_to_standard(round(ml, 1), _COMMON_ML)
+            # Some retailers (e.g. ASDA) report ppu in pence/100ml but label
+            # the unit column as 'l'.  This yields an inferred value ~10× too
+            # small (e.g. 75ml instead of 750ml for a standard wine bottle).
+            # Heuristic: the only legitimate grocery liquid in the 50–100ml
+            # range is a 75ml mini-bottle, which is vanishingly rare.  If the
+            # snapped value sits in that band, try ×10 and prefer the scaled
+            # result when it snaps cleanly to a known bottle size.
+            if 50 <= snapped <= 100:
+                ml_scaled = round(ml * 10, 1)
+                snapped_scaled = _snap_to_standard(ml_scaled, _COMMON_ML)
+                if snapped_scaled != ml_scaled:  # ×10 landed on a standard size
+                    return snapped_scaled, 'ml'
+            return snapped, 'ml'
     return None, None
