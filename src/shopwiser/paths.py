@@ -18,6 +18,8 @@ DATA_PROCESSED = PROJECT_ROOT / "data" / "processed"
 DATA_OUTPUTS = PROJECT_ROOT / "data" / "outputs"
 DATA_OUTPUTS_CLUSTERS = DATA_OUTPUTS / "clusters"
 DATA_OUTPUTS_CLUSTERS_SAMPLE = DATA_OUTPUTS / "clusters_sample"
+DATA_OUTPUTS_ML_CLUSTERS = DATA_OUTPUTS / "ml_clusters"
+DATA_OUTPUTS_ML_CLUSTERS_SAMPLE = DATA_OUTPUTS / "ml_clusters_sample"
 DATA_EMBEDDINGS = PROJECT_ROOT / "data" / "embeddings"
 
 RAW_CSV = "raw.csv"
@@ -41,6 +43,11 @@ def normalized_products_path(*, sample: bool = False) -> Path:
 def cluster_outputs_path(*, sample: bool = False) -> Path:
     """Cluster CSVs and audit samples (separate folder so sample runs do not overwrite)."""
     return DATA_OUTPUTS_CLUSTERS_SAMPLE if sample else DATA_OUTPUTS_CLUSTERS
+
+
+def ml_matching_outputs_path(*, sample: bool = False) -> Path:
+    """FAISS + LightGBM matching outputs (separate from heuristic clusters)."""
+    return DATA_OUTPUTS_ML_CLUSTERS_SAMPLE if sample else DATA_OUTPUTS_ML_CLUSTERS
 
 
 # Backwards-compatible defaults (full dataset)

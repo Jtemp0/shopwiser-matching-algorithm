@@ -1,12 +1,14 @@
-"""Unified ShopWiser CLI: normalise, cluster, audit, similarity tests.
+"""Unified ShopWiser CLI: normalise, cluster, ml-match, audit, similarity tests.
 
 Examples:
     uv run python main.py normalise --sample
     uv run python main.py cluster --sample
+    uv run python main.py ml-match --sample
     uv run python main.py audit --sample
     uv run python main.py test-similarity
 
-Module entrypoints remain available, e.g. ``python -m shopwiser.clustering.main --sample``.
+Module entrypoints remain available, e.g. ``python -m shopwiser.clustering.main --sample`` or
+``python -m shopwiser.ml_matching.main --sample``.
 """
 
 from __future__ import annotations
@@ -25,6 +27,12 @@ def _cmd_cluster(args: argparse.Namespace) -> None:
     from shopwiser.clustering.main import main
 
     main(sample=args.sample)
+
+
+def _cmd_ml_match(args: argparse.Namespace) -> None:
+    from shopwiser.ml_matching.main import run_ml_matching
+
+    run_ml_matching(sample=args.sample)
 
 
 def _cmd_audit(args: argparse.Namespace) -> None:
@@ -81,6 +89,14 @@ def build_parser() -> argparse.ArgumentParser:
     pc = sub.add_parser('cluster', help='Cluster normalized CSV → clusters/ + audit_sample_50.csv')
     add_sample(pc)
     pc.set_defaults(func=_cmd_cluster)
+
+    pm = sub.add_parser(
+        'ml-match',
+        aliases=('match-ml',),
+        help='FAISS + LightGBM matching → data/outputs/ml_clusters/',
+    )
+    add_sample(pm)
+    pm.set_defaults(func=_cmd_ml_match)
 
     pa = sub.add_parser(
         'audit',

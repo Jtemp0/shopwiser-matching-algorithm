@@ -167,7 +167,7 @@ def normalize_product_name(row: pd.Series) -> dict:
     known_brand = result['known_brand']
     name_for_norm = f"{known_brand} {core}".strip() if known_brand else core
     normalized = normalize_accents(name_for_norm).lower()
-    normalized = normalized.replace("'", ' ')
+    normalized = normalized.replace("'", '')
     normalized = re.sub(r'[^a-z0-9\s]', ' ', normalized)
     normalized = re.sub(r'\s+', ' ', normalized).strip()
     result['normalized_name'] = normalized

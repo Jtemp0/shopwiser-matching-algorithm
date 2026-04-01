@@ -108,8 +108,19 @@ def run_clustering(df: pd.DataFrame) -> None:
         tok2  = toks[1] if len(toks) > 1 else (toks[0] if toks else 'unknown')
         return f'{cat}||{utype}||{tok2}'
 
+    def _own_key_h(row):
+        """v10: cross-category key — catches own-brand products miscategorised across SMs
+        (e.g. 'Gluten Free Bread' as bakery at Tesco vs free_from at Sainsbury's).
+        Uses tier + utype + first two name tokens; omits cat to allow cross-category comparison."""
+        tier  = str(row['tier_type'] or 'standard').lower().strip()
+        utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
+        toks  = _get_tokens(row['normalized_name'])
+        tok1  = toks[0] if toks else 'unknown'
+        tok2  = toks[1] if len(toks) > 1 else 'x'
+        return f'{tier}||{utype}||{tok1}||{tok2}'
+
     print('Building multi-key blocks for own-brand...')
-    pairs_own = build_multi_blocks(own_brand_df, [_own_key_a, _own_key_b, _own_key_c, _own_key_d, _own_key_e, _own_key_f, _own_key_g])
+    pairs_own = build_multi_blocks(own_brand_df, [_own_key_a, _own_key_b, _own_key_c, _own_key_d, _own_key_e, _own_key_f, _own_key_g, _own_key_h])
     print('Running comparisons...')
     matches_own = run_pass(own_brand_df, pairs_own, 'own_brand', UNIT_TOLERANCE_OWN_BRAND)
     print(f'Pass 2 complete: {len(matches_own):,} matches')
