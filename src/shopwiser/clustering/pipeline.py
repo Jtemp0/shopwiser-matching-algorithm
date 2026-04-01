@@ -763,20 +763,27 @@ def run_clustering(df: pd.DataFrame) -> None:
                 if _s > 0:
                     cluster_all_zero = False
                     cluster_max_score = max(cluster_max_score, _s)
-                if not _ok and _s > 0:
-                    # token_set_ratio fallback for same-type pairs that just miss the threshold
+                if not _ok and _s >= _comp_thresh * 0.80:
+                    # Token-sort fallback for pairs that narrowly miss the threshold.
+                    # Requirements:
+                    #   • Base score ≥ 80% of threshold (not low-confidence pairs).
+                    #   • Uses token_sort_ratio (NOT token_set_ratio) — token_set
+                    #     gives ~100% when one name is a subset of the other (e.g.
+                    #     "Tomato Soup" ⊂ "Cream of Tomato Soup"), creating false
+                    #     positives.  token_sort_ratio is length-sensitive.
                     _na = str(_mr.get('normalized_name', ''))
                     _nb = str(_cr.get('normalized_name', ''))
                     if ptype == 'branded':
                         _brand = str(_mr.get('known_brand_clean', '') or '').lower()
                         _na = _strip_brand(_na, _brand)
                         _nb = _strip_brand(_nb, _brand)
-                    _tset = fuzz.token_set_ratio(_na, _nb) / 100.0
-                    _s2 = 0.55 * _s + 0.45 * _tset
+                    _tsort = fuzz.token_sort_ratio(_na, _nb) / 100.0
+                    _s2 = 0.55 * _s + 0.45 * _tsort
                     if _s2 >= _comp_thresh:
-                        _ok = True
-                        _s = _s2
-                elif not _ok and _s >= _comp_thresh:
+                        _ok = True; _s = _s2
+                # Direct acceptance: score already at or above completion threshold
+                # (compute_similarity used the stricter main threshold internally).
+                if not _ok and _s >= _comp_thresh:
                     _ok = True
                 if _ok and _s > best_score:
                     best_score = _s
@@ -847,7 +854,9 @@ def run_clustering(df: pd.DataFrame) -> None:
                 _ca, _cb = _cands
                 _ra, _rb = df.loc[_ca], df.loc[_cb]
                 _ok_ab, _ = compute_similarity(_ra, _rb, pass_type=_ptype2, unit_tolerance=_utol2)
-                if _ok_ab or True:   # cross-SM pair check is best-effort
+                if _ok_ab:
+                    # Both new candidates must be mutually compatible; if not,
+                    # fall through to the single-best-SM path below.
                     for _cidx in _cands:
                         _sing_used.add(_cidx)
                         _p5c_sing.add(_sing_pos[_cidx])
@@ -968,6 +977,284 @@ def run_clustering(df: pd.DataFrame) -> None:
           f'low_score={_p5_score_diag["low_score"]}  '
           f'max_low_score={_p5_score_diag["max_low"]:.3f}')
 
+    # ============================================================
+    # PASS 5D — 2-WAY × 2-WAY MERGE  +  3-WAY ABSORBS 2-WAY
+    # ============================================================
+    # Passes 5B/5C only consume singletons.  Many potential 4-way clusters
+    # have their 3rd or 4th SM product already in a 2-way cluster — not a
+    # singleton — so they were invisible to prior completion passes.
+    #
+    # Sub-pass A: For each remaining 3-way cluster find the missing SM's
+    #   product inside a 2-way cluster; absorb the whole 2-way → resolve
+    #   any same-SM dup → 4-way.
+    # Sub-pass B: Pair complementary 2-way clusters that together cover all
+    #   4 SMs (e.g. {ASDA|Sains} + {Morrisons|Tesco}) → direct 4-way merge.
+
+    print('\nPass 5D — 2-way absorption (sub-A: 3w+2w, sub-B: 2w+2w)...')
+
+    # ── Build index over current 2-way cluster members ─────────────────────
+    _p2_branded_idx: dict = defaultdict(list)   # (sm, brand_lower) → [(pidx, cl_pos)]
+    _p2_own_idx:    dict = defaultdict(list)    # (sm, tier, cat)   → [(pidx, cl_pos)]
+    _p2_unb_idx:    dict = defaultdict(list)    # (sm, cat, ut)     → [(pidx, cl_pos)]
+    _p2_cl_of:      dict = {}                  # pidx → cluster position
+
+    for _i, _cl in enumerate(final_clusters):
+        if len(_cl) != 2 or _cl['supermarket'].nunique() != 2:
+            continue
+        for _pidx in _cl.index:
+            _r    = _cl.loc[_pidx]
+            _sm   = _r['supermarket']
+            _pt   = _r['product_type']
+            _cat  = _r['cat_norm']
+            _p2_cl_of[_pidx] = _i
+            if _pt == 'branded':
+                _bl = str(_r['known_brand_clean'] or '').lower()
+                if _bl:
+                    _p2_branded_idx[(_sm, _bl)].append((_pidx, _i))
+            elif _pt == 'own_brand':
+                _p2_own_idx[(_sm, _r['tier_type'], _cat)].append((_pidx, _i))
+            else:
+                _ut = _r['unit_type'] if pd.notna(_r['unit_type']) else ''
+                _p2_unb_idx[(_sm, _cat, _ut)].append((_pidx, _i))
+
+    _p5d_cl_used: set = set()   # cluster positions already consumed by 5D
+
+    def _p2_lookup(ptype, miss_sm, brand3, tier3, cat3, ut3, uv3):
+        """Return (pidx, cl_pos) pairs for 2-way cluster members matching the missing SM."""
+        if ptype == 'branded':
+            if brand3.empty:
+                return []
+            bl = str(brand3.iloc[0]).lower()
+            raw = _p2_branded_idx.get((miss_sm, bl), [])
+        elif ptype == 'own_brand':
+            tv = tier3.iloc[0] if not tier3.empty else np.nan
+            cv = cat3.iloc[0]  if not cat3.empty  else np.nan
+            raw = _p2_own_idx.get((miss_sm, tv, cv), [])
+            if not raw and not cat3.empty:
+                # Tier fallback: try all tiers for this category
+                cv = cat3.iloc[0]
+                raw = []
+                for _tb in [np.nan, 'standard', 'value', 'premium', 'dietary']:
+                    raw.extend(_p2_own_idx.get((miss_sm, _tb, cv), []))
+                raw = list(dict.fromkeys(raw))
+        else:
+            cv = cat3.iloc[0] if not cat3.empty else np.nan
+            uv = ut3.iloc[0]  if not ut3.empty  else ''
+            raw = _p2_unb_idx.get((miss_sm, cv, uv), [])
+        # Filter: skip already-consumed 2-way clusters
+        raw = [(p, cp) for p, cp in raw if cp not in _p5d_cl_used]
+        # Unit pre-filter
+        if pd.notna(uv3) and uv3 > 0:
+            raw = [(p, cp) for p, cp in raw
+                   if not pd.notna(df.at[p, 'unit_value'])
+                   or max(df.at[p, 'unit_value'], uv3) / min(df.at[p, 'unit_value'], uv3)
+                   <= 1.0 + _P5_PRE_UV_TOL * 2]
+        return raw
+
+    # ── Sub-pass A: 3-way + 2-way → 4-way ─────────────────────────────────
+    _rebuild_3way = [
+        (i, cl) for i, cl in enumerate(final_clusters)
+        if len(cl) == 3 and cl['supermarket'].nunique() == 3
+    ]
+    print(f'  Sub-A: {len(_rebuild_3way):,} remaining 3-way clusters')
+
+    _p5d_old_pos:  set  = set()
+    _p5d_new_cls:  list = []
+    _p5da_upgraded = 0
+
+    for _3pos, _cl3 in tqdm(_rebuild_3way, desc='  Pass=5D-A', leave=True):
+        _miss = list(_ALL_SMS_COMPLETION - set(_cl3['supermarket']))[0]
+        _pt3  = _cl3['product_type'].mode()[0]
+        _b3   = _cl3['known_brand_clean'].dropna()
+        _ti3  = _cl3['tier_type'].dropna()
+        _ca3  = _cl3['cat_norm'].dropna()
+        _ut3  = _cl3['unit_type'].dropna()
+        _uv3  = _cl3['unit_value'].mean()
+        _utol = COMPLETION_UNIT_TOL.get(_pt3, UNIT_TOLERANCE_BRANDED)
+
+        raw_cands = _p2_lookup(_pt3, _miss, _b3, _ti3, _ca3, _ut3, _uv3)
+        if not raw_cands:
+            continue
+
+        # Name-trim the candidate list
+        filt_pidxs = [p for p, _ in raw_cands]
+        filt_pidxs = _p5_name_trim(_cl3, filt_pidxs, _COMPLETION_MAX_CANDS.get(_pt3, 200))
+        raw_cands  = [(p, _p2_cl_of[p]) for p in filt_pidxs]
+
+        best_score = 0.0; best_cand = None; best_mem = None
+        for _m in _cl3.index:
+            for _cp, _cp_pos in raw_cands:
+                if _cp_pos in _p5d_cl_used:
+                    continue
+                _ok, _s = compute_similarity(_cl3.loc[_m], df.loc[_cp],
+                                             pass_type=_pt3, unit_tolerance=_utol)
+                if _ok and _s > best_score:
+                    best_score = _s; best_cand = _cp; best_mem = _m
+
+        if best_cand is None:
+            continue
+
+        _2pos = _p2_cl_of[best_cand]
+        _cl2  = final_clusters[_2pos]
+
+        # "Extract D only": add the missing-SM member (best_cand) directly to the
+        # 3-way. The 2-way's other member (which overlaps with a SM already in the
+        # 3-way) is released back as a singleton — avoids the messy 5-product merge
+        # that fix_same_supermarket_violation struggles to clean cleanly.
+        _cl4 = pd.concat([_cl3, df.loc[[best_cand]]])
+        _cl4_clean, _ = _purge_hard_conflicts(_cl4)
+
+        if len(_cl4_clean) == 4 and _cl4_clean['supermarket'].nunique() == 4:
+            _p5d_old_pos.add(_3pos)
+            _p5d_old_pos.add(_2pos)
+            _p5d_cl_used.add(_2pos)
+            _p5d_new_cls.append(_cl4_clean)
+            # Orphan the 2-way's other member as a singleton so it can be
+            # picked up by Sub-B or a subsequent pass.
+            _other = [i for i in _cl2.index if i != best_cand]
+            for _oi in _other:
+                _p5d_new_cls.append(df.loc[[_oi]])
+            pair_scores[(min(best_mem, best_cand), max(best_mem, best_cand))] = best_score
+            matches_completion.append((best_mem, best_cand, best_score))
+            _p5da_upgraded += 1
+
+    print(f'  Sub-A complete: {_p5da_upgraded:,} 3-way → 4-way')
+
+    # ── Sub-pass B: complementary 2-way + 2-way → 4-way ───────────────────
+    # E.g. {ASDA|Sains} cluster finds a matching {Morrisons|Tesco} cluster.
+    _COMP_PAIRS = [
+        (frozenset({'ASDA', 'Sains'}),      frozenset({'Morrisons', 'Tesco'})),
+        (frozenset({'ASDA', 'Tesco'}),      frozenset({'Morrisons', 'Sains'})),
+        (frozenset({'ASDA', 'Morrisons'}),  frozenset({'Sains', 'Tesco'})),
+    ]
+
+    # Index 2-way clusters by SM pair + blocking key
+    _p2_by_pair: dict = defaultdict(list)
+    # key: (sm_pair_frozen, ptype, lookup_key) → list of cluster positions
+    for _i, _cl in enumerate(final_clusters):
+        if len(_cl) != 2 or _cl['supermarket'].nunique() != 2 or _i in _p5d_cl_used:
+            continue
+        _smp  = frozenset(_cl['supermarket'])
+        _ptb  = _cl['product_type'].mode()[0]
+        for _pidx in _cl.index:
+            _r = _cl.loc[_pidx]
+            if _ptb == 'branded':
+                _bk = str(_r['known_brand_clean'] or '').lower()
+                if _bk:
+                    _p2_by_pair[(_smp, _ptb, _bk)].append(_i)
+                    break
+            elif _ptb == 'own_brand':
+                _ck = (_r['tier_type'], _r['cat_norm'])
+                _p2_by_pair[(_smp, _ptb, _ck)].append(_i)
+                break
+            else:
+                _uk = (_r['cat_norm'], _r['unit_type'] if pd.notna(_r['unit_type']) else '')
+                _p2_by_pair[(_smp, _ptb, _uk)].append(_i)
+                break
+    # Deduplicate (same cluster could be inserted multiple times)
+    for _k in _p2_by_pair:
+        _p2_by_pair[_k] = list(dict.fromkeys(_p2_by_pair[_k]))
+
+    _p5db_upgraded = 0
+    _p5db_old: set = set()
+    _p5db_new: list = []
+
+    for _sm_pair_a, _sm_pair_b in _COMP_PAIRS:
+        # Iterate over all 2-way clusters in pair_a
+        _pair_a_entries = [
+            (_i, _cl) for _i, _cl in enumerate(final_clusters)
+            if len(_cl) == 2 and _cl['supermarket'].nunique() == 2
+            and frozenset(_cl['supermarket']) == _sm_pair_a
+            and _i not in _p5d_cl_used and _i not in _p5db_old
+        ]
+
+        for _apos, _cla in tqdm(_pair_a_entries, desc=f'  Pass=5D-B {"|".join(sorted(_sm_pair_a))}', leave=False):
+            _pta  = _cla['product_type'].mode()[0]
+            _uva  = _cla['unit_value'].mean()
+            _utol = COMPLETION_UNIT_TOL.get(_pta, UNIT_TOLERANCE_BRANDED)
+
+            # Build lookup key for pair_b
+            _rep = _cla.iloc[0]
+            if _pta == 'branded':
+                _lk = str(_rep['known_brand_clean'] or '').lower()
+                if not _lk:
+                    continue
+                _bpos_list = list(dict.fromkeys(
+                    _p2_by_pair.get((_sm_pair_b, _pta, _lk), [])
+                ))
+            elif _pta == 'own_brand':
+                _lk = (_rep['tier_type'], _rep['cat_norm'])
+                _bpos_list = list(dict.fromkeys(
+                    _p2_by_pair.get((_sm_pair_b, _pta, _lk), [])
+                ))
+                if not _bpos_list:
+                    # Tier fallback
+                    for _tb in [np.nan, 'standard', 'value', 'premium', 'dietary']:
+                        _bpos_list.extend(
+                            _p2_by_pair.get((_sm_pair_b, _pta, (_tb, _rep['cat_norm'])), [])
+                        )
+                    _bpos_list = list(dict.fromkeys(_bpos_list))
+            else:
+                _lk = (_rep['cat_norm'],
+                       _rep['unit_type'] if pd.notna(_rep['unit_type']) else '')
+                _bpos_list = list(dict.fromkeys(
+                    _p2_by_pair.get((_sm_pair_b, _pta, _lk), [])
+                ))
+
+            _bpos_list = [bp for bp in _bpos_list
+                          if bp not in _p5d_cl_used and bp not in _p5db_old]
+            if not _bpos_list:
+                continue
+
+            # Unit pre-filter on pair_b candidates
+            if pd.notna(_uva) and _uva > 0:
+                _bpos_list = [
+                    bp for bp in _bpos_list
+                    if final_clusters[bp]['unit_value'].dropna().empty
+                    or (abs(final_clusters[bp]['unit_value'].mean() - _uva) / _uva
+                        <= _P5_PRE_UV_TOL * 2)
+                ]
+            if not _bpos_list:
+                continue
+
+            best_score = 0.0; best_bpos = None
+            for _bpos in _bpos_list[:_COMPLETION_MAX_CANDS.get(_pta, 200)]:
+                _clb = final_clusters[_bpos]
+                # Compare best member of A vs best member of B
+                for _ai in _cla.index:
+                    for _bi in _clb.index:
+                        _ok, _s = compute_similarity(
+                            _cla.loc[_ai], _clb.loc[_bi],
+                            pass_type=_pta, unit_tolerance=_utol)
+                        if _ok and _s > best_score:
+                            best_score = _s
+                            best_bpos  = _bpos
+
+            if best_bpos is None:
+                continue
+
+            _clb     = final_clusters[best_bpos]
+            _merged  = pd.concat([_cla, _clb])
+            _merged, _ = _purge_hard_conflicts(_merged)
+            if len(_merged) < 4 or _merged['supermarket'].nunique() < 4:
+                continue
+
+            _p5db_old.add(_apos)
+            _p5db_old.add(best_bpos)
+            _p5d_cl_used.add(_apos)
+            _p5d_cl_used.add(best_bpos)
+            _p5db_new.append(_merged)
+            _p5db_upgraded += 1
+
+    print(f'  Sub-B complete: {_p5db_upgraded:,} 2-way × 2-way → 4-way')
+
+    # Rebuild final_clusters after Pass 5D
+    _p5d_all_old = _p5d_old_pos | _p5db_old
+    final_clusters = [cl for i, cl in enumerate(final_clusters) if i not in _p5d_all_old]
+    final_clusters.extend(_p5d_new_cls)
+    final_clusters.extend(_p5db_new)
+    print(f'Pass 5D complete: {_p5da_upgraded + _p5db_upgraded:,} new 4-way clusters')
+
     # Assign sequential cluster IDs (largest first)
     final_clusters.sort(key=lambda g: -len(g))
     cluster_id_map = {}
@@ -1038,7 +1325,18 @@ def run_clustering(df: pd.DataFrame) -> None:
     summary_rows = []
     for cid, group in tqdm(clusters_df.groupby('cluster_id'), desc='Building summary'):
         names_avail = group['core_product_name'].dropna()
-        consensus   = names_avail.loc[names_avail.str.len().idxmin()] if len(names_avail) else ''
+        if len(names_avail) == 0:
+            consensus = ''
+        else:
+            # Prefer the most-common name; when all names are unique fall back to
+            # the median-length name (avoids the over-stripped shortest-name bug
+            # where "Chai" was chosen over "Masala Chai Tea").
+            vc = names_avail.value_counts()
+            if vc.iloc[0] > 1:
+                consensus = vc.index[0]
+            else:
+                by_len = names_avail.sort_values(key=lambda s: s.str.len())
+                consensus = by_len.iloc[len(by_len) // 2]
         summary_rows.append({
             'cluster_id':                  cid,
             'cluster_size':                len(group),

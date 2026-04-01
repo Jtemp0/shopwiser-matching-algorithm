@@ -60,6 +60,18 @@ def _unit_value_compatible(uv_a, uv_b, tolerance, pq_a=None, pq_b=None) -> bool:
             # Case B: side-B reports total weight, side-A reports per-unit
             if per_b > 0 and max(uva, per_b) / min(uva, per_b) <= (1.0 + tolerance):
                 return True
+    # One-sided pack normalisation: one SM reports total size, the other reports per-unit
+    # with a pack count (e.g. ASDA "Beck's 1.65L" vs Sains "Beck's 275ml x6").
+    if pqa_ok and not pqb_ok:
+        # A has pack count; check if B's value ≈ A's total (uva × pq_a)
+        total_a = uva * float(pq_a)
+        if total_a > 0 and max(total_a, uvb) / min(total_a, uvb) <= (1.0 + tolerance):
+            return True
+    elif not pqa_ok and pqb_ok:
+        # B has pack count; check if A's value ≈ B's total (uvb × pq_b)
+        total_b = uvb * float(pq_b)
+        if total_b > 0 and max(uva, total_b) / min(uva, total_b) <= (1.0 + tolerance):
+            return True
     return False
 
 
@@ -95,7 +107,7 @@ def _pack_compatible_branded(pq_a, pq_b) -> bool:
         return True
     if not a_valid or not b_valid:
         known_qty = float(pq_b if b_valid else pq_a)
-        return known_qty <= 8   # allow common multipack sizes; unit_value is the real guard
+        return known_qty <= 20   # allow common multipack sizes up to 20; unit_value is the real guard
     ratio = max(float(pq_a), float(pq_b)) / min(float(pq_a), float(pq_b))
     return ratio <= PACK_QTY_MAX_RATIO
 
@@ -103,7 +115,7 @@ def _pack_compatible_branded(pq_a, pq_b) -> bool:
 def _get_wine_type(text: str) -> str:
     t = text.lower()
     for tok in WINE_TYPE_TOKENS:
-        if tok in t:
+        if re.search(r'\b' + re.escape(tok) + r'\b', t):
             return tok
     return ''
 
@@ -123,7 +135,7 @@ def _get_milk_fat(text: str):
 
 def _has_diet_marker(text: str) -> bool:
     t = text.lower()
-    if 'diet' in t:
+    if re.search(r'\bdiet\b', t):
         return True
     return any(p in t for p in NAS_PATTERNS)
 

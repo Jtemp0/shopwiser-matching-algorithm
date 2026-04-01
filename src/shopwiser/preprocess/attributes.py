@@ -20,7 +20,9 @@ def extract_attributes(name: str) -> Tuple[List[str], List[str], str]:
                 found_keywords.append(kw)
                 remaining = pat.sub('', remaining)
                 remaining = re.sub(r'\s+', ' ', remaining).strip()
-                break
+                # NOTE: no `break` — continue to catch all matching keywords
+                # for this type (e.g. "Fat Free" AND "No Added Sugar" are
+                # both `diet` and both should be stripped from the name).
     return found_types, found_keywords, remaining
 
 

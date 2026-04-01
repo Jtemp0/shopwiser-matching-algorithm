@@ -14,19 +14,22 @@ SUPERMARKET_BRANDS: Dict[str, List[str]] = {
         'ASDA Extra Special', 'Asda Extra Special', 'ASDA Smart Price', 
         'Just Essentials by ASDA', 'Just Essentials', 'ASDA Plant Based', 
         'ASDA Chosen By You', 'ASDA Free From', 'COOK by ASDA', 'BAKE by ASDA', 
-        'The BAKERY at ASDA', 'OMV! by Asda', 'George Home', 'George', 'ASDA', 'Asda'
+        'The BAKERY at ASDA', 'OMV! by Asda', 'OMV!', 'George Home', 'George', 'ASDA', 'Asda'
     ],
     'Morrisons': [
         'Morrisons The Best', 'Morrisons Savers', 'Morrisons Free From', 
         'Morrisons Organic', 'Morrisons Market Street', 'Market Street', 
         'Morrisons Plant Revolution', 'Morrisons For Farmers', 'M Kitchen', 
-        'Savers', 'Morrisons', 'Morrison' # Added to catch typos in raw data
+        'Savers', 'Morrisons', 'Morrison',  # Added to catch typos in raw data
     ],
     'Sains': [
-        "Sainsbury's Taste the Difference", "Taste the Difference", 
-        "Sainsbury's Basics", "Stamford Street Co.", "Stamford Street", 
-        "Sainsbury's Free From", "Sainsbury's SO Organic", 'SO Organic', 
-        "Sainsbury's Plant Pioneers", 'JS', "Sainsbury's", "Sainsburys"
+        "Sainsbury's Taste the Difference", "Taste the Difference",
+        "Sainsbury's Basics", "Stamford Street Co.", "Stamford Street",
+        "Sainsbury's Free From", "Sainsbury's SO Organic", 'SO Organic',
+        "Sainsbury's Plant Pioneers",
+        "Sainsbury's Inspired to Cook", "Inspired to Cook",
+        "Sainsbury's Be Good to Yourself", "Be Good to Yourself",
+        'JS', "Sainsbury's", "Sainsburys"
     ],
 }
 
@@ -45,9 +48,12 @@ TIER_MAP = {
     'everyday essentials': 'value', 'simply': 'value', 'honest value': 'value',
     
     # Dietary / Specialty
-    'plant chef': 'dietary', 'plant based': 'dietary', 'omv!': 'dietary', 
+    'plant chef': 'dietary', 'plant based': 'dietary', 'omv!': 'dietary',
     'plant pioneers': 'dietary', 'plant menu': 'dietary', 'vemondo': 'dietary',
-    'plant revolution': 'dietary', 'gro': 'dietary', 'free from': 'dietary'
+    'plant revolution': 'dietary', 'gro': 'dietary', 'free from': 'dietary',
+    'so organic': 'dietary', 'organic': 'dietary',
+    'be good to yourself': 'dietary',   # Sainsbury's healthier-eating range
+    'inspired to cook': 'dietary',      # Sainsbury's recipe kit range
 }
 
 
@@ -87,6 +93,7 @@ KNOWN_BRANDS: List[str] = [
     'cheerios', 'shredded wheat', 'special k', 'corn flakes', 'rice krispies',
     'coco pops', 'frosties', 'nature valley', 'belvita', 'nakd', 'trek', 'kind',
     'kellogg\'s', 'kelloggs', 'nestle', 'quaker', 'scotts', 'flahavan\'s',
+    'nesquik',
 
     # Bread, bakery, cakes
     'warburtons', 'hovis', 'kingsmill', 'allinson', 'soreen', 'jus-rol',
@@ -184,7 +191,7 @@ KNOWN_BRANDS: List[str] = [
     'campo viejo', 'villa maria', 'oyster bay', '19 crimes', 'jam shed',
     'barefoot', 'mcguigan', 'jacob\'s creek', 'jacobs creek',
     'lindeman\'s', 'lindemans', 'wolf blass', 'errazuriz', 'trapiche',
-    'freixenet', 'moët', 'moet', 'veuve clicquot', 'bollinger', 'lanson',
+    'freixenet', 'moët', 'moet', 'veuve clicquot', 'bollinger', 'lanson', 'pommery',
     'squealing pig', 'wollemi', 'giesen',
 
     # Health, protein, wellness
@@ -207,7 +214,7 @@ KNOWN_BRANDS: List[str] = [
     'oatly', 'alpro', 'provamil', 'koko', 'nutpods',
 
     # Tins & specialist food brands
-    'east end', 'fudco', 'natco', 'ktc',
+    'east end', 'fudco', 'natco', 'ktc', 'indus', 'indus foods',
     'new covent garden',
 
     # Misc
@@ -249,6 +256,7 @@ KNOWN_BRANDS: List[str] = [
     'jelly tots', 'toffee crisp', 'munchies', 'yorkie', 'twirl', 'wispa', 'crunchie',
     'double decker', 'flake', 'curly wurly', 'chomps', 'fudge', 'bournville', 'topic', 
     'picnic', 'boost', 'starbar', 'ritter sport', 'montezuma\'s', 'montezumas', 'ombar',
+    'the natural confectionery company', 'natural confectionery co',
 
     # Crisps & savoury snacks
     'space raiders', 'wheat crunchies', 'roysters', 'pipers', 'burts', 'eat real', 
@@ -375,5 +383,9 @@ _VAPE_KEYWORDS = frozenset([
     'e-liquid', 'e liquid', 'eliquid', 'vape', 'vaping', 'pod', 'pods',
     'nicotine', 'tobacco', 'cigarette', 'e-cig', 'ecig', 'juul', 'elf bar',
     'disposable', 'menthol e', 'nic salt',
-    'vuse', 'velo', 'nordic spirit', 'ske crystal', 'carlton', 'vampire vape', 'aqua vape', 'vapes bars'
+    'vuse', 'velo', 'nordic spirit', 'ske crystal', 'carlton', 'vampire vape', 'aqua vape', 'vapes bars',
+    # Additional vape device brands observed in dataset
+    'ignite', 'slix', 'found mary', 'geek bar', 'nasty bar', 'lost mary',
+    'randm', 'r and m', 'vozol', 'hayati', 'crystal bar', 'elux', 'nerd bar',
+    'frunk bar', 'aroma king', 'riot bar', 'hyde', 'puff bar',
 ])

@@ -17,14 +17,14 @@ UNIT_TOLERANCE_UNBRANDED = 0.05
 # are already tightly constrained.  Minor size reporting differences between retailers
 # (e.g. 400 g vs 415 g) are acceptable there.
 COMPLETION_UNIT_TOL = {
-    'branded':   0.15,
-    'own_brand': 0.12,
-    'unbranded': 0.12,
+    'branded':   0.25,   # widened: retailers often differ slightly in stated weight
+    'own_brand': 0.22,
+    'unbranded': 0.22,
 }
 
-FUZZY_THRESHOLD            = 0.750
-FUZZY_THRESHOLD_OWNBRAND   = 0.805
-FUZZY_THRESHOLD_NOUNIT     = 0.800
+FUZZY_THRESHOLD            = 0.710   # lowered from 0.720 — meat/type ONE_SIDED guards protect precision
+FUZZY_THRESHOLD_OWNBRAND   = 0.775   # lowered from 0.805
+FUZZY_THRESHOLD_NOUNIT     = 0.790   # lowered from 0.800
 # v8: per-type thresholds for the completion passes (5B/5C).
 # Branded can go lower because brand pre-filters heavily; own_brand needs
 # to stay high because generic names (e.g. "black beans" vs "black eyed
@@ -36,7 +36,7 @@ COMPLETION_THRESHOLD = {
 }
 FUZZY_THRESHOLD_COMPLETION = 0.600   # kept for backward-compat references
 
-SHORT_STRIPPED_THRESHOLD = 0.76   # ≤3 equal-token branded pairs (v7: lowered from 0.87;
+SHORT_STRIPPED_THRESHOLD = 0.74   # ≤3 equal-token branded pairs (v7: lowered from 0.87;
                                   # ingredient/flavor conflicts caught by FLAVOR_NAMED_TOKENS and
                                   # ONE_SIDED_CONFLICT_TOKENS, making the elevated threshold
                                   # unnecessarily strict for legitimate matches with minor penalties)
@@ -135,6 +135,19 @@ ONE_SIDED_CONFLICT_TOKENS = frozenset({
                  #      (DIET_PENALTY alone insufficient; hard-reject is correct)
     # 'cup' removed v8: caused false rejections for pot-noodle naming variants
     #   ("cup noodles pot" vs "noodles pot" blocked incorrectly)
+    # Product-category discriminators: if one product names the category type and the
+    # other doesn't, they are different things (e.g. "Tomato Soup" ≠ "Tomato Sauce").
+    'soup',      # "Tomato Soup" vs "Tomato Sauce" / "Tomato Paste"
+    'jam',       # "Strawberry Jam" vs "Strawberry Yogurt" / "Strawberry Sauce"
+    'juice',     # "Apple Juice" vs "Apple Sauce" / "Apple Cider"
+    'eyed',      # "black-eyed beans" vs "black beans" — distinct legume variety
+    'plum',      # "plum tomatoes" vs "chopped/tinned tomatoes" — distinct variety
+    # Meat / poultry / fish directional tokens: present in one but absent in the
+    # other is always a hard differentiator (e.g. "chicken pizza" ≠ "four cheese pizza").
+    # These are also in FLAVOR_NAMED_TOKENS (fires when BOTH products have named
+    # tokens that differ); ONE_SIDED adds the asymmetric case.
+    'chicken', 'beef', 'pork', 'lamb', 'turkey', 'duck',
+    'salmon', 'tuna', 'cod', 'bacon', 'prawn',
 })
 
 # PREPARATION_CONFLICT_PAIRS: mutually-exclusive preparation tokens —
@@ -167,11 +180,11 @@ NAS_PATTERNS = ['no added sugar', 'sugar free', 'sugarfree', 'zero sugar', 'no s
 BRAND_EXCLUSIONS = {'extra', 'essential', 'basics', 'finest', 'select', 'special'}
 
 CATEGORY_ALIASES = {
-    'food_cupboard': 'grocery',
-    'fresh_food':    'grocery',
-    'bakery':        'grocery',
-    'frozen':        'grocery',
-    'free-from':     'grocery',
+    # Normalise only the hyphenated variant — all other raw categories are already
+    # distinct enough to serve as fine-grained blocking keys.  Collapsing everything
+    # into 'grocery' destroyed blocking precision (frozen ↔ fresh, bakery ↔ cupboard)
+    # and caused the own-brand completion pool to span the entire supermarket range.
+    'free-from': 'free_from',
 }
 
 # Pass 4 (cross-bucket catch-all) threshold
