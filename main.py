@@ -4,6 +4,7 @@ Examples:
     uv run python main.py normalise --sample
     uv run python main.py cluster --sample
     uv run python main.py ml-match --sample
+    uv run python main.py export-demo
     uv run python main.py audit --sample
     uv run python main.py test-similarity
 
@@ -15,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 
 
 def _cmd_normalise(args: argparse.Namespace) -> None:
@@ -33,6 +35,24 @@ def _cmd_ml_match(args: argparse.Namespace) -> None:
     from shopwiser.ml_matching.main import run_ml_matching
 
     run_ml_matching(sample=args.sample)
+
+
+def _cmd_export_demo(args: argparse.Namespace) -> None:
+    from shopwiser.utils.cofounder_demo_export import export_cofounder_demo
+
+    long_p, wide_p, html_p = export_cofounder_demo(
+        ml_clusters_csv=Path(args.input) if args.input else None,
+        out_dir=Path(args.out_dir) if args.out_dir else None,
+        use_stratified_fallback=args.stratified,
+        n_clusters=args.n_clusters,
+        seed=args.seed,
+        write_html=args.html,
+    )
+    print('Wrote:')
+    print(f'  {long_p}')
+    print(f'  {wide_p}')
+    if html_p:
+        print(f'  {html_p}')
 
 
 def _cmd_audit(args: argparse.Namespace) -> None:
@@ -97,6 +117,33 @@ def build_parser() -> argparse.ArgumentParser:
     )
     add_sample(pm)
     pm.set_defaults(func=_cmd_ml_match)
+
+    pdemo = sub.add_parser(
+        'export-demo',
+        aliases=('demo',),
+        help='Build cofounder demo CSV/HTML from ml_clusters.csv → data/outputs/demo/',
+    )
+    pdemo.add_argument(
+        '--input',
+        type=str,
+        default=None,
+        help='Path to ml_clusters.csv (default: data/outputs/ml_clusters/ml_clusters.csv)',
+    )
+    pdemo.add_argument(
+        '--out-dir',
+        type=str,
+        default=None,
+        help='Output directory (default: data/outputs/demo)',
+    )
+    pdemo.add_argument('--n-clusters', type=int, default=25)
+    pdemo.add_argument('--seed', type=int, default=42)
+    pdemo.add_argument(
+        '--stratified',
+        action='store_true',
+        help='Auto-sample clusters instead of the hand-validated list',
+    )
+    pdemo.add_argument('--html', action='store_true', help='Also write cofounder_demo.html')
+    pdemo.set_defaults(func=_cmd_export_demo)
 
     pa = sub.add_parser(
         'audit',
