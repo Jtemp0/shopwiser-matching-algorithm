@@ -34,32 +34,34 @@ def configure_paths(*, sample: bool = False) -> None:
 
 
 # Retrieval (Level A) Configuration
-EMBEDDING_MODEL = 'all-MiniLM-L6-v2'  # Fast, highly accurate semantic search model
-TOP_K_CANDIDATES = 15                 # How many candidates to pull per retailer
+EMBEDDING_MODEL = 'all-MiniLM-L6-v2'
+TOP_K_CANDIDATES = 40
 
 # Gating (Level B) Configuration
 # Reject pairs before ML scoring if the base unit size differs by more than 20%
-SIZE_GATE_TOLERANCE = 0.20
+SIZE_GATE_TOLERANCE = 0.50
 
 # Ranker (Level C) Configuration
 LGBM_PARAMS = {
     'objective': 'binary',
     'metric': 'binary_logloss',
     'boosting_type': 'gbdt',
-    'learning_rate': 0.05,
-    'num_leaves': 31,
+    'learning_rate': 0.03,            # Slower learning for better generalization
+    'num_leaves': 127,                # Much deeper trees to handle messy unit edge-cases
     'max_depth': -1,
     'feature_fraction': 0.8,
-    'is_unbalance': True,
+    'scale_pos_weight': 25.0,         # <-- Aggressive: Forces the model to find matches
     'verbose': -1,
     'random_state': 42,
+    'num_threads': 1,
+    'force_col_wise': True
 }
 
 LGBM_NUM_BOOST_ROUNDS = 100
 
 # Final Decision Configuration
-ACCEPT_THRESHOLD = 0.50   # Minimum ML probability to accept a match
-MARGIN_THRESHOLD = 0.10   # The best match must beat the second-best match by this much
+ACCEPT_THRESHOLD = 0.15 
+MARGIN_THRESHOLD = 0.001
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -128,6 +130,10 @@ def build_pairwise_features(df: pd.DataFrame, pairs_df: pd.DataFrame) -> pd.Data
     features['id_b'] = feat['id_b']
     features['cosine_sim'] = feat['score']  # from FAISS
 
+    features['unit_missing_a'] = feat['unit_value_a'].isna().astype(int)
+    features['unit_missing_b'] = feat['unit_value_b'].isna().astype(int)
+    features['both_units_present'] = (feat['unit_value_a'].notna() & feat['unit_value_b'].notna()).astype(int)
+
     # Base Unit Size Calculation (Fixes the Multipack Math Problem)
     pq_a = np.where(feat['pack_quantity_a'].isna(), 1.0, feat['pack_quantity_a'])
     pq_b = np.where(feat['pack_quantity_b'].isna(), 1.0, feat['pack_quantity_b'])
@@ -178,28 +184,26 @@ FILE: retrieval.py
 import faiss
 import numpy as np
 import pandas as pd
+import re
 from sentence_transformers import SentenceTransformer
 
 from .config import EMBEDDING_MODEL, TOP_K_CANDIDATES
 
 
 def create_embedding_text(row) -> str:
-    """Constructs the string to be vectorized (Level A1 in PDF)."""
-    brand = str(row.get('known_brand_clean', ''))
-    brand = brand if brand != 'nan' else ''
+    # Use original name + normalized name to give FAISS more keywords
+    # but remove numbers/sizes which cause false hits.
+    name = str(row.get('names', '')).lower()
+    brand = str(row.get('known_brand_clean', '')).lower()
+    brand = "" if brand == 'nan' else brand
+    
+    # Strip common units from embedding string so FAISS doesn't match 
+    # two completely different "500g" items.
+    name = re.sub(r'\d+(g|kg|ml|l|cl)\b', '', name)
+    
+    return f"{brand} {name}".strip()
 
-    name = str(row.get('normalized_name', ''))
-    cat = str(row.get('category', ''))
 
-    # Coarse size bucket for the text embedding
-    size = ''
-    uv = row.get('unit_value')
-    ut = row.get('unit_type')
-    if pd.notna(uv) and uv is not None:
-        ut_s = '' if pd.isna(ut) else str(ut)
-        size = f"{int(float(uv) // 50 * 50)}{ut_s}"
-
-    return f"{brand} {name} {cat} {size}".strip()
 
 
 def retrieve_candidates(df: pd.DataFrame) -> pd.DataFrame:
@@ -296,35 +300,35 @@ def _try_import_lightgbm():
 
 
 def generate_silver_labels(feat_df: pd.DataFrame) -> pd.DataFrame:
-    """Creates highly-confident positive and negative labels from the candidates."""
-
-    print('Generating Silver Labels for training...')
     df = feat_df.copy()
 
-    # 1. Silver Positives (strict rules; includes own-brand↔own-brand so the model
-    #    does not learn to reject every own-brand pair)
-    brand_or_own_both = (df['same_brand'] == 1) | (
-        (df['is_own_brand_a'] == 1) & (df['is_own_brand_b'] == 1)
-    )
-    pos_mask = (
-        (df['delta_size'] >= 0) & (df['delta_size'] <= 0.02)
-        & (df['fuzz_sort'] >= 85)
-        & (df['same_category'] == 1)
-        & (df['hard_conflict'] == 0)
-        & brand_or_own_both
+    # 1. Silver Positives (Messy names but Brand + Size match)
+    brand_size_match = (
+        (df['same_brand'] == 1) & 
+        (df['delta_size'] >= 0) & (df['delta_size'] <= 0.05) &
+        (df['fuzz_sort'] >= 50) # Very generous text match
     )
 
-    # 2. Silver Negatives (Contradictions)
-    neg_mask = (
-        ((df['same_brand'] == 1) & (df['delta_size'] > 0.15))
-        | ((df['fuzz_sort'] > 85) & (df['same_brand'] == 0) & (df['is_own_brand_a'] == 0))
-        | (df['hard_conflict'] == 1)
-        | (df['is_own_brand_a'] != df['is_own_brand_b'])
+    # 2. Perfect Text matches (Brand might be missing in one store)
+    perfect_text = (
+        (df['fuzz_sort'] >= 95) & 
+        (df['delta_size'] >= 0) & (df['delta_size'] <= 0.05)
     )
+
+    # 3. Silver Negatives (Keep these strict)
+    neg_mask = (
+        # Same brand but totally different size
+        ((df['same_brand'] == 1) & (df['delta_size'] > 0.25)) |
+        # Hard semantic conflict
+        (df['hard_conflict'] == 1)
+    )
+
 
     df['label'] = -1
-    df.loc[pos_mask, 'label'] = 1
+    df.loc[brand_size_match | perfect_text, 'label'] = 1
     df.loc[neg_mask, 'label'] = 0
+
+
 
     labeled_df = df[df['label'] != -1]
     print(f"  -> Generated {len(labeled_df[labeled_df['label'] == 1]):,} Positives")
@@ -351,7 +355,6 @@ def _predict_probs_chunked_sklearn(clf, X: np.ndarray, n_rows: int) -> np.ndarra
 
 
 def _predict_probs_chunked_lgb(model, X: np.ndarray, n_rows: int) -> np.ndarray:
-    out = np.empty(n_rows, dtype=np.float64)
     with tqdm(
         total=n_rows,
         desc='LightGBM predict',
@@ -359,11 +362,10 @@ def _predict_probs_chunked_lgb(model, X: np.ndarray, n_rows: int) -> np.ndarray:
         unit_scale=True,
         mininterval=0.5,
     ) as pbar:
-        for start in range(0, n_rows, _PREDICT_CHUNK_ROWS):
-            end = min(start + _PREDICT_CHUNK_ROWS, n_rows)
-            out[start:end] = model.predict(X[start:end])
-            pbar.update(end - start)
+        out = model.predict(X, num_threads=1)
+        pbar.update(n_rows)
     return out
+
 
 
 def _fit_and_predict_probs(
@@ -533,15 +535,21 @@ def build_final_clusters(df: pd.DataFrame, scored_pairs: pd.DataFrame) -> None:
 
     df['cluster_id'] = df.index.map(cluster_map)
 
-    # Diagnostics
-    cluster_sizes = df['cluster_id'].value_counts()
-    n_multi = (cluster_sizes >= 2).sum()
-    n_4way = (df.groupby('cluster_id')['supermarket'].nunique() == 4).sum()
+    # Per-cluster size + dedupe view for diagnostics (at most one row per supermarket)
+    df['cluster_size'] = df.groupby('cluster_id')['product_idx'].transform('count')
+    clean_clusters: list[pd.DataFrame] = []
+
+    for _cid, group in df[df['cluster_size'] > 1].groupby('cluster_id'):
+        clean_group = group.drop_duplicates(subset=['supermarket'])
+        if len(clean_group) > 1:
+            clean_clusters.append(clean_group)
+
+    n_multi = len(clean_clusters)
+    n_4way = sum(1 for c in clean_clusters if len(c) == 4)
 
     print('\n' + '=' * 50)
     print('FINAL ML CLUSTERING RESULTS')
     print('=' * 50)
-    print(f'Total Clusters: {len(clusters):,}')
     print(f'Multi-product Clusters (>=2): {n_multi:,}')
     print(f'Perfect 4-way Clusters: {n_4way:,}')
     print('=' * 50)
