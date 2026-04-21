@@ -284,7 +284,9 @@ def run_clustering(df: pd.DataFrame) -> None:
     # against same-brand / tier+category products from the missing SM.
 
     _ALL_SMS_COMPLETION = {'ASDA', 'Tesco', 'Sains', 'Morrisons'}
-    _COMPLETION_MAX_CANDS = {'branded': 200, 'own_brand': 80, 'unbranded': 50}
+    # v11: wider caps unlock more recall.  Branch-level tier/category/brand
+    # gates keep FP risk contained.
+    _COMPLETION_MAX_CANDS = {'branded': 400, 'own_brand': 200, 'unbranded': 120}
 
 
     def _get_completion_candidates(members: pd.DataFrame, df_full: pd.DataFrame,
@@ -338,63 +340,95 @@ def run_clustering(df: pd.DataFrame) -> None:
         return cands, ptype
 
 
-    # Identify 3-way clusters using current UF state
-    df['_comp_rc'] = df['product_idx'].apply(uf.find)
-    _rc_sms   = df.groupby('_comp_rc')['supermarket'].agg(frozenset)
-    _rc_sizes = df.groupby('_comp_rc').size()
-    _three_way_roots = [
-        root for root in _rc_sizes.index
-        if _rc_sizes[root] == 3 and len(_rc_sms[root]) == 3
-    ]
-    print(f'\nPass 5 — Cluster completion: {len(_three_way_roots):,} 3-way clusters to extend')
+    # v11: Iterate completion over 2-way AND 3-way clusters so that 2-way→3-way
+    # upgrades feed the next iteration's 3-way→4-way upgrades.  Uses the
+    # COMPLETION_UNIT_TOL (wider) since brand/category/tier already gate the pool.
+    _completion_unit_tol = {
+        'branded':   COMPLETION_UNIT_TOL.get('branded',   0.25),
+        'own_brand': COMPLETION_UNIT_TOL.get('own_brand', 0.22),
+        'unbranded': COMPLETION_UNIT_TOL.get('unbranded', 0.22),
+    }
 
     matches_completion: list = []
-    _n_upgraded = 0
+    total_n_upgraded = 0
 
-    for root in tqdm(_three_way_roots, desc='  Pass=completion', leave=True):
-        members   = df[df['_comp_rc'] == root]
-        present   = set(members['supermarket'])
-        missing_l = list(_ALL_SMS_COMPLETION - present)
-        if not missing_l:
-            continue
-        missing_sm = missing_l[0]
+    for completion_pass in range(1, 4):
+        df['_comp_rc'] = df['product_idx'].apply(uf.find)
+        _rc_sms   = df.groupby('_comp_rc')['supermarket'].agg(frozenset)
+        _rc_sizes = df.groupby('_comp_rc').size()
+        # Target 2-way AND 3-way clusters where size == unique SMs (clean).
+        _target_roots = [
+            root for root in _rc_sizes.index
+            if _rc_sizes[root] in (2, 3)
+            and _rc_sizes[root] == len(_rc_sms[root])
+        ]
+        if not _target_roots:
+            break
 
-        cands, pass_type = _get_completion_candidates(members, df, missing_sm)
-        if cands.empty:
-            continue
-        if len(cands) > _COMPLETION_MAX_CANDS.get(pass_type, 25):
-            continue
+        n_two = sum(1 for r in _target_roots if _rc_sizes[r] == 2)
+        n_three = sum(1 for r in _target_roots if _rc_sizes[r] == 3)
+        print(
+            f'\nPass 5.{completion_pass} — Cluster completion: '
+            f'{n_two:,} 2-way + {n_three:,} 3-way clusters to extend'
+        )
 
-        best_score = 0.0
-        best_pair: tuple | None = None
+        pass_upgrades = 0
+        pass_matches: list = []
 
-        _unit_tol = {
-            'branded':   UNIT_TOLERANCE_BRANDED,
-            'own_brand': UNIT_TOLERANCE_OWN_BRAND,
-            'unbranded': UNIT_TOLERANCE_UNBRANDED,
-        }.get(pass_type, UNIT_TOLERANCE_BRANDED)
+        for root in tqdm(_target_roots, desc=f'  Pass=completion.{completion_pass}', leave=True):
+            members   = df[df['_comp_rc'] == root]
+            present   = set(members['supermarket'])
+            missing_list = list(_ALL_SMS_COMPLETION - present)
+            if not missing_list:
+                continue
 
-        for member_idx in members.index:
-            m_row = members.loc[member_idx]
-            for cand_idx in cands.index:
-                if uf.find(member_idx) == uf.find(cand_idx):
-                    continue  # already merged
-                is_match, score = compute_similarity(m_row, cands.loc[cand_idx],
-                                                     pass_type=pass_type,
-                                                     unit_tolerance=_unit_tol)
-                if is_match and score > best_score:
-                    best_score = score
-                    best_pair  = (member_idx, cand_idx)
+            # Stronger clusters (3-way, with more SM consensus) are allowed to try
+            # all missing SMs in priority order; 2-way clusters still get all tried
+            # but only one bridge per pass per cluster.
+            best_overall_score = 0.0
+            best_overall_pair: tuple | None = None
 
-        if best_pair:
-            ia, ib = best_pair
-            uf.union(ia, ib)
-            matches_completion.append((ia, ib, best_score))
-            pair_scores[(min(ia, ib), max(ia, ib))] = best_score
-            _n_upgraded += 1
+            for missing_sm in missing_list:
+                cands, pass_type = _get_completion_candidates(members, df, missing_sm)
+                if cands.empty:
+                    continue
+                if len(cands) > _COMPLETION_MAX_CANDS.get(pass_type, 25):
+                    continue
+
+                _unit_tol = _completion_unit_tol.get(pass_type, COMPLETION_UNIT_TOL.get('branded', 0.25))
+
+                for member_idx in members.index:
+                    m_row = members.loc[member_idx]
+                    for cand_idx in cands.index:
+                        if uf.find(member_idx) == uf.find(cand_idx):
+                            continue
+                        is_match, score = compute_similarity(
+                            m_row, cands.loc[cand_idx],
+                            pass_type=pass_type,
+                            unit_tolerance=_unit_tol,
+                        )
+                        if is_match and score > best_overall_score:
+                            best_overall_score = score
+                            best_overall_pair  = (member_idx, cand_idx)
+
+            if best_overall_pair:
+                ia, ib = best_overall_pair
+                uf.union(ia, ib)
+                pair_scores[(min(ia, ib), max(ia, ib))] = best_overall_score
+                pass_matches.append((ia, ib, best_overall_score))
+                pass_upgrades += 1
+
+        matches_completion.extend(pass_matches)
+        total_n_upgraded += pass_upgrades
+        print(
+            f'  Pass 5.{completion_pass}: {pass_upgrades:,} clusters extended '
+            f'({len(pass_matches):,} new matches)'
+        )
+        if pass_upgrades == 0:
+            break
 
     df.drop(columns=['_comp_rc'], inplace=True, errors='ignore')
-    print(f'Pass 5 complete: {len(matches_completion):,} new matches  ({_n_upgraded:,} clusters extended)')
+    print(f'\nPass 5 total: {len(matches_completion):,} new matches  ({total_n_upgraded:,} clusters extended)')
 
     # ============================================================
     # POST-CLUSTER VALIDATION — prevent transitive-link artifacts

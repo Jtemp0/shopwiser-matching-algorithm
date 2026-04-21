@@ -10,6 +10,8 @@ import time
 import pandas as pd
 from anthropic import Anthropic
 
+from pathlib import Path
+
 from shopwiser.paths import cluster_outputs_path
 
 MODEL = 'claude-sonnet-4-5'
@@ -58,14 +60,29 @@ def build_prompt(cluster_df: pd.DataFrame) -> str:
     )
 
 
-def run_audit(*, sample: bool = False) -> None:
-    """Read ``audit_sample_50.csv`` from full or sample cluster output dir."""
-    out_root = cluster_outputs_path(sample=sample)
-    input_csv = out_root / 'audit_sample_50.csv'
-    output_csv = out_root / 'audit_results_v5.csv'
+def run_audit(
+    *,
+    sample: bool = False,
+    input_csv: Path | None = None,
+    output_csv: Path | None = None,
+) -> None:
+    """Read ``audit_sample_50.csv`` from full or sample cluster output dir.
+
+    If ``input_csv`` is given, read from that path and write results next to it.
+    """
+    if input_csv is None:
+        out_root = cluster_outputs_path(sample=sample)
+        input_csv = out_root / 'audit_sample_50.csv'
+        output_csv = output_csv or (out_root / 'audit_results_v5.csv')
+    else:
+        input_csv = Path(input_csv)
+        output_csv = Path(output_csv) if output_csv else input_csv.with_name(
+            input_csv.stem.replace('audit_sample', 'audit_results_v5') + '.csv'
+        )
     client = Anthropic()
 
-    print(f'Audit: {"sample" if sample else "full"} → {out_root}')
+    print(f'Audit input : {input_csv}')
+    print(f'Audit output: {output_csv}')
     df = pd.read_csv(input_csv)
     cluster_ids = sorted(df['cluster_id'].unique())
     print(f'Loaded {len(df)} rows, {len(cluster_ids)} clusters')

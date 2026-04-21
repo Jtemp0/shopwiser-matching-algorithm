@@ -15,12 +15,14 @@ from .config import (
     CLUSTER_GUIDED_MIN_FUZZ,
     CLUSTER_GUIDED_MIN_SIM,
     CLUSTER_GUIDED_TOP_K,
+    COMPLETION_MAX_DELTA,
     COMPLETION_THRESHOLD,
     MAX_CLUSTER_SIZE,
     OUTPUT_DIR,
     REVERSE_THRESHOLD,
     configure_paths,
 )
+from .assembly import enforce_one_per_sm
 from .features import build_pairwise_features, check_hard_conflict
 from .ranker import FEATURE_COLS, train_and_score
 from .retrieval import retrieve_candidates
@@ -66,6 +68,58 @@ def _delta_size_multi(
     return _best_delta_size_scalar(uv_a, pq_a, uv_b, pq_b)
 
 
+def _delta_size_total(
+    parsed_a: tuple[float, float] | None,
+    parsed_b: tuple[float, float] | None,
+) -> float:
+    """Total-only size delta: relative delta of uv_a vs uv_b (unit_value is TOTAL).
+
+    Used for hard gates to prevent multipack/single pair collapse (1x750ml vs 4x750ml).
+    Returns -1.0 when either side lacks unit data.
+    """
+    if parsed_a is None or parsed_b is None:
+        return -1.0
+    uv_a, _ = parsed_a
+    uv_b, _ = parsed_b
+    hi = max(abs(uv_a), abs(uv_b))
+    if hi < 1e-5:
+        return 0.0
+    return abs(uv_a - uv_b) / hi
+
+
+def _cluster_product_type(member_ids: list[int], product_type_map: dict) -> str | None:
+    """Majority product_type of the cluster members, or None if mixed beyond repair."""
+    types = [product_type_map.get(m) for m in member_ids if product_type_map.get(m)]
+    if not types:
+        return None
+    # Majority rules; ties broken by first-seen.  Empty string → no constraint.
+    from collections import Counter
+    counts = Counter(types)
+    top_type, top_count = counts.most_common(1)[0]
+    # Only enforce if the majority is strong enough (>=2/3 of typed members).
+    if top_count / len(types) >= 2 / 3:
+        return top_type
+    return None
+
+
+def _type_compatible(cluster_type: str | None, target_type: str | None) -> bool:
+    """Accept target iff its product_type matches the cluster's dominant type.
+
+    'branded' and 'own_brand' are mutually exclusive — mixing them produces
+    FPs like (Lanson Champagne + Sainsbury's own Champagne).
+    'unbranded' can bridge to either (brand-extraction failures).
+    """
+    if cluster_type is None or target_type is None:
+        return True
+    if cluster_type == target_type:
+        return True
+    # 'unbranded' is permissive in either direction: brand extraction sometimes
+    # fails and genuinely branded products fall into unbranded.
+    if 'unbranded' in (cluster_type, target_type):
+        return True
+    return False
+
+
 def _run_guided_retrieval(
     G: 'nx.Graph',
     df: pd.DataFrame,
@@ -90,6 +144,7 @@ def _run_guided_retrieval(
     pack_qty_map = df['pack_quantity'].to_dict()
     norm_name_map = df['normalized_name'].fillna('').to_dict()
     brand_map = df['known_brand_clean'].fillna('').to_dict()
+    product_type_map = df['product_type'].to_dict() if 'product_type' in df.columns else {}
     # is_truncated: True for Morrisons products with source-truncated names.
     # token_set_ratio is used instead of token_sort_ratio for these candidates
     # because the shorter truncated name is typically a prefix of the full name.
@@ -153,6 +208,7 @@ def _run_guided_retrieval(
         member_brands = [b for m in members if (b := brand_map.get(m, ''))]
         cluster_brand = max(set(member_brands), key=member_brands.count) if member_brands else ''
         member_is_truncated = any(is_truncated_map.get(m, False) for m in members)
+        cluster_type = _cluster_product_type(members, product_type_map)
 
         for missing_sm in list(missing_sms):
             if missing_sm not in indices:
@@ -188,11 +244,20 @@ def _run_guided_retrieval(
                 if cluster_brand and t_brand and cluster_brand != t_brand:
                     continue
 
+                # Product-type gate: branded and own_brand must not mix
+                # (e.g. Lanson Champagne vs Sainsbury's Champagne).
+                if not _type_compatible(cluster_type, product_type_map.get(target_id)):
+                    continue
+
                 t_parsed = _parse_uv_pq(unit_value_map.get(target_id), pack_qty_map.get(target_id))
-                if not any(
-                    _delta_size_multi(m_ps, t_parsed) <= CLUSTER_GUIDED_MAX_DELTA
-                    for m_ps in member_parsed_sizes
-                ):
+                # Use total-only delta for hard gating (multi-interp permits
+                # multipack/single collapse).  -1.0 means missing size data and
+                # is admitted (can't reject on missing evidence).
+                def _size_ok(m_ps, t_ps) -> bool:
+                    d = _delta_size_total(m_ps, t_ps)
+                    return d < 0 or d <= CLUSTER_GUIDED_MAX_DELTA
+
+                if not any(_size_ok(m_ps, t_parsed) for m_ps in member_parsed_sizes):
                     continue
 
                 # Fuzz check: for truncated targets (Morrisons source-truncated names),
@@ -282,6 +347,7 @@ def _run_model_guided_retrieval(
     sm_map = df['supermarket'].to_dict()
     norm_name_map = df['normalized_name'].fillna('').to_dict()
     brand_map = df['known_brand_clean'].fillna('').to_dict()
+    product_type_map = df['product_type'].to_dict() if 'product_type' in df.columns else {}
     is_truncated_map = df['is_truncated'].fillna(False).astype(bool).to_dict() if 'is_truncated' in df.columns else {}
 
     # Build component snapshot
@@ -326,6 +392,7 @@ def _run_model_guided_retrieval(
 
         member_brands = [b for m in members if (b := brand_map.get(m, ''))]
         cluster_brand = max(set(member_brands), key=member_brands.count) if member_brands else ''
+        cluster_type = _cluster_product_type(members, product_type_map)
         cluster_info[cid_g] = (members, cluster_brand)
 
         anchor = members[0]
@@ -352,6 +419,9 @@ def _run_model_guided_retrieval(
                     continue
                 t_brand = brand_map.get(t_id, '')
                 if cluster_brand and t_brand and cluster_brand != t_brand:
+                    continue
+                # Product-type gate (branded vs own_brand)
+                if not _type_compatible(cluster_type, product_type_map.get(t_id)):
                     continue
                 member_names = [norm_name_map.get(m, '') for m in members]
                 t_name = norm_name_map.get(t_id, '')
@@ -381,9 +451,16 @@ def _run_model_guided_retrieval(
     probs = model.predict(X, num_threads=1)
     feat_df = feat_df.assign(match_prob=probs)
 
-    # Build lookup: (anchor, target) → match_prob
+    # Build lookup: (anchor, target) → match_prob.  Apply total-size gate so
+    # multipack-vs-single pairs don't slip in via the model's permissive
+    # multi-interpretation delta_size feature.
     prob_lookup: dict[tuple[int, int], float] = {}
+    _has_total = 'delta_size_total' in feat_df.columns
     for row in feat_df.itertuples(index=False):
+        if _has_total:
+            dst = getattr(row, 'delta_size_total', None)
+            if dst is not None and pd.notna(dst) and dst > CLUSTER_GUIDED_MAX_DELTA:
+                continue
         prob_lookup[(int(row.id_a), int(row.id_b))] = float(row.match_prob)
 
     # Per-cluster: find best model-scored candidate above threshold.
@@ -443,10 +520,13 @@ def build_final_clusters(
     """Soft mutual argmax → completion pass → cluster-guided retrieval for missing SM links."""
     print('\nApplying Soft Mutual Argmax Selection...')
 
-    # Include delta_size so we can hard-gate on size at acceptance time.
-    # scored_pairs already has delta_size (it's a filtered copy of features_df).
+    # Include delta_size_total for hard size gating at acceptance.  delta_size
+    # (multi-interpretation min) is permissive for the model but collapses
+    # multipack-vs-single pairs to zero; delta_size_total uses total uv only.
     _sp_cols = ['id_a', 'id_b', 'match_prob']
-    if 'delta_size' in scored_pairs.columns:
+    if 'delta_size_total' in scored_pairs.columns:
+        _sp_cols.append('delta_size_total')
+    elif 'delta_size' in scored_pairs.columns:
         _sp_cols.append('delta_size')
 
     edges_f = scored_pairs[_sp_cols].rename(columns={'id_a': 'anchor', 'id_b': 'target'})
@@ -464,16 +544,72 @@ def build_final_clusters(
     best_matches = best_matches.groupby(['anchor', 'target_sm'], sort=False).head(1)
     best_matches = best_matches[best_matches['match_prob'] >= ACCEPT_THRESHOLD]
 
-    # Hard size gate: pairs where both unit values are known and the relative size
-    # difference exceeds ACCEPT_SIZE_GATE are rejected regardless of model score.
-    # This prevents same-brand, different-size transitive chains from forming blobs
-    # (e.g. 250 g → 400 g → 700 g chains that cluster all Heinz Ketchup sizes together).
-    if 'delta_size' in best_matches.columns:
-        size_safe = best_matches['delta_size'].isna() | (best_matches['delta_size'] <= ACCEPT_SIZE_GATE)
+    # Hard size gate: pairs where both unit values are known and the relative
+    # TOTAL size difference exceeds ACCEPT_SIZE_GATE are rejected regardless of
+    # model score.  Uses delta_size_total (total-only, uv-vs-uv) so that
+    # single-bottle vs multipack pairs (e.g. 1x750ml vs 4x750ml total=3000ml)
+    # don't collapse to d1=0 via the per-unit interpretation.
+    _size_col = 'delta_size_total' if 'delta_size_total' in best_matches.columns else 'delta_size'
+    if _size_col in best_matches.columns:
+        size_safe = best_matches[_size_col].isna() | (best_matches[_size_col] <= ACCEPT_SIZE_GATE)
         n_size_rejected = (~size_safe).sum()
         if n_size_rejected > 0:
-            print(f'Hard size gate rejected {n_size_rejected:,} edges at acceptance (delta_size > {ACCEPT_SIZE_GATE}).')
+            print(f'Hard size gate rejected {n_size_rejected:,} edges at acceptance ({_size_col} > {ACCEPT_SIZE_GATE}).')
         best_matches = best_matches[size_safe]
+
+    # Product-type gate: branded ↔ own_brand cross-type matches are almost always
+    # false positives (e.g. "Lanson Champagne" vs "Sainsbury's Champagne").  Apply
+    # a hard filter here even though the ranker's silver negatives already penalise
+    # this — a minority still slip through when text/size features dominate.
+    if 'product_type' in df.columns:
+        _ptype = df['product_type'].to_dict()
+        best_matches['_type_a'] = best_matches['anchor'].map(_ptype)
+        best_matches['_type_b'] = best_matches['target'].map(_ptype)
+        type_ok = [_type_compatible(a, b) for a, b in zip(best_matches['_type_a'], best_matches['_type_b'])]
+        n_type_rejected = sum(1 for x in type_ok if not x)
+        if n_type_rejected > 0:
+            print(f'Product-type gate rejected {n_type_rejected:,} cross-type edges at acceptance.')
+        best_matches = best_matches[type_ok].drop(columns=['_type_a', '_type_b'])
+
+    # Branded↔unbranded brand-token check: when one side has a known_brand and
+    # the other is unbranded (brand-extractor miss), require the brand token to
+    # appear in the unbranded side's normalized_name.  This blocks cross-brand
+    # matches like (Lindeman's Chardonnay, D.V Catena Chardonnay) where Catena
+    # wasn't extracted and the pair passed the permissive unbranded↔branded rule.
+    if 'known_brand_clean' in df.columns and 'normalized_name' in df.columns:
+        _brand = df['known_brand_clean'].fillna('').astype(str).str.lower().to_dict()
+        _name = df['normalized_name'].fillna('').astype(str).str.lower().to_dict()
+        best_matches['_brand_a'] = best_matches['anchor'].map(_brand)
+        best_matches['_brand_b'] = best_matches['target'].map(_brand)
+        best_matches['_name_a'] = best_matches['anchor'].map(_name)
+        best_matches['_name_b'] = best_matches['target'].map(_name)
+
+        def _brand_token_ok(ba: str, bb: str, na: str, nb: str) -> bool:
+            # Both branded or both unbranded → no asymmetry to check
+            if bool(ba) == bool(bb):
+                return True
+            # Asymmetric: require the known brand's first token in the other name
+            known = ba if ba else bb
+            other_name = nb if ba else na
+            primary = known.split()[0] if known else ''
+            if not primary or len(primary) < 3:
+                return True  # too short to be discriminative
+            return primary in other_name.split()
+
+        brand_ok = [
+            _brand_token_ok(ba, bb, na, nb)
+            for ba, bb, na, nb in zip(
+                best_matches['_brand_a'], best_matches['_brand_b'],
+                best_matches['_name_a'], best_matches['_name_b'],
+            )
+        ]
+        n_brand_rejected = sum(1 for x in brand_ok if not x)
+        if n_brand_rejected > 0:
+            print(f'Branded↔unbranded brand-token gate rejected {n_brand_rejected:,} edges.')
+        best_matches = best_matches[brand_ok].drop(
+            columns=['_brand_a', '_brand_b', '_name_a', '_name_b']
+        )
+
     argmax_set = set(zip(best_matches['anchor'].astype(int), best_matches['target'].astype(int)))
 
     # Step 2: Reverse confirmation set — uses REVERSE_THRESHOLD (lower than ACCEPT)
@@ -515,11 +651,27 @@ def build_final_clusters(
     all_sms = set(df['supermarket'].unique())
     incomplete_comps = {cid for cid, sms in comp_sms.items() if 1 < len(sms) < len(all_sms)}
 
-    completion_candidates = scored_pairs[scored_pairs['match_prob'] >= COMPLETION_THRESHOLD].copy()
+    _ptype = df['product_type'].to_dict() if 'product_type' in df.columns else {}
+    completion_candidates = scored_pairs[
+        (scored_pairs['match_prob'] >= COMPLETION_THRESHOLD)
+        & (
+            scored_pairs['delta_size_total'].isna()
+            | (scored_pairs['delta_size_total'] <= COMPLETION_MAX_DELTA)
+        )
+    ].copy()
     completion_candidates['comp_a'] = completion_candidates['id_a'].map(components_before)
     completion_candidates['comp_b'] = completion_candidates['id_b'].map(components_before)
     completion_candidates['sm_a'] = completion_candidates['id_a'].map(sm_map)
     completion_candidates['sm_b'] = completion_candidates['id_b'].map(sm_map)
+    # Same-product-type gate (branded/own_brand/unbranded) to prevent cross-type FPs.
+    completion_candidates['type_a'] = completion_candidates['id_a'].map(_ptype)
+    completion_candidates['type_b'] = completion_candidates['id_b'].map(_ptype)
+    completion_candidates = completion_candidates[
+        [
+            _type_compatible(a, b)
+            for a, b in zip(completion_candidates['type_a'], completion_candidates['type_b'])
+        ]
+    ]
 
     sp_edges_added = 0
     for row in (
@@ -585,10 +737,13 @@ def build_final_clusters(
     if blobs:
         print(f'Splitting {len(blobs):,} blob clusters (>{MAX_CLUSTER_SIZE} products)...')
 
-        # Build a flat lookup: (min_id, max_id) → (match_prob, fuzz_sort, delta_size)
-        # Using features_df which has fuzz_sort and delta_size alongside match_prob.
+        # Build a flat lookup: (min_id, max_id) → (match_prob, fuzz_sort, delta_size_total)
+        # Using features_df which has fuzz_sort and delta_size_total alongside match_prob.
+        # delta_size_total (total-only) is stricter than delta_size (multi-interp) and
+        # prevents multipack-vs-single pairs from surviving blob re-admission.
+        _size_col = 'delta_size_total' if 'delta_size_total' in features_df.columns else 'delta_size'
         scored_with_feats = scored_pairs[['id_a', 'id_b', 'match_prob']].merge(
-            features_df[['id_a', 'id_b', 'fuzz_sort', 'delta_size']],
+            features_df[['id_a', 'id_b', 'fuzz_sort', _size_col]],
             on=['id_a', 'id_b'], how='left',
         )
         blob_lookup: dict[tuple[int, int], tuple[float, float, float]] = {}
@@ -596,7 +751,8 @@ def build_final_clusters(
             key = (min(int(row.id_a), int(row.id_b)), max(int(row.id_a), int(row.id_b)))
             if key not in blob_lookup or row.match_prob > blob_lookup[key][0]:
                 fuzz_score = float(row.fuzz_sort) if pd.notna(row.fuzz_sort) else 0.0
-                ds = float(row.delta_size) if pd.notna(row.delta_size) else -1.0
+                ds_val = getattr(row, _size_col)
+                ds = float(ds_val) if pd.notna(ds_val) else -1.0
                 blob_lookup[key] = (row.match_prob, fuzz_score, ds)
 
         split_removed = 0
@@ -678,9 +834,23 @@ def build_final_clusters(
         final_comp_sms.setdefault(cid, set()).add(sm_map[node])
 
     final_incomplete = {cid for cid, sms in final_comp_sms.items() if 1 < len(sms) < len(all_sms)}
-    completion_candidates2 = scored_pairs[scored_pairs['match_prob'] >= COMPLETION_THRESHOLD].copy()
+    completion_candidates2 = scored_pairs[
+        (scored_pairs['match_prob'] >= COMPLETION_THRESHOLD)
+        & (
+            scored_pairs['delta_size_total'].isna()
+            | (scored_pairs['delta_size_total'] <= COMPLETION_MAX_DELTA)
+        )
+    ].copy()
     completion_candidates2['comp_a'] = completion_candidates2['id_a'].map(final_comps)
     completion_candidates2['comp_b'] = completion_candidates2['id_b'].map(final_comps)
+    completion_candidates2['type_a'] = completion_candidates2['id_a'].map(_ptype)
+    completion_candidates2['type_b'] = completion_candidates2['id_b'].map(_ptype)
+    completion_candidates2 = completion_candidates2[
+        [
+            _type_compatible(a, b)
+            for a, b in zip(completion_candidates2['type_a'], completion_candidates2['type_b'])
+        ]
+    ]
 
     sp2_edges_added = 0
     for row in (
@@ -722,6 +892,25 @@ def build_final_clusters(
 
     print(f'Final scored-pairs completion added {sp2_edges_added:,} bridging edges.')
     # ── End final scored-pairs completion ─────────────────────────────────────
+
+    # ── One-per-supermarket cluster assembly ─────────────────────────────────
+    # Decompose any component that violates the one-product-per-SM invariant
+    # using a score-ordered Kruskal union-find.  Blobs formed by transitive
+    # weak edges (e.g. all Cadbury chocolate bars chained through size-similar
+    # pairs) split into clean 4-way / 3-way / 2-way sub-clusters; any product
+    # that cannot be placed drops to a singleton.
+    print('\nEnforcing one-per-supermarket invariant...')
+    enforcement_stats = enforce_one_per_sm(
+        G, df, scored_pairs, features_df, guided_edge_meta,
+        max_cluster_size=MAX_CLUSTER_SIZE,
+    )
+    print(
+        f'  Clean components kept: {enforcement_stats["components_clean"]:,}\n'
+        f'  Components rebuilt   : {enforcement_stats["components_rebuilt"]:,} '
+        f'(touched {enforcement_stats["nodes_touched"]:,} products)\n'
+        f'  Edges kept / dropped : {enforcement_stats["edges_kept"]:,} / '
+        f'{enforcement_stats["edges_dropped"]:,}'
+    )
 
     clusters = list(nx.connected_components(G))
     cluster_map = {}
