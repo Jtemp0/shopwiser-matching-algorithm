@@ -46,6 +46,17 @@ ONE_SIDED_CONFLICT_TOKENS = frozenset({
     'balti', 'biryani', 'pilau', 'tandoori', 'gujarati', 'bhuna',
     # ── Smoked variant (unsmoked omitted — not consistently labelled across SMs) ──
     'smoked',
+    # ── Preparation format: DIY kits, dry mixes, and sliced variants are different
+    # products from the ready-made or whole-format counterpart.
+    # "Cake Mix" vs "Cake Slices", "Cupcake Kit" vs "Cupcakes".
+    'kit', 'mix',
+    # ── Protein/dish format — same category but different prepared dishes.
+    # "Salmon Quiche" vs "Salmon Fish Cakes", "Lamb Moussaka" vs "Lamb Shanks".
+    'quiche', 'moussaka', 'shanks', 'kebab', 'goujons', 'nuggets', 'fishcakes',
+    # ── Rice variety — distinct grains that consumers don't substitute.
+    'basmati', 'jasmine',
+    # ── Confectionery / Easter variants.
+    'sherbet', 'sherbets', 'bunny',
     # ── All FLAVOR_NAMED_TOKENS (union) — catches one-sided flavour/protein ──
     'ginger', 'mint', 'raspberry', 'lemon', 'orange', 'cherry', 'strawberry',
     'blueberry', 'mango', 'blackcurrant', 'blackberry', 'elderflower', 'rhubarb',
@@ -139,6 +150,16 @@ def build_pairwise_features(df: pd.DataFrame, pairs_df: pd.DataFrame) -> pd.Data
     # Multi-interpretation size delta (handles one-sided multipack reporting)
     raw_delta = _best_delta_size(uv_a, pq_a, uv_b, pq_b)
     features['delta_size'] = np.where(both_present, raw_delta, np.nan)
+
+    # Total-only size delta: relative difference between uv_a and uv_b directly.
+    # Since unit_value stores the TOTAL package amount in this dataset, this is
+    # the correct measure for "same physical product" — d1 (per-unit) collapses
+    # 1x750ml vs 4x750ml to zero, which incorrectly admits multipack/single pairs.
+    # delta_size (multi-interp) stays as the model feature for flexibility; hard
+    # gates use delta_size_total.
+    hi = np.maximum(np.abs(uv_a), np.abs(uv_b))
+    total_delta = np.where(hi > 1e-5, np.abs(uv_a - uv_b) / hi, 0.0)
+    features['delta_size_total'] = np.where(both_present, total_delta, np.nan)
 
     features['same_unit_type'] = np.where(
         feat['unit_type_a'].notna() & feat['unit_type_b'].notna(),

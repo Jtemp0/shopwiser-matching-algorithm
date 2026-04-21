@@ -65,6 +65,20 @@ def load_prepared_dataframe(*, sample: bool = False) -> pd.DataFrame:
         ~df['known_brand'].fillna('').str.lower().isin(BRAND_EXCLUSIONS), other=None
     )
 
+    # Canonicalize brand strings so "Birds Eye" == "Birdseye", "Kellogg's" == "Kelloggs",
+    # "Coca-Cola" == "Coca Cola" etc. The scraper produces inconsistent casing /
+    # apostrophes / hyphens across supermarkets for the same brand, which previously
+    # made `same_brand` feature = 0 on genuine same-brand pairs.
+    def _canon_brand(b):
+        if not isinstance(b, str):
+            return b
+        s = b.strip().lower()
+        s = re.sub(r"['\u2019\.\-]", "", s)  # drop apostrophes / dots / hyphens
+        s = re.sub(r"\s+", "", s)             # collapse spaces: "fever tree" → "fevertree"
+        return s if s else None
+
+    df['known_brand_clean'] = df['known_brand_clean'].map(_canon_brand)
+
     df['product_type'] = np.where(
         df['known_brand_clean'].notna(), 'branded',
         np.where(df['own_brand'].astype(str).str.lower().isin(['true', '1', 'yes']), 'own_brand', 'unbranded')
@@ -76,6 +90,19 @@ def load_prepared_dataframe(*, sample: bool = False) -> pd.DataFrame:
     df['is_truncated'] = df.get('is_truncated', pd.Series(False, index=df.index)).astype(bool)
 
     df['cat_norm'] = df['category'].str.lower().map(CATEGORY_ALIASES).fillna(df['category'].str.lower())
+
+    # Tesco has zero products tagged `free-from` by the scraper — their site
+    # doesn't expose it as a top-level section, so those products sit under
+    # food_cupboard / fresh_food. Rescue them by attribute keywords so the
+    # category hard-gate can pair them with Sains / ASDA / Morrisons free-from.
+    _ff_attrs = re.compile(r'\b(gluten\s*free|dairy\s*free|lactose\s*free|'
+                           r'vegan|plant[-_\s]*based|free\s*from)\b', re.IGNORECASE)
+    _ff_mask = df['attributes_keywords'].fillna('').astype(str).str.contains(_ff_attrs, na=False)
+    _needs_rescue = _ff_mask & (df['cat_norm'] != 'free_from') & (df['supermarket'] == 'Tesco')
+    if _needs_rescue.any():
+        df.loc[_needs_rescue, 'cat_norm'] = 'free_from'
+        # Also update the raw category field so gates reading `category` see it too.
+        df.loc[_needs_rescue, 'category'] = 'free-from'
 
     df['normalized_name'] = df['normalized_name'].apply(apply_name_synonyms)
 

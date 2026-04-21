@@ -37,6 +37,42 @@ def _cmd_ml_match(args: argparse.Namespace) -> None:
     run_ml_matching(sample=args.sample)
 
 
+def _cmd_ensemble(args: argparse.Namespace) -> None:
+    from shopwiser.ensemble.main import run_ensemble
+
+    run_ensemble(sample=args.sample)
+
+
+def _cmd_ensemble_complete(args: argparse.Namespace) -> None:
+    from pathlib import Path
+
+    from shopwiser.ensemble.complete import complete_clusters
+
+    complete_clusters(
+        ensemble_csv=Path(args.input) if args.input else None,
+        dry_run_limit=args.limit,
+        min_confidence=args.min_confidence,
+        max_workers=args.workers,
+        fuzz_min=args.fuzz_min,
+        size_tol=args.size_tol,
+        max_candidates=args.candidates,
+        output_name=args.output_name,
+        log_name=args.log_name,
+        additions_name=args.additions_name,
+    )
+
+
+def _cmd_ensemble_merge(args: argparse.Namespace) -> None:
+    from shopwiser.ensemble.merge_twoways import merge_twoways
+
+    merge_twoways(
+        dry_run_limit=args.limit,
+        min_confidence=args.min_confidence,
+        max_workers=args.workers,
+        max_partners=args.partners,
+    )
+
+
 def _cmd_export_demo(args: argparse.Namespace) -> None:
     from shopwiser.utils.cofounder_demo_export import export_cofounder_demo
 
@@ -117,6 +153,39 @@ def build_parser() -> argparse.ArgumentParser:
     )
     add_sample(pm)
     pm.set_defaults(func=_cmd_ml_match)
+
+    pe = sub.add_parser(
+        'ensemble',
+        help='Union ML-matching + rule-based clusters → data/outputs/ensemble/',
+    )
+    add_sample(pe)
+    pe.set_defaults(func=_cmd_ensemble)
+
+    pec = sub.add_parser(
+        'ensemble-complete',
+        help='LLM-gated completion: promote 2/3-way ensemble clusters to 4-way',
+    )
+    pec.add_argument('--input', type=str, default=None, help='Ensemble CSV to complete')
+    pec.add_argument('--limit', type=int, default=None, help='Dry-run with first N tasks')
+    pec.add_argument('--min-confidence', type=float, default=0.70)
+    pec.add_argument('--workers', type=int, default=12)
+    pec.add_argument('--fuzz-min', type=int, default=55)
+    pec.add_argument('--size-tol', type=float, default=0.15)
+    pec.add_argument('--candidates', type=int, default=5)
+    pec.add_argument('--output-name', type=str, default='ensemble_clusters_completed.csv')
+    pec.add_argument('--log-name', type=str, default='completion_llm_log.csv')
+    pec.add_argument('--additions-name', type=str, default='completion_additions.csv')
+    pec.set_defaults(func=_cmd_ensemble_complete)
+
+    pem = sub.add_parser(
+        'ensemble-merge',
+        help='LLM-gated 2-way ↔ 2-way/3-way fusion into 4-way clusters',
+    )
+    pem.add_argument('--limit', type=int, default=None)
+    pem.add_argument('--min-confidence', type=float, default=0.70)
+    pem.add_argument('--workers', type=int, default=16)
+    pem.add_argument('--partners', type=int, default=4)
+    pem.set_defaults(func=_cmd_ensemble_merge)
 
     pdemo = sub.add_parser(
         'export-demo',

@@ -48,14 +48,18 @@ ACCEPT_THRESHOLD = 0.13
 REVERSE_THRESHOLD = 0.09
 MARGIN_THRESHOLD = 0.04
 
-# Cluster completion: looser threshold used only within already-established clusters
-COMPLETION_THRESHOLD = 0.08
+# Cluster completion: looser than ACCEPT_THRESHOLD but tight enough to prevent
+# weak-transitive chains from bridging incomplete clusters.  Precision-critical
+# because completion edges are only validated by already-present cluster members,
+# which themselves may have been admitted with marginal evidence.
+COMPLETION_THRESHOLD = 0.15
+COMPLETION_MAX_DELTA = 0.12   # size agreement required for completion bridges
 
 # Cluster-guided retrieval: after initial clustering, for each incomplete cluster
 # query the missing SM's FAISS index with the cluster's mean embedding.
 CLUSTER_GUIDED_TOP_K = 75
 CLUSTER_GUIDED_MIN_SIM = 0.58
-CLUSTER_GUIDED_MAX_DELTA = 0.20
+CLUSTER_GUIDED_MAX_DELTA = 0.12   # tightened from 0.20 — centroid drift compounds
 CLUSTER_GUIDED_MIN_FUZZ = 65
 
 # Blob splitting: clusters larger than MAX_CLUSTER_SIZE are almost certainly blobs
