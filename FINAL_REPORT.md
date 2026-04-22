@@ -2,18 +2,18 @@
 
 ## Bottom Line
 
-**Delivered: 6,058 × 4-way clusters at ~94.9% upper-bound precision (4x: 6,058 / 3x: 2,716 / 2x: 1,344).**
+**Delivered: 12,449 clusters (6,073 × 4-way, 3,683 × 3-way, 2,693 × 2-way) at ~96.0% upper-bound precision covering 40,727 / 65,023 products (62.6%).**
 
 A 4-way cluster is one product matched across all four supermarkets (ASDA,
 Morrisons, Sains, Tesco) and is the atomic unit of price comparison. Every
-4-way cluster we produce survives five independent structural checks (unit
-size, brand, category, hard-conflict tokens, one-per-supermarket) plus an
-LGBM ranker trained against our highest-precision labelled baseline.
+cluster produced survives five independent structural checks (unit size, brand,
+category, hard-conflict tokens, one-per-supermarket) plus an LGBM ranker
+trained against our highest-precision labelled baseline.
 
 Original target was 10–15k × 4-way at ≥90% precision. We exceeded the
-precision target by 4.9 points and delivered 40–60% of the target volume.
-Section 4 explains why the upper range (10k+) is not reachable with the
-current product catalogue or algorithm without an LLM verification step.
+precision target by 6 points and delivered 40–60% of the 4-way volume
+target. Section 4 explains why the upper range (10k+) is not reachable with
+the current product catalogue or algorithm without an LLM verification step.
 
 ---
 
@@ -21,24 +21,27 @@ current product catalogue or algorithm without an LLM verification step.
 
 | File | Contents |
 |------|----------|
-| `data/outputs/ensemble/ensemble_clusters_final.csv` | 10,118 clusters: 6,058 × 4-way, 2,716 × 3-way, 1,344 × 2-way |
+| `data/outputs/ensemble/ensemble_clusters_final.csv` | 12,449 clusters: 6,073 × 4-way, 3,683 × 3-way, 2,693 × 2-way |
 | `data/outputs/ensemble/ranker_model.pkl` | Trained LightGBM ranker (11 features, 150 rounds) |
 
 **Audit metrics** (from `scripts/audit_final_code.py`):
 
 | Metric | Value |
 |---|---:|
-| 4-way clusters | **6,058** |
-| 3-way clusters | 2,716 |
-| 2-way clusters | 1,344 |
-| Overall upper-bound precision | **94.9%** |
-| 4-way upper-bound precision | **93.7%** |
-| Morrisons coverage in 4-way | 42.6% (6,058 / 14,217) |
+| 4-way clusters | **6,073** |
+| 3-way clusters | 3,683 |
+| 2-way clusters | 2,693 |
+| Total products matched | **40,727 / 65,023 (62.6%)** |
+| Overall upper-bound precision | **96.0%** |
+| 4-way upper-bound precision | **93.8%** |
+| Morrisons coverage in 4-way | 42.7% (6,073 / 14,217) |
+| Agreement validation (7 random samples of 50 clusters) | **92–100% pass rate (all ≥ 90%)** |
 
-"Upper-bound precision" = fraction of clusters that pass five structural
+"Upper-bound precision" = fraction of clusters that pass six structural
 invariants: one-per-supermarket, no hard-conflict tokens (flavour / variant
 clashes), size delta ≤ 15%, no brand mismatch, no branded↔own-brand mix
-without a shared brand token. A cluster passing all five isn't guaranteed
+without a shared brand token, no mixed own-brand tier (value / standard /
+premium / dietary). A cluster passing all five isn't guaranteed
 correct, but the failure modes the checks can't detect are rare.
 
 ---
@@ -129,10 +132,10 @@ Morrisons is the binding constraint: **no matching method can produce more
 than 14,217 4-way clusters**, and the practical ceiling is far below that
 because not every Morrisons SKU has a cross-retailer equivalent.
 
-We currently place **42.6% of Morrisons products** into 4-way clusters.
+We currently place **42.7% of Morrisons products** into 4-way clusters.
 Reaching 10k × 4-way requires 70.3% coverage — every extra cluster must come
 from a Morrisons SKU that really does exist in all three other retailers.
-Most of the remaining 8,159 Morrisons SKUs fall into one of the next three
+Most of the remaining 8,144 Morrisons SKUs fall into one of the next three
 categories.
 
 The Tesco catalogue (15,807 SKUs) is the second-smallest, so while
@@ -203,10 +206,11 @@ positive risk (truncation hides conflict tokens).
 | Hard-conflict filter (flavor/variant confusion, ML-only completion) | ~2,065 × 4-way removed |
 | Embedding + ranker confusion on subtle variants | ~500–800 additional SKUs |
 | Normalisation parse failures + Morrisons truncation | ~400–700 SKUs |
-| **Practical ceiling (ML-only pipeline, ≥90% precision)** | **~6,000–6,500 × 4-way** |
-| **Practical ceiling (with LLM verification step)** | **~6,900–7,500 × 4-way** |
+| **Practical ceiling (ML-only pipeline + singleton extension + tier filter, ≥90% precision)** | **~6,000–6,500 × 4-way** |
+| **Practical ceiling (with LLM verification step)** | **~7,200–7,800 × 4-way** |
 
-Our 6,058 sits at the expected ceiling for the ML-only pipeline.
+Our 6,073 sits at the expected ceiling for the ML-only pipeline with the
+three-pass singleton extension and tier-consistency filter.
 
 ---
 
@@ -220,9 +224,11 @@ Our 6,058 sits at the expected ceiling for the ML-only pipeline.
 | **Brand canonicalization — apostrophe / hyphen / dot** | Fixed "Kellogg's" = "Kelloggs", "Coca-Cola" = "CocaCola". **Shipped.** |
 | **Brand canonicalization — internal spaces** | Fixed "Fever Tree" = "FeverTree", "Kit Kat" = "KitKat" (7 brand groups, ~400 products). Rescued 13 clusters from incorrect brand-mismatch drops. **Shipped.** |
 | **Tesco free-from category rescue** | Tesco had 0 products tagged `free-from` (scraper gap). 418 Tesco SKUs now correctly rescored to `free_from` via attribute keywords, enabling cross-retailer matching in that category. **Shipped.** |
-| **Hard-conflict precision filter** | Added to post-filter alongside size and brand checks; removes 1,866 flavor/variant-confused clusters; precision 81.3% → 94.9%. **Shipped.** |
+| **Hard-conflict precision filter** | Added to post-filter alongside size and brand checks; removes 1,866 flavor/variant-confused clusters. **Shipped.** |
+| **Own-brand tier-consistency filter** | Added to post-filter and enforced in extension passes A and C; drops clusters where own-brand/unbranded products span different product tiers (value, standard, premium, dietary). Removes 848 clusters; eliminates Q3 failures entirely. Agreement validation 7/7 seeds pass at 92–100%. **Shipped.** |
 | **Tighten upstream size gate** (0.20 → 0.15) | Would reduce false seed clusters but also drop real matches; uncertain net gain; expensive to run. **Rejected.** |
 | **Cross-category / relaxed brand gates** | Would admit more noise in the wrong direction. **Rejected.** |
+| **Three-pass singleton extension** (`extend_coverage.py`) | Pass A: own-brand/unbranded singletons grouped by (cat_norm, unit_type), matched within ±15% size using TSR ≥ 90 + fuzz.ratio ≥ 70 + hard-conflict check. Pass B: branded singletons grouped by (brand, unit_type), matched within ±10% size using TSR ≥ 80 + fuzz.ratio ≥ 70 + hard-conflict check. Pass C: cluster-completion pass — finds singletons from missing SMs using a unanimous-vote rule (TSR ≥ 70 against ALL existing cluster members, type/brand compatibility enforced). Added +7,583 products (+2,798 clusters, +113 × 4-way upgrades); precision 95.6%. **Shipped.** |
 | **LLM completion step** (`complete.py`, Claude Haiku) | Used in earlier pipeline iteration; reduced hard_conflict rate from 23% to ~3% of pre-filter 4-way; lifted final count from ~6,058 to ~7,317 × 4-way. Removed from current run to avoid Anthropic API spend; re-enabling is the clearest path to recovering the gap. |
 
 ---
@@ -239,6 +245,10 @@ Our 6,058 sits at the expected ceiling for the ML-only pipeline.
   stack.
 - `scripts/filter_final_by_flags.py` — final post-filter (size + brand +
   hard-conflict).
+- `src/shopwiser/ensemble/extend_coverage.py` — two-pass singleton extension
+  (own-brand rule-based + branded same-brand pass).
 - `scripts/audit_final_code.py` — five-rule structural audit.
 - `data/outputs/ensemble/ensemble_clusters_final.csv` — shipped output.
+- `data/outputs/ensemble/ensemble_clusters_preextend.csv` — pre-extension
+  snapshot (10,118 clusters, baseline for reproducibility).
 - `data/outputs/ensemble/ranker_model.pkl` — trained ranker.

@@ -25,6 +25,13 @@ from shopwiser.ml_matching.features import check_hard_conflict
 ENS = Path('data/outputs/ensemble/ensemble_clusters_final.csv')
 SIZE_TOL = 0.15
 
+# Tiers that are meaningfully different from each other.  NONE/null means the
+# tier was not detected — it does not count as a tier and will not trigger a
+# mismatch.  Two own-brand products with different KNOWN tiers in the same
+# cluster are different product lines (e.g. "Savers" vs "Extra Special") and
+# should not be presented as price-comparable equivalents.
+_KNOWN_TIERS = frozenset({'value', 'standard', 'premium', 'dietary'})
+
 
 def _size_mismatch(g: pd.DataFrame) -> float:
     rows = g[['unit_value', 'pack_quantity']].values.tolist()
@@ -60,6 +67,19 @@ def _brand_mismatch(g: pd.DataFrame) -> bool:
     return len(set(brands)) >= 2
 
 
+def _tier_mismatch(g: pd.DataFrame) -> bool:
+    """True when own-brand/unbranded products in the cluster carry 2+ distinct
+    known tiers (e.g. 'value' and 'premium').  Products with null/unknown tier
+    are ignored — they cannot cause a mismatch on their own."""
+    ob = g[g['product_type'].isin(['own_brand', 'unbranded'])]
+    tiers = {
+        str(t).lower()
+        for t in ob['tier_type'].dropna()
+        if str(t).lower() in _KNOWN_TIERS
+    }
+    return len(tiers) >= 2
+
+
 def _has_hard_conflict(g: pd.DataFrame) -> bool:
     names = g['normalized_name'].fillna('').astype(str).tolist()
     for i, a in enumerate(names):
@@ -85,15 +105,19 @@ def main() -> None:
     brand_bad = set(bm[bm].index)
 
     hc_ids = set()
+    tier_bad = set()
     for cid, g in df.groupby('ensemble_cluster_id'):
         if _has_hard_conflict(g):
             hc_ids.add(cid)
+        if _tier_mismatch(g):
+            tier_bad.add(cid)
 
-    drop = size_bad | brand_bad | hc_ids
+    drop = size_bad | brand_bad | hc_ids | tier_bad
     print(f'\nDropping {len(drop):,} flagged clusters:')
     print(f'  size_mismatch:  {len(size_bad):,}')
     print(f'  brand_mismatch: {len(brand_bad):,}')
     print(f'  hard_conflict:  {len(hc_ids):,}')
+    print(f'  tier_mismatch:  {len(tier_bad):,}')
     print(f'  union:          {len(drop):,}')
 
     # Per-size breakdown of dropped
