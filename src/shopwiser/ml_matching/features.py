@@ -16,6 +16,20 @@ FLAVOR_NAMED_TOKENS = frozenset({
     'lamb', 'ham', 'pork', 'beef', 'chicken', 'turkey', 'duck', 'venison', 'bacon',
     'salmon', 'tuna', 'cod', 'haddock', 'prawn', 'shrimp', 'crab', 'mackerel',
     'trout', 'sardine', 'anchovy',
+    # Italian brand-variant / coffee-range tokens (mirrored from clustering/config.py)
+    'rossa', 'oro', 'intenso', 'americano',
+    # v11: snack / sauce / curry / cheese variant tokens
+    # Catches Pringles "Sour Cream & Onion" vs "Cheese & Onion" style mismatches.
+    'paprika', 'vinegar', 'pickled', 'marmite', 'worcester',
+    'ketchup', 'mustard', 'horseradish', 'wasabi',
+    'cheddar', 'parmesan', 'mozzarella', 'feta', 'halloumi',
+    'tikka', 'korma', 'masala', 'jalfrezi', 'madras', 'vindaloo',
+    'rogan', 'biryani', 'pad', 'thai', 'szechuan', 'teriyaki',
+    'hoisin', 'satay', 'katsu',
+    'pesto', 'arrabbiata', 'carbonara', 'bolognese', 'lasagne',
+    'jerk', 'cajun', 'creole', 'piri',
+    'cocktail', 'salad', 'ranch',
+    'apple',
 })
 
 # ONE_SIDED tokens: present in exactly one name → likely different product variant.
@@ -67,6 +81,18 @@ ONE_SIDED_CONFLICT_TOKENS = frozenset({
     'lamb', 'ham', 'pork', 'beef', 'chicken', 'turkey', 'duck', 'venison', 'bacon',
     'salmon', 'tuna', 'cod', 'haddock', 'prawn', 'shrimp', 'crab', 'mackerel',
     'trout', 'sardine', 'anchovy',
+    # v11: variant tokens (mirrored from clustering/config.py ONE_SIDED_CONFLICT_TOKENS)
+    'sour', 'unsalted', 'smoky',
+    # v11: snack / sauce / curry / cheese — also in FLAVOR_NAMED_TOKENS so the
+    # FLAVOR CLASH branch catches both-have-but-differ; adding here catches
+    # the asymmetric "one has, other doesn't" case (Pringles Original vs Cheese).
+    'paprika', 'vinegar', 'pickled', 'marmite', 'worcester',
+    'ketchup', 'mustard', 'horseradish', 'wasabi',
+    'cheddar', 'parmesan', 'mozzarella', 'feta', 'halloumi',
+    'jalfrezi', 'rogan', 'biryani', 'szechuan', 'teriyaki',
+    'hoisin', 'satay', 'katsu',
+    'pesto', 'arrabbiata', 'carbonara', 'bolognese', 'lasagne',
+    'jerk', 'cajun', 'creole', 'piri',
 })
 
 

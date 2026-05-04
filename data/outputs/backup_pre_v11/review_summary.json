@@ -1,0 +1,43 @@
+{
+  "n_products_in_deliverable": 40727,
+  "n_clusters": 12449,
+  "n_4way": 6073,
+  "n_3way": 3683,
+  "n_2way": 2693,
+  "stage1_pure": 8290,
+  "post_hoc_assembled": 4159,
+  "stage1_dist": {
+    "4way": 3508,
+    "3way": 2614,
+    "2way": 2168
+  },
+  "posthoc_dist": {
+    "4way": 2565,
+    "3way": 1069,
+    "2way": 525
+  },
+  "check1_duplicate_retailer": 0,
+  "check2_size_mismatch_15pct": 769,
+  "check3_brand_conflict": 621,
+  "check5_branded_vs_own_brand": 1066,
+  "cross_category_clusters": 3080,
+  "cross_category_pct": 24.7,
+  "n_raw": 65473,
+  "n_matched": 40727,
+  "n_unmatched": 24746,
+  "pct_covered": 62.2,
+  "calibrated_precision_2way": 74.9,
+  "probe_pass_rate_2way": 78.5,
+  "calibrated_precision_3way": 52.8,
+  "probe_pass_rate_3way": 46.8,
+  "calibrated_precision_4way": 40.8,
+  "probe_pass_rate_4way": 29.7,
+  "calibrated_precision_overall": 51.7,
+  "probe_pass_rate_overall": 45.3,
+  "coverage_known_brand": 53.7,
+  "coverage_tier_keyword": 5.4,
+  "coverage_unit_value": 95.3,
+  "coverage_attributes_keywords": 7.6,
+  "coverage_descriptors": 25.7,
+  "branded_no_known_brand": 8778
+}
