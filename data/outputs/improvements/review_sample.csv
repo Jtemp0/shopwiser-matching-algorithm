@@ -1,0 +1,152 @@
+ensemble_cluster_id,supermarket,names,prices_(£),unit_value,unit_type,tier_keyword,own_brand,category
+771,ASDA,Monster Energy Zero Sugar 500ml,1.7,500.0,ml,,False,fresh_food
+771,Sains,Monster Energy Lewis Hamilton Zero Sugar 500ml,1.75,500.0,ml,,False,food_cupboard
+771,Tesco,Monster Energy Drink Lewis Hamilton Zero Sugar 500ml,1.7,500.0,ml,,False,drinks
+783,ASDA,Costa Coffee Vanilla Latte,1.6,250.0,ml,,False,fresh_food
+783,Morrisons,Costa Coffee Latte Iced Coffee,1.59,250.0,ml,,False,drinks
+783,Sains,Costa Iced Coffee Frappe Choc Fudge Brownie 250ml,1.95,250.0,ml,,False,drinks
+783,Tesco,Costa Coffee Latte Iced Coffee 250ml,1.25,250.0,ml,,False,drinks
+828,ASDA,Tropicana Long Life Pressed Apple Perfectly Pressed Fruit Juice,2.0,850.0,ml,,False,drinks
+828,Sains,Tropicana Long Life Apple Fruit Juice 850ml,2.0,850.0,ml,,False,drinks
+828,Tesco,Tropicana Pressed Apple Juice 900Ml,3.0,900.0,ml,,False,drinks
+1384,ASDA,Ben's Original Tomato & Basil Microwave Rice,1.4,220.0,g,,False,food_cupboard
+1384,Morrisons,Bens Original Wholegrain Microwave Rice,1.0,220.0,g,,False,food_cupboard
+1384,Sains,Ben's Original Smokey BBQ Microwave Rice 220g,1.15,220.0,g,,False,free-from
+1384,Tesco,Ben's Original Smokey BBQ Microwave Rice 220g,1.0,220.0,g,,False,food_cupboard
+1939,ASDA,Ayoola Chicken Flavour Instant Noodles,0.35,70.0,g,,False,food_cupboard
+1939,Morrisons,Shangri-La Chicken Flavour Noodles,0.59,60.0,g,,False,food_cupboard
+1939,Sains,Ko-Lee Instant Noodles Chicken Flavour 70g,0.28,70.0,g,,False,food_cupboard
+1939,Tesco,Ayoola Chicken Flavour Instant Noodles 70g,0.4,70.0,g,,False,food_cupboard
+1991,ASDA,ASDA Mild & Crisp Apple Grapes & Cheese,1.5,150.0,g,,True,food_cupboard
+1991,Morrisons,"Morrisons Apple, Grapes & Cheese",1.59,150.0,g,,True,fresh_food
+2054,ASDA,ASDA Frozen for Freshness Black Forest Fruits,2.25,500.0,g,,True,fresh_food
+2054,Sains,Sainsbury's Frozen Black Forest Fruits 500g,2.5,500.0,g,,True,fresh_food
+2134,ASDA,Shalimar Monkey Nuts,1.2,300.0,g,,False,fresh_food
+2134,Morrisons,Shalimar Monkey Nuts,1.0,300.0,g,,False,food_cupboard
+2185,ASDA,ASDA Extra Special Three Fruits Marmalade,1.85,360.0,g,Extra Special,True,fresh_food
+2185,Morrisons,Morrisons Thick Cut Marmalade,1.0,425.0,g,,True,food_cupboard
+2185,Tesco,Tesco Finest Three Fruit Marmalade 340G,1.8,340.0,g,Finest,True,food_cupboard
+2329,ASDA,Glenmorangie The Original Single Malt Scotch Whisky,28.0,700.0,ml,,False,drinks
+2329,Morrisons,Glenmorangie Original Single Malt Scotch Whisky,39.0,700.0,ml,,False,drinks
+2329,Sains,Glenmorangie The Original 10 Years Old Single Malt Whisky 70cl,38.0,700.0,ml,,False,drinks
+2329,Tesco,Glenmorangie The Original 10 Years Old Single Malt Whisky 70cl,38.0,700.0,ml,,False,drinks
+3304,ASDA,ASDA Extra Special Black Cherry Yogurt,0.69,150.0,g,Extra Special,True,fresh_food
+3304,Morrisons,Morrisons The Best Black Cherry Yoghurt,0.95,150.0,g,The Best,True,fresh_food
+3304,Sains,"Sainsbury's West Country Black Cherry Yogurt, Taste the Difference 150g",0.95,150.0,g,Taste The Difference,True,food_cupboard
+3304,Tesco,Tesco Finest Black Cherry Yogurt 150G,0.9,150.0,g,Finest,True,fresh_food
+3346,ASDA,Yeo Valley Organic Natural Creamy Bio Live Yogurt,1.95,450.0,g,,False,fresh_food
+3346,Morrisons,Yeo Valley Greek & Honey Yogurt,2.4,400.0,g,,False,fresh_food
+3346,Sains,Yeo Valley Organic Super Thick 5% Fat Natural Yogurt 450g,3.25,450.0,g,,False,fresh_food
+3346,Tesco,Yeo Valley Organic Super Thick Natural Yogurt 450G,3.0,450.0,g,,False,fresh_food
+3783,ASDA,Quaker Protein Golden Syrup Porridge Pot 63g,1.29,63.0,g,,False,food_cupboard
+3783,Morrisons,Quaker Heavenly Oats Carame…,1.49,58.0,g,,False,food_cupboard
+3783,Sains,Quaker Oat So Simple Protein Golden Syrup Porridge Pot 63g,0.7,63.0,g,,False,food_cupboard
+3783,Tesco,Quaker Oat So Simple Golden Syrup Porridge Pot 57g,1.3,57.0,g,,False,food_cupboard
+3793,ASDA,ASDA Original Porridge Oats Sachets,0.95,270.0,g,,True,food_cupboard
+3793,Sains,Sainsbury's Porridge Original 10x27g,1.35,270.0,g,,True,food_cupboard
+3793,Tesco,Tesco Easy Oats Original Porridge 10 X27g,1.35,270.0,g,,True,food_cupboard
+3831,ASDA,Nairn's Scottish Porridge Oats,2.2,450.0,g,,False,food_cupboard
+3831,Morrisons,Nairn's Gluten Free Scottish Porridge Oats,2.2,450.0,g,,False,free-from
+3831,Sains,Nairn's Gluten Free Scottish Porridge Oats 450g,2.2,450.0,g,,False,food_cupboard
+3831,Tesco,Nairns Gluten Free Scottish Porridge 450G,2.2,450.0,g,,False,free-from
+4145,ASDA,Heinz Chunky Vegetable Big Soup,2.0,400.0,g,,False,food_cupboard
+4145,Sains,Heinz Sausage & Vegetable Chunky Big Soup 400g,1.35,400.0,g,,False,food_cupboard
+4263,ASDA,ASDA Skinless & Boneless Red Salmon,4.0,170.0,g,,True,food_cupboard
+4263,Morrisons,Morrisons Skin & Boned Red Salmon (170g),4.25,170.0,g,,True,food_cupboard
+4263,Sains,"Sainsbury's Wild Pacific Red Salmon, Skinless & Boneless 170g",4.25,170.0,g,,True,food_cupboard
+4263,Tesco,Tesco Skinless Boneless Wild Pacific Red Salmon 170G,4.15,170.0,g,,True,food_cupboard
+4807,ASDA,ASDA Mango Chutney,1.4,240.0,g,,True,food_cupboard
+4807,Sains,Sainsbury's Mango Chutney 240g,1.03,240.0,g,,True,food_cupboard
+4807,Tesco,Tesco Mango Chutney 230G,0.99,230.0,g,,True,food_cupboard
+4924,ASDA,Yutaka Japanese Rice Vinegar,2.2,150.0,ml,,False,food_cupboard
+4924,Morrisons,Yutaka Japanese Rice Vinegar,2.35,150.0,ml,,False,food_cupboard
+4924,Sains,Yutaka Japanese Rice Vinegar 150ml,1.5,150.0,ml,,False,food_cupboard
+4924,Tesco,Yutaka Japanese Rice Vinegar 150Ml,2.2,150.0,ml,,False,food_cupboard
+5058,ASDA,ASDA Honey Roasted Peanuts,1.5,200.0,g,,True,fresh_food
+5058,Morrisons,Morrisons Honey Roast Peanuts,1.5,200.0,g,,True,food_cupboard
+5058,Sains,Sainsbury's Honey Roast Peanuts 200g,1.5,200.0,g,,True,food_cupboard
+5058,Tesco,Tesco Honey Roast Peanuts & Cashews 200G,2.75,200.0,g,,True,food_cupboard
+5138,ASDA,Food Heaven Heavenly Whipped Cream Alternative,2.2,200.0,ml,,False,fresh_food
+5138,Morrisons,Food Heaven Free-From Heavenly Whipped,2.2,200.0,ml,,False,free-from
+5138,Sains,Food Heaven Heavenly Whipped 200ml,2.0,200.0,ml,,False,food_cupboard
+5138,Tesco,Food Heaven Whipped Spray Cream Vegan 200Ml,2.2,200.0,ml,,False,free-from
+5935,ASDA,Pagen Gifflar Cinnamon Rolls,2.0,259.7,g,,False,bakery
+5935,Morrisons,Pagen Gifflar Cinnamon Rolls,1.9,260.3,g,,False,bakery
+5935,Tesco,Pagen Gifflar Cinnamon 260G,1.95,260.0,g,,False,bakery
+6211,ASDA,Mr Kipling Chocolate Slices,1.25,,,,False,bakery
+6211,Morrisons,Mr Kipling Angel Slices,2.5,,,,False,bakery
+6211,Sains,Mr Kipling Bramley Apple Pies x6,3.0,,,,False,bakery
+6211,Tesco,Mr Kipling Apple & Blackcurrant Pies 6 Pack,1.25,,,,False,bakery
+7319,ASDA,ASDA Extra Special Prosecco Rosé Brut,8.0,750.0,ml,Extra Special,True,drinks
+7319,Morrisons,Morrisons The Best Prosecco Rose DOC,7.0,750.0,ml,The Best,True,drinks
+7319,Sains,"Sainsbury's Prosecco Rose, Taste the Difference 75cl",9.75,750.0,ml,Taste The Difference,True,drinks
+7319,Tesco,Tesco Finest Prosecco Rose 75Cl,7.0,750.0,ml,Finest,True,drinks
+7416,ASDA,Ambrosia Devon Custard,1.6,500.0,g,,False,food_cupboard
+7416,Sains,Ambrosia Devon Custard 500g,1.0,500.0,g,,False,food_cupboard
+7416,Tesco,Ambrosia Chocolate Flavour Devon Custard 4X120g,2.49,480.0,g,,False,food_cupboard
+7482,ASDA,ASDA Sticky Toffee Sponge Puddings 2 x 95g (190g),2.0,190.0,g,,True,food_cupboard
+7482,Morrisons,Aunty's Sticky Toffee Steamed Puddings,1.5,190.0,g,,False,food_cupboard
+7482,Sains,Aunty's Sticky Toffee Puddings 200g,1.5,200.0,g,,False,food_cupboard
+7482,Tesco,Auntys Sticky Toffee Puddings 2 X 95G,1.45,190.0,g,,False,food_cupboard
+8062,ASDA,Tarczynski Tarczy?ski Ham Frankfurters 2 x 110g,1.35,220.0,g,,False,fresh_food
+8062,Sains,Tarczyński Ham Frankfurters 2x110g,2.15,220.0,g,,False,free-from
+8219,ASDA,Foster's Proper Shandy 4 x 440ml,3.75,1760.0,ml,,False,drinks
+8219,Tesco,Fosters Proper Shandy Lager Beer 4x440ml,3.75,1760.0,ml,,False,drinks
+8372,ASDA,Henney's Dry Cider,2.4,500.0,ml,,False,drinks
+8372,Morrisons,Frome Valley Henney's Dry Cider Bottle,2.75,500.0,ml,,False,drinks
+8372,Sains,Frome Valley Dry Cider 500ml,2.5,500.0,ml,,False,drinks
+8982,ASDA,BrewDog Silk Road Lychee & Mango Hazy IPA,3.0,440.0,ml,,False,drinks
+8982,Morrisons,BrewDog Silk Road,3.75,440.0,ml,,False,drinks
+8982,Sains,BrewDog Silk Road Lychee & Mango Hazy IPA 440ml,3.75,440.0,ml,,False,drinks
+8982,Tesco,Brewdog Silk Road Ipa 440Ml,3.65,440.0,ml,,False,drinks
+9259,Morrisons,Osem Chicken Flavour Soup & Seasoning Mix,3.29,400.0,g,,False,food_cupboard
+9259,Tesco,Osem Chicken Soup & Seasoning Mix 400G,3.45,400.0,g,,False,food_cupboard
+9313,Morrisons,Morrisons Market Street Sweet Chill…,2.4,200.0,g,Market Street,True,fresh_food
+9313,Sains,"Sainsbury's Sweet Chilli Beetroot, Taste the Difference 200g",1.2,200.0,g,Taste The Difference,True,fresh_food
+9313,Tesco,Tesco Finest Sweet & Fiery Beetroot 180G,1.5,180.0,g,Finest,True,fresh_food
+9423,Morrisons,Morrisons Nourish Pulled Beef Chilli & Rice,3.75,375.0,g,,True,fresh_food
+9423,Tesco,"Tesco Finest Beef, Chorizo Chilli & Rice 400G",4.25,400.0,g,Finest,True,fresh_food
+9978,Morrisons,Whole Earth Original Crunchy Peanut Butter,3.0,450.0,g,,False,food_cupboard
+9978,Sains,Whole Earth Crunchy Peanut Butter 454g,4.5,454.0,g,,False,food_cupboard
+9978,Tesco,Whole Earth Smooth Peanut Butter 454G,4.5,454.0,g,,False,food_cupboard
+10830,Morrisons,Yellow Tail Pinot Grigio,2.5,187.0,ml,,False,drinks
+10830,Sains,Yellow Tail Pinot Grigio 18.7cl,2.5,187.0,ml,,False,drinks
+10830,Tesco,Yellow Tail Pinot Grigio 18.7Cl,2.5,187.0,ml,,False,drinks
+11117,ASDA,Sipsmith London Lemon Drizzle Gin 700ml,30.0,700.0,ml,,False,drinks
+11117,Morrisons,Sipsmith Sloe Gin,29.5,700.0,ml,,False,drinks
+11117,Sains,Opihr Black Lemon London Dry Gin 70cl,28.0,700.0,ml,,False,drinks
+11117,Tesco,Sipsmith Lemon Drizzle Gin 70cl,29.5,700.0,ml,,False,drinks
+11129,Morrisons,Jameson Black Barrel Triple D…,39.0,700.0,ml,,False,drinks
+11129,Sains,Jameson Black Barrel Triple Distilled Irish Whiskey 70cl,39.0,700.0,ml,,False,drinks
+11129,Tesco,Jameson Triple Distilled Irish Whiskey 700ml,20.0,700.0,ml,,False,drinks
+11153,Morrisons,Hovis 4 Rustic White Rolls,1.3,,,,False,bakery
+11153,Tesco,Hovis Home Bake Rustic White Rolls 4 Pack,1.8,,,,False,bakery
+11538,Morrisons,Coca-Cola Original Taste,3.0,1000.0,ml,,False,drinks
+11538,Sains,Coca-Cola Original Taste 4x250ml,4.5,1000.0,ml,,False,drinks
+11538,Tesco,Coca-Cola Original Taste 4x250ml,4.5,1000.0,ml,,False,drinks
+11615,Morrisons,Morrisons Raspberry Sports Drink,0.99,500.0,ml,,True,drinks
+11615,Sains,Sainsbury's Sorbet Raspberry 500ml,2.55,500.0,ml,,True,food_cupboard
+11615,Tesco,Tesco Raspberry Sorbet 500Ml,2.55,500.0,ml,,True,frozen
+11749,Morrisons,Morrisons Spinach,2.25,450.0,g,,True,fresh_food
+11749,Tesco,Tesco Spinach 500G,1.88,500.0,g,,True,fresh_food
+12013,Morrisons,Morrisons Cookies & Cream Heaven…,14.5,,,,True,bakery
+12013,Tesco,Tesco Cookies and Cream Pie 450g,2.5,450.0,g,,True,frozen
+12249,Sains,Sainsbury's Baby Carrots In Water 300g (180g*),0.6,300.0,g,,True,food_cupboard
+12249,Tesco,Tesco Baby Carrots In Water 300G,0.5,300.0,g,,True,food_cupboard
+12278,ASDA,Lindt Excellence Extra Creamy Chocolate Bar,2.15,100.0,g,,False,food_cupboard
+12278,Morrisons,Lindt Excellence Caramel & Sea Salt Milk,2.15,100.0,g,,False,food_cupboard
+12278,Sains,Lindt Excellence Dark Sea Salt Chocolate Bar 100g,2.15,100.0,g,,False,food_cupboard
+12278,Tesco,Lindt Excellence Touch Of Sea Salt Chocolate Bar 100G,2.15,100.0,g,,False,food_cupboard
+12477,Sains,"Sainsbury's 00 Grade Pasta Flour, Taste the Difference 1kg",1.6,1000.0,g,Taste The Difference,True,food_cupboard
+12477,Tesco,Tesco Finest '00' Grade Pasta & Pizza Flour 1Kg,1.6,1000.0,g,Finest,True,food_cupboard
+12569,Sains,"Sainsbury's Cashew Nuts, SO Organic 100g",2.1,100.0,g,So Organic,True,food_cupboard
+12569,Tesco,Tesco Organic Cashew Nuts 100G,2.1,100.0,g,Organic,True,food_cupboard
+12679,Sains,Sainsburys Breadstick Selection 120g,1.75,120.0,g,,False,food_cupboard
+12679,Tesco,Tesco Breadstick Selection 120G,1.75,120.0,g,,True,food_cupboard
+13209,ASDA,ASDA No Added Sugar Double Strength Cherries & Berries Squash,0.95,1583.3,ml,,True,drinks
+13209,Sains,Sainsbury's Quadruple Strength Cherries & Berries Squash 1.5L,2.0,1500.0,ml,,True,drinks
+13209,Tesco,Tesco Quadruple Strength Cherries & Berries Squash No Added Sugar 1.5L,2.0,1500.0,ml,,True,drinks
+13238,Sains,Ocean Spray Sparkling Water Cranberry & Raspberry 1L,1.0,1000.0,ml,,False,drinks
+13238,Tesco,Ocean Spray Sparkling Cranberry Raspberry Water 1L,1.0,1000.0,ml,,False,drinks
+14091,Sains,Itsu Crispy Seaweed Thins Sweet Soy & Sea Salt 5g,1.0,5.0,g,,False,bakery
+14091,Tesco,Itsu Seaweed Thins Sea Salt 5G,1.0,5.0,g,,False,food_cupboard

@@ -1,0 +1,139 @@
+idx_a,idx_b,retailer_a,retailer_b,name_a,name_b,similarity,size_ratio,category
+12853,18194,ASDA,Morrisons,SweetZone Tangy Mix,Sweetzone Tangy Mix,1.0,1.111,food_cupboard
+4108,29026,ASDA,Morrisons,ASDA Extra Special Plums,Morrisons The Best Plums,1.0,,fresh_food
+15388,21682,ASDA,Morrisons,ASDA Chopped Mixed Nuts,Morrisons Chopped Mixed Nuts,1.0,1.2,food_cupboard
+12851,18176,ASDA,Morrisons,SweetZone Party Mix,Sweetzone Party Mix,1.0,1.111,food_cupboard
+6934,21799,ASDA,Morrisons,ASDA Original Porridge Pot,Morrisons Original Porridge Pot,1.0,1.098,food_cupboard
+46618,55421,Sains,Tesco,Bonne Maman Lemon Madeleines Cakes 175g,Bonne Maman Lemon Madeleines 175G,0.98,1.0,bakery
+37840,61781,Sains,Tesco,Mohapx Sunflower Seeds 300g,Tesco Sunflower Seeds 300G,0.977,1.0,food_cupboard
+47191,63849,Sains,Tesco,Blossom Hill White Zinfandel Rosé 75cl,Blossom Hill White Zinfandel 75Cl,0.974,1.0,drinks
+11598,60752,ASDA,Tesco,Simply Cook Spicy Prawn Pasta Recipe Kit 43g,Simply Cook Spicy Prawns Pasta Recipe Kit 43G,0.974,1.0,food_cupboard
+8552,38072,ASDA,Sains,Oxo Hickory Smoked Chipotle Seasoning Rub,Oxo Hickory Smoked Chipotle Seasoning Rub 35g,0.969,1.143,food_cupboard
+15460,24769,ASDA,Morrisons,Mirabeau Forever Summer,Mirabeau Forever Summer Rose,0.961,1.0,drinks
+46442,51635,Sains,Tesco,Paul Hollywood Ready to Bake Crusty Rolls x4,Paul Hollywood 4 Ready To Bake White Crusty Rolls,0.959,,bakery
+37842,64749,Sains,Tesco,Hellmann's Squeezy Mayonnaise Chilli Charger 250ml,Hellmann's Chilli Charger Mayonnaise Squeezy 250g,0.957,1.0,food_cupboard
+3748,22530,ASDA,Morrisons,Mug Shot Classic Original Curry Noodles,Mug Shot Noodles Classic Original Curry Soup,0.956,1.007,food_cupboard
+21726,51338,Morrisons,Tesco,Morrisons Savers Pickled Silverskin Onions (440g),Tesco Sweet Pickled Silverskin Onions 440G,0.953,1.0,food_cupboard
+14234,45081,ASDA,Sains,Holy Moly Red Pepper & Tomato Salsa 150g,Holy Moly Smoky Red Pepper & Tomato Salsa 150g,0.949,1.0,fresh_food
+16473,63662,ASDA,Tesco,Maltesers Chocolate Bunny Extra Large Easter Egg,Maltesers Milk Chocolate Bunny Extra Large Easter Egg 236g,0.946,1.144,food_cupboard
+40367,59286,Sains,Tesco,Shipyard American IPA Ale Beer Can 4x440ml,Shipyard American IPA Ale Beer Bottle 4X440ml,0.946,1.0,drinks
+39557,64468,Sains,Tesco,J2O Spritz Apple & Watermelon Sparkling Juice Drink 4x275ml,J2O Spritz Sparkling Apple & Watermelon 4x275ml,0.945,1.0,drinks
+28219,48659,Morrisons,Sains,Morrisons Unsmoked Gammon Steaks,Sainsbury's Unsmoked Gammon Steaks 300g,0.942,1.2,fresh_food
+19116,45333,Morrisons,Sains,Yo Chicken Katsu Rolls,YO! Chicken Katsu Rolls 200g,0.941,1.143,fresh_food
+40788,51031,Sains,Tesco,Fever-Tree Sparkling Mexican Lime 4x250ml,Fever-Tree Light Sparkling Mexican Lime 4X250ml,0.94,1.0,drinks
+332,48873,ASDA,Sains,Nescafe Starbucks by Nescafé Dolce Gusto Madagascar Vanilla Macchiato Coffee Pods,"Starbucks by Nescafe Dolce Gusto Madagascar Vanilla Macchiato Coffee Pods, 12 Pods Per Box",0.939,1.0,drinks
+33457,58284,Sains,Tesco,Sainsbury's Cheese & Tomato Ravioli 400g,Tesco Cheese Ravioli In Tomato Sauce 400G,0.938,1.0,food_cupboard
+3258,28865,ASDA,Morrisons,Cadbury Timeout Wafer Orange 6x,Cadbury Timeout Chocolate Orange Wafer…,0.937,1.167,food_cupboard
+7668,50351,ASDA,Tesco,Crosse & Blackwell Cream of Roast Chicken 400g,Crosse And Blackwell Cream Of Roast Chicken Soup 400G,0.936,1.0,food_cupboard
+22943,33522,Morrisons,Sains,Bare Naked Noodles,Bare Naked Noodles 250g,0.935,1.2,food_cupboard
+19328,54571,Morrisons,Tesco,Billy Bear Slices,Billy Bear Slices 100G,0.932,1.111,fresh_food
+15723,40905,ASDA,Sains,Tropicana Sensations Pineapple & Pink Guava Crush,Tropicana Sensations Pineapple & Pink Guava Crush Juice 850ml,0.929,1.0,drinks
+13684,17739,ASDA,Morrisons,Lajkonik Paluszki - Salted Sticks,Lajkonik Paluszki Salty Sticks,0.928,1.0,food_cupboard
+32057,52728,Sains,Tesco,Nutella Hazelnut & Chocolate Spread 750g,Nutella Hazelnut & Chocolate Spread 630G,0.928,1.19,food_cupboard
+13843,18081,ASDA,Morrisons,Maggi Authentic Malaysian Chilli Sauce,Maggi Authentic Malaysian Chi…,0.925,1.133,food_cupboard
+3681,22530,ASDA,Morrisons,Mug Shot Classic Original Curry Noodles Pot,Mug Shot Noodles Classic Original Curry Soup,0.925,1.007,food_cupboard
+39390,50669,Sains,Tesco,Innocent Apple & Mango Juice 900ml,Innocent Apple Juice 900Ml,0.924,1.0,drinks
+18307,34513,Morrisons,Sains,Krasnystaw Kefir,Krasnystaw Kefir 420g,0.923,1.19,food_cupboard
+25342,61327,Morrisons,Tesco,Gallo Family Vineyards Chardonnay White Wine,Gallo Family Vineyards Chardonnay 75Cl,0.923,1.0,drinks
+12412,23264,ASDA,Morrisons,JUST ESSENTIALS by ASDA Chocolate Hazelnut Spread,Morrisons White Chocolate & Hazelnut Spread,0.922,1.0,food_cupboard
+22285,59465,Morrisons,Tesco,Mr. Porky Crispy Strips,Mr. Porky Crispy Pork Strips 35G,0.922,1.0,food_cupboard
+13831,28779,ASDA,Morrisons,Indus Kebab House Sauce,Indus Kebab House Chilli Sauce,0.921,1.035,food_cupboard
+37359,55610,Sains,Tesco,Tony's Chocolonely Dark Creamy Hazelnut Crunch 180g,Tony's Chocolonely Milk Chocolate Creamy Hazelnut Crunch 180G,0.921,1.0,food_cupboard
+31274,54082,Sains,Tesco,Sainsbury's White Granulated Sugar 1kg,Granulated Sugar 1Kg,0.92,1.0,food_cupboard
+16345,22125,ASDA,Morrisons,ASDA Shredless Orange Marmalade,Morrisons Shredless Marmalade,0.92,1.068,food_cupboard
+4991,40410,ASDA,Sains,Most Wanted Malbec Rosé,Most Wanted Malbec 75cl,0.92,1.0,drinks
+8095,52714,ASDA,Tesco,Tiger Tiger Luncheon Meat,Tiger Tiger Pork Luncheon Meat 340G,0.919,1.0,food_cupboard
+36461,54176,Sains,Tesco,Schär Gluten Free Foldable Flatbreads 225g,Schar Gluten Free Foldable Flatbreads 225G,0.919,1.0,food_cupboard
+23574,35408,Morrisons,Sains,Bare Naked Rice,Bare Naked Rice 250g,0.919,1.2,food_cupboard
+7649,50354,ASDA,Tesco,Crosse & Blackwell Roast Chicken & Vegetable,Crosse And Blackwell Roast Chicken & Vegetable Soup 400G,0.918,1.0,food_cupboard
+43359,53238,Sains,Tesco,Sainsbury's British Baking Potatoes 2kg,Tesco Baking Potatoes 2kg,0.918,1.0,fresh_food
+7655,50356,ASDA,Tesco,Crosse & Blackwell Winter Vegetable,Crosse And Blackwell Winter Vegetable Soup 400G,0.918,1.0,food_cupboard
+29507,50472,Morrisons,Tesco,Big n Free Large Free Range Eggs 10 pack,Big & Free Large White Free Range Eggs 10 Pack,0.917,,fresh_food
+7639,50355,ASDA,Tesco,Crosse & Blackwell Spicy Parsnip & Carrot,Crosse And Blackwell Spicy Parsnip & Carrot Soup 400G,0.916,1.0,food_cupboard
+17556,37669,Morrisons,Sains,Aunty Noray's Merguez Sausage,Aunty Noray's Merguez Sausages 280g,0.913,1.12,food_cupboard
+24647,39659,Morrisons,Sains,Gordon's Alcohol Free Gin,Gordon's Alcohol Free 70cl,0.913,1.0,drinks
+3583,39833,ASDA,Sains,Teisseire Passion Fruit 60cl,Teisseire Passion Fruit Zero Sugar 60cl,0.912,1.0,drinks
+16136,54770,ASDA,Tesco,Twix Caramel & White Chocolate Fingers Biscuit Bars Multipack 9x20g,"Twix Salted Caramel & Milk Chocolate Fingers Biscuit Bars Multipack, 9x20g",0.911,1.0,food_cupboard
+39287,49288,Sains,Tesco,Highland Still Spring Water 10L,Highland Spring Still Water 6 X 1.5 Ltrs,0.909,1.143,drinks
+1069,28602,ASDA,Morrisons,ASDA Organic White Mushrooms,Morrisons Organic Mushrooms,0.909,1.0,fresh_food
+18619,53216,Morrisons,Tesco,Morrison Coronation Chicken Sandwich Filler,Tesco Coronation Chicken Sandwich Filler 235g,0.908,1.175,fresh_food
+40331,56057,Sains,Tesco,Dark Horse Sauvignon Blanc White Wine 75cl,Dark Horse Sauvignon Blanc 75Cl,0.907,1.0,drinks
+3684,17641,ASDA,Morrisons,Nongshim Kimchi Ramyun Noodle Soup,Nongshim Kimchi Ramyun,0.906,1.091,food_cupboard
+11463,33810,ASDA,Sains,Old El Paso Mexican One Pan Chilli & Garlic Rice Meal Kit,Old El Paso Mexican One Pan Chilli & Garlic Rice Meal For Chicken Kit 355g,0.904,1.014,food_cupboard
+41278,60855,Sains,Tesco,Korev 4x440ml,Korev Lager 4x440ml,0.903,1.0,drinks
+7659,51058,ASDA,Tesco,Weight Watchers from Heinz Carrot & Lentil Soup,Heinz Weight Watchers Carrot & Lentil Soup 295G,0.902,1.017,food_cupboard
+38031,50568,Sains,Tesco,Baxters Favourites Highlanders Beef Broth 400g,Baxters Favourites Highlander Broth Soup 400G,0.901,1.0,food_cupboard
+28510,43301,Morrisons,Sains,Morrisons Closed Cup Mushrooms,Sainsbury's Closed Cup White Mushrooms 300g,0.9,1.2,fresh_food
+16488,19830,ASDA,Morrisons,ASDA Goat's Cheese,Morrisons British Goat's Cheese,0.897,1.0,fresh_food
+28153,57536,Morrisons,Tesco,Gressingham Duck Breast Fillets,Gressingham Duck Fillets 250G,0.897,1.2,fresh_food
+36685,60371,Sains,Tesco,Proper Chips Barbecue Lentil Chips 20g,Properchips Barbecue Lentil Chips 20G,0.897,1.0,food_cupboard
+21234,62929,Morrisons,Tesco,Schwartz Wrap It Takeaway Kebab,Schwartz Wrap It Takeaway Kebab Recipe Mix 30g,0.896,1.167,food_cupboard
+30679,39925,Morrisons,Sains,Heineken Premium Lager Beer Cans6 x 330ml,Heineken Premium Lager Beer Cans 4 x 440ml,0.894,1.125,drinks
+36074,50323,Sains,Tesco,Kubus Go Multivitamin 300ml,Kubus 100% Multivitamin Juice 300Ml,0.893,1.0,food_cupboard
+1851,49468,ASDA,Tesco,Rubicon Sparkling Mango Juice Soft Drink 18 x 330ml,Rubicon Sparkling Mango Drink 18 X 330Ml,0.891,1.0,drinks
+12855,36053,ASDA,Sains,Chupa Chups 10 Sour Assorted Flavour Lollipops 120g,Chupa Chups the Best Assorted Flavour Lollipops x10 120g,0.89,1.0,food_cupboard
+41350,57327,Sains,Tesco,Mirabeau Pure Côtes De Provence 75cl,Mirabeau Pure Provence Rose 75Cl,0.89,1.0,drinks
+29064,47349,Morrisons,Sains,Moo Free Easter Bunnycomb Egg Wit…,Moo Free Bunnycomb Easter Egg 85g,0.889,1.116,free-from
+45824,55689,Sains,Tesco,Pukka Steak Microwaveable Shortcrust Pies x2,Pukka Chicken Microwaveable Shortcrust Pies 2 Pack,0.888,,frozen
+11518,31182,ASDA,Morrisons,Old El Paso Gluten Free Fajita Kit Smokey BBQ,Old El Paso Gluten Free Smoky BBQ Fajita Kit,0.887,,food_cupboard
+19302,46143,Morrisons,Sains,Oakpark Naturally Smoked Turkey Bacon Rashers,Oakpark Naturally Smoked Turkey Breast Rashers x6 150g,0.886,1.0,fresh_food
+13435,60403,ASDA,Tesco,Not Guilty Alcohol Free Red Blend,Not Guilty Red Blend Zero Alcohol 75Cl,0.885,1.0,drinks
+45004,53591,Sains,Tesco,Sainsbury's On the Go Southern Fried Chicken Pasta Salad 300g,Tesco Southern Fried Chicken Pasta 300G,0.885,1.0,fresh_food
+38997,50669,Sains,Tesco,Innocent Apple & Raspberry Juice 900ml,Innocent Apple Juice 900Ml,0.885,1.0,drinks
+8561,52452,ASDA,Tesco,Pot Noel Caramelised Onion Gravy with HP Sauce 330g,Potts Caramelised Onion Gravy with HP Sauce 330g,0.883,1.0,food_cupboard
+24760,57235,Morrisons,Tesco,Ravenswood Lodi Old Vine Zinfandel Red Wine,Ravenswood Lodi Zinfandel 75Cl,0.881,1.0,drinks
+22578,31867,Morrisons,Sains,Hartley's Raspberry Jelly Pot,"Hartley's Jelly, Raspberry 135g",0.88,1.08,food_cupboard
+40974,64459,Sains,Tesco,Tenzing Natural Energy Raspberry & Yuzu 4x250ml,Tenzing Energy Drink Raspberry & Yuzu 4X250ml,0.88,1.0,drinks
+5862,59166,ASDA,Tesco,ASDA 4 Steam Bags Long Grain Rice,Tesco Steam Bags Long Grain White Rice 4 X 200G,0.878,1.0,frozen
+30678,61324,Morrisons,Tesco,Barefoot On Tap Pinot Grigio White Wine,Barefoot On Tap Pinot Grigio Box Wine 1.5L,0.878,1.0,drinks
+44514,56524,Sains,Tesco,Charlie Bigham's Thai Red Curry 835g (Serves 2),Charlie Bigham's Thai Red Chicken Curry & Rice 835G,0.877,1.0,fresh_food
+35233,58097,Sains,Tesco,Miso Tasty Organic White Miso 110g,Miso Tasty Organic White Miso Light Soy Paste 110G,0.877,1.0,food_cupboard
+46146,61917,Sains,Tesco,Finnebrogue Naked Ultimate Pork Sausage x6 400g,Finne Brogue Naked Ultimate Pork Sausage 400G,0.874,1.0,fresh_food
+13249,50757,ASDA,Tesco,Ambrosia Chocolate Flavour Devon Custard,Ambrosia Devon Custard 500G,0.873,1.053,food_cupboard
+28277,48006,Morrisons,Sains,Oakpark Unsmoked Turkey Rashers,Oakpark Smoked Turkey Rashers x6 150g,0.872,1.0,fresh_food
+14185,29037,ASDA,Morrisons,ASDA Extra Special Potato Salad,Morrisons Potato & Egg Salad,0.872,1.0,fresh_food
+44339,54488,Sains,Tesco,Herta Frankfurter Hot Dogs x4 140g,Herta 4 Chicken Frankfurter Hot Dog 140G,0.871,1.0,fresh_food
+44852,56164,Sains,Tesco,Wasabi Sweet Chilli Chkn Yakisoba 450g,Wasabi Sweet Chilli Chicken Yakisoba Noodles 450G,0.871,1.0,fresh_food
+13516,54745,ASDA,Tesco,Tahira Sliced Turkey & Beef Salami,Tahira Slice Turkey Salami 200G,0.87,1.0,food_cupboard
+9712,62377,ASDA,Tesco,JUST ESSENTIALS by ASDA Lightly Salted Sharing Tortilla Chips,Tesco Lightly Salted Tortilla Chips 200g,0.869,1.111,food_cupboard
+25029,59615,Morrisons,Tesco,Brewdog Wonderland Cocktail Co Classic Mojito,Wonderland Cocktail Co. Classic Mojito 200ml,0.869,1.0,drinks
+1447,19344,ASDA,Morrisons,Pukka Pork Sausage Rolls,Pukka Sausage Rolls 4 Pack,0.869,1.0,fresh_food
+28637,55305,Morrisons,Tesco,Morrisons Celeriac,Tesco Celeriac Loose,0.868,1.125,fresh_food
+3892,23555,ASDA,Morrisons,Ainsley Harriott Tomato & Chilli Cous Cous,Ainsley Harriot Chilli Cous Cous,0.868,1.0,food_cupboard
+14154,30705,ASDA,Morrisons,7Moon Udon Japanese Style Noodles,Seven Moons Udon Japanese Style Noodles,0.868,1.0,food_cupboard
+29245,48878,Morrisons,Sains,Lindt Gold Bunny,Lindt Gold Bunny 115g,0.866,1.15,food_cupboard
+29245,48957,Morrisons,Sains,Lindt Gold Bunny,Lindt GOLD BUNNY 115g,0.866,1.15,food_cupboard
+15533,20276,ASDA,Morrisons,ASDA Extra Special Taleggio D.O.P,Morrisons The Best Taleggio Cheese,0.866,1.0,fresh_food
+2622,40749,ASDA,Sains,Dalston's Real Squeezed Cherry & Sparkling Water,Dalston's Real Squeezed Peach & Sparkling Water 4x330ml,0.865,1.01,drinks
+43461,59915,Sains,Tesco,Sainsbury's Broccoli & Cauliflower Florets 240g,Tesco Cauliflower Florets 240G,0.865,1.0,fresh_food
+1560,62505,ASDA,Tesco,Ginsters Vegan Bombay Potato & Spinach Pasty,Ginster Pasty Bombay Potato & Spinach 180G,0.864,1.0,fresh_food
+46168,62747,Sains,Tesco,Finnebrogue Wagyu Beef Burgers x2 340g,Finne Brogue 2 Wagyu Beef Burgers 340G,0.864,1.0,fresh_food
+16040,26275,ASDA,Morrisons,Young's 10 Haddock Fish Fingers,Morrisons 10 Haddock Fish Fingers,0.864,1.0,frozen
+48641,54299,Sains,Tesco,Sour Patch Kids Watermelon Sweets Bag 140g,Sour Patch Kids Watermelon Sour Sweets 130G,0.862,1.077,food_cupboard
+10823,46337,ASDA,Sains,Bake at Home 2 Baguettes,Sainsbury's White Bake At Home Baguettes x2,0.861,,bakery
+20177,57072,Morrisons,Tesco,Morrisons The Best Mature Double Gloucester,Tesco Finest Extra Mature Double Gloucester Cheese 200G,0.86,1.1,fresh_food
+30341,44915,Morrisons,Sains,Morrisons Caramelised Onion Scotch Egg,Sainsbury's Pork & Caramelised Onion Scotch Egg 113g,0.86,,fresh_food
+36691,63531,Sains,Tesco,"Manischewitz Egg Noodles, Fine 250g",Manischewitz Medium Egg Noodles 250G,0.859,1.0,food_cupboard
+15480,56707,ASDA,Tesco,Frank's Red Hot Smoked Chipotle Craft Hot Sauce,Frank's RedHot Smoked Chipotle Craft Hot Sauce 135ml,0.859,1.0,food_cupboard
+19912,57214,Morrisons,Tesco,Belton Farm Red Leicester,Belton Farm Smoked Red Leicester Cheese 180G,0.859,1.111,fresh_food
+28221,63386,Morrisons,Tesco,Morrisons Smoked Lardons,Tesco Smoked Bacon Lardons 200G,0.858,1.0,fresh_food
+2679,38685,ASDA,Sains,Old Jamaica Ginger Beer Light,Old Jamaica Ginger Beer 1.5L,0.858,1.05,drinks
+44547,64133,Sains,Tesco,"Sainsbury's Maple Cured Bacon, Lettuce & Tomato Sandwich","Tesco Bacon, Lettuce & Tomato Sandwich",0.858,,fresh_food
+43762,54473,Sains,Tesco,Sainsbury's Small Whole Cucumber,Tesco Organic Whole Cucumber,0.857,,fresh_food
+11150,39117,ASDA,Sains,ASDA No Added Sugar Zero Tropical Crush,Sainsbury's No Added Sugar Tropical Crush Drink 2L,0.857,1.0,drinks
+11154,27601,ASDA,Morrisons,ASDA No Added Sugar Zero Orange Crush Bottle,Morrisons No Added Sugar Orange Crush,0.856,1.038,drinks
+10826,46409,ASDA,Sains,Bake at Home Brown Baguette,Sainsbury's Brown Baguettes Bake At Home x2,0.856,,bakery
+17844,34826,Morrisons,Sains,Polish Speciality Sauerkraut With Carrot,Polish Specialities Sauerkraut With Carrot 900g,0.856,1.125,food_cupboard
+45946,60701,Sains,Tesco,Sainsbury's Quarter Pounder British Beef Burgers x4 454g,Tesco Fire Pit 4 Quarter Pounder Beef Burgers 454G,0.855,1.0,fresh_food
+2159,38087,ASDA,Sains,ASDA 100's & 1000's,Sainsbury's Pink & White 100's & 1000's 80g,0.855,1.0,food_cupboard
+5671,62097,ASDA,Tesco,Fry's 4 Plant Based Chick'n Burgers 320g,Fry's 4 Plant Based Chick' N Burgers 320G,0.855,1.0,frozen
+34535,52648,Sains,Tesco,Hillfarm Extra Virgin Cold Pressed Rapeseed Oil 500ml,Mr Hugh's Extra Virgin Cold Pressed Rapeseed 500Ml,0.855,1.0,food_cupboard
+8760,57630,ASDA,Tesco,Napolina Light in Colour Olive Oil Spray 200ml,Napolina Olive Oil Spray 200Ml,0.854,1.0,food_cupboard
+41195,59705,Sains,Tesco,BrewDog Distilling Co. Abstrakt Vodka Madagascan Vanilla x Toasted Marshmallow 70cl,Abstrakt Madagascan Vanilla & Marshmallow Vodka 70Cl,0.854,1.0,drinks
+13279,36512,ASDA,Sains,ASDA Classic Runny Honey 720g,Sainsbury's Runny Honey 720g,0.853,1.0,food_cupboard
+45903,61782,Sains,Tesco,Sainsbury's Sausage Patties 342g,Tesco 6 Pork & Herb Sausage Patties 342G,0.853,1.0,frozen
+32298,50580,Sains,Tesco,Sainsbury's Sliced Pickled Beetroot in Vinegar 710g (462g*),Tesco Pickled Sliced Beetroot 710G,0.852,1.0,food_cupboard
+20922,47567,Morrisons,Sains,Kenco Unsweetened Cappuccino…,Kenco Duo Cappuccino Unsweetened Instant Coffee x6,0.851,1.167,food_cupboard
+28437,60447,Morrisons,Tesco,Morrisons The Best Mash Potato,Tesco Sweet Potato & Potato Mash 400G,0.851,1.0,fresh_food
+37838,63501,Sains,Tesco,Jammie Dodgers Minis Biscuits Apple & Blackcurrant x6 120g,Jammie Dodger Apple & Blackcurrant Biscuits 140G,0.851,1.167,food_cupboard
+43472,53709,Sains,Tesco,Sainsbury's Large Pineapple,Tesco Pineapple,0.85,,fresh_food

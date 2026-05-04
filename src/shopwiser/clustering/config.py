@@ -92,6 +92,20 @@ FLAVOR_NAMED_TOKENS = frozenset({
     'rossa', 'oro',
     # Nescafe Azera: Intenso vs Americano — distinct coffee-style variants
     'intenso', 'americano',
+    # v11: Snack / crisp / condiment flavour distinguishers
+    # Catches Pringles "Sour Cream & Onion" vs "Cheese & Onion" style mismatches
+    # by ensuring named flavour vocabulary fires on both sides for variant-rich
+    # categories (crisps, snacks, sauces, ready-meals).
+    'paprika', 'vinegar', 'pickled', 'marmite', 'worcester',
+    'ketchup', 'mustard', 'horseradish', 'wasabi',
+    'cheddar', 'parmesan', 'mozzarella', 'feta', 'halloumi',
+    'tikka', 'korma', 'masala', 'jalfrezi', 'madras', 'vindaloo',
+    'rogan', 'biryani', 'pad', 'thai', 'szechuan', 'teriyaki',
+    'hoisin', 'satay', 'katsu',
+    'pesto', 'arrabbiata', 'carbonara', 'bolognese', 'lasagne',
+    'jerk', 'cajun', 'creole', 'piri',
+    'cocktail', 'salad', 'ranch',
+    'apple', 'pear',
 })
 
 # MILK_BASE_TOKENS: milk alternatives — mutually exclusive bases.
@@ -148,6 +162,15 @@ ONE_SIDED_CONFLICT_TOKENS = frozenset({
     # tokens that differ); ONE_SIDED adds the asymmetric case.
     'chicken', 'beef', 'pork', 'lamb', 'turkey', 'duck',
     'salmon', 'tuna', 'cod', 'bacon', 'prawn',
+    # v11: variant tokens that distinguish snack / sauce / dressing variants
+    # one-sided presence is a near-certain mismatch
+    'sour',       # "Sour Cream & Onion" vs "Cheese & Onion" — catches Pringles bug
+    'salted',     # "Salted" crisps vs ready-salted intensity / unsalted variants
+    'unsalted',
+    'smoky',      # "Smoky BBQ" vs plain BBQ flavours
+    # Intentionally NOT added: 'hot', 'sweet', 'spicy' — too broad,
+    # they generate false positives on use-case words ("Hot Chocolate")
+    # and on brand names ("Sweet Freedom"). Keep them in DESCRIPTORS only.
 })
 
 # PREPARATION_CONFLICT_PAIRS: mutually-exclusive preparation tokens —

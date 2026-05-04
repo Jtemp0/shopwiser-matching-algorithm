@@ -1,0 +1,798 @@
+ensemble_cluster_id,cluster_size,conflict_type,conflict_token,retailer_a,retailer_b,name_a,name_b
+45,4,one_sided,decaf,ASDA,Tesco,ASDA Rich Roast Instant Coffee Granules Decaffeinated 200g,Mellow Birds Instant Coffee 200G
+45,4,one_sided,decaf,Morrisons,Tesco,Morrisons Decaff Full Roast Instant Coffee,Mellow Birds Instant Coffee 200G
+45,4,one_sided,decaf,Sains,Tesco,"Sainsbury's Rich Roast Instant Coffee Granules, Decaffeinated 200g",Mellow Birds Instant Coffee 200G
+144,3,one_sided,decaf,ASDA,Tesco,L'OR Espresso Lungo Profondo Coffee Pods x10 Intensity 11,Tesco Finest Decaff Americano Microground Coffee 100G
+144,3,one_sided,decaf,Sains,Tesco,L'OR Lungo Profondo Intensity 8 Aluminium Coffee Pods x20,Tesco Finest Decaff Americano Microground Coffee 100G
+283,4,one_sided,decaf,ASDA,Morrisons,Lavazza Espresso Maestro Decaffeinated Medium Roasting 10 Capsules 58g,Caffe Nero Napoletano 10 Capsules
+283,4,one_sided,decaf,Morrisons,Sains,Caffe Nero Napoletano 10 Capsules,Lavazza Espresso Maestro Decaffeinated Medium Roasting Capsules x10 58g
+283,4,one_sided,decaf,Morrisons,Tesco,Caffe Nero Napoletano 10 Capsules,Lavazza Espresso Decaffeinated Coffee Capsules 10 Pack 58G
+348,4,named_flavour_clash,hoisin vs teriyaki,Morrisons,Sains,Morrisons Stir Fry Hoisin Sauce,Sainsburys Teriyaki Stir Fry Sauce 175g
+1346,4,named_flavour_clash,pesto vs bolognese,ASDA,Sains,ASDA Green Pesto Micro Pasta,Heinz Spaghetti Bolognese 200g
+1346,4,named_flavour_clash,pesto vs bolognese,Morrisons,Sains,Morrisons Green Pesto Microwave Pasta,Heinz Spaghetti Bolognese 200g
+1346,4,named_flavour_clash,bolognese vs pesto,Sains,Tesco,Heinz Spaghetti Bolognese 200g,Tesco Classic Green Pesto 190G
+1483,3,one_sided,sour,ASDA,Tesco,Jacob's Savours Thins Sour Cream & Chive Crackers 150g,Tesco free from cream crackers 137g
+1483,3,one_sided,sour,Sains,Tesco,"Jacob's Savours Thins, Sour Cream & Chive Crackers 150g",Tesco free from cream crackers 137g
+1962,4,named_flavour_clash,thai vs cajun,ASDA,Tesco,Mug Shot Noodles Thai Style,Mug Shot Cajun Pasta 60G
+1962,4,named_flavour_clash,thai vs cajun,Morrisons,Tesco,Mug Shot Thai Style,Mug Shot Cajun Pasta 60G
+1962,4,named_flavour_clash,thai vs cajun,Sains,Tesco,"Mug Shot Noodles, Thai Style 55g",Mug Shot Cajun Pasta 60G
+1983,4,named_flavour_clash,carbonara vs bolognese,ASDA,Tesco,Batchelors Pasta 'n' Sauce Creamy Carbonara Flavour 65g,Plantastic Bolognese Pasta In Tomato Sauce 65G
+2022,4,one_sided,smoky,ASDA,Morrisons,Batchelors Pasta 'n' Sauce Smoky Cheese & Pancetta Flavour Pasta Sachet,Batchelors Pasta 'N' Sauce Ch…
+2022,4,one_sided,smoky,ASDA,Sains,Batchelors Pasta 'n' Sauce Smoky Cheese & Pancetta Flavour Pasta Sachet,"Batchelors Pasta 'n' Sauce, Cheese & Pancetta 110g"
+2022,4,one_sided,smoky,ASDA,Tesco,Batchelors Pasta 'n' Sauce Smoky Cheese & Pancetta Flavour Pasta Sachet,Batchelors Pasta & Sauce Low Fat Cheese & Pancetta
+2026,4,one_sided,smoky,ASDA,Morrisons,Batchelors Chef's Special Pasta 'n' Sauce Caramelised Onion and Smoky Bacon Flavour 99g,Morrisons Bacon Flavour Instant Noodles
+2026,4,one_sided,smoky,Morrisons,Sains,Morrisons Bacon Flavour Instant Noodles,Batchelors Pasta 'n' Sauce Chefs Special Caramelised Onion & Smoky Bacon Flavour Pasta Sachet 99g
+2026,4,one_sided,smoky,Morrisons,Tesco,Morrisons Bacon Flavour Instant Noodles,Batchelors Pasta & Sauce Caramelised Onion & Smoky Bacon 99G
+2075,4,one_sided,reduced,ASDA,Tesco,Regal BAKERY Fruit Cake with Glazed Fruit Pieces 210g,Tesco 10 Reduced Fat Mild Slices 200G
+2075,4,one_sided,reduced,Morrisons,Tesco,Regal Angel Cake Slices,Tesco 10 Reduced Fat Mild Slices 200G
+2075,4,one_sided,reduced,Sains,Tesco,Regal Bakery Fruit Cake Slices with Glazed Fruit Pieces 210g,Tesco 10 Reduced Fat Mild Slices 200G
+2149,4,one_sided,unsalted,ASDA,Tesco,ASDA Roasted Monkey Nuts,Tesco Unsalted Roasted Monkey Nuts 300G
+2149,4,one_sided,unsalted,Morrisons,Tesco,Morrisons Shell On Walnuts,Tesco Unsalted Roasted Monkey Nuts 300G
+2149,4,one_sided,unsalted,Sains,Tesco,Sainsbury's Roasted Monkey Nuts in Shells 300g,Tesco Unsalted Roasted Monkey Nuts 300G
+2213,3,one_sided,sour,ASDA,Tesco,Sour Patch Kids Fruit Mix Flavour Sweets,Tesco Finest Tropical Fruit Mix 125G
+2213,3,one_sided,sour,Sains,Tesco,Sour Patch Kids Fruit Mix Sweets Bag 130g,Tesco Finest Tropical Fruit Mix 125G
+2255,3,one_sided,sour,ASDA,Tesco,Sourz Cherry Liqueur,Sourz The Original Cherry Sweet & Sour Spirit Drink 70cl
+2255,3,one_sided,sour,Sains,Tesco,Sourz Cherry Liqueur 70cl,Sourz The Original Cherry Sweet & Sour Spirit Drink 70cl
+2448,3,one_sided,rose,ASDA,Morrisons,Nicolas Feuillatte Champagne Brut Rosé,Champagne Veuve Devanlay Nv Rose
+2448,3,one_sided,rose,Morrisons,Sains,Champagne Veuve Devanlay Nv Rose,Nicolas Feuillatte Champagne Brut Rosé 75cl
+2525,3,one_sided,rose,ASDA,Sains,Valdo Prosecco DOC Rosé Brut,Valdo Marca Oro Prosecco Rose Brut 750ml
+2525,3,one_sided,rose,ASDA,Tesco,Valdo Prosecco DOC Rosé Brut,Soffio Prosecco Rose Spumante Extra Dry Doc 75Cl
+2526,4,one_sided,rose,ASDA,Morrisons,Pendium Rosé Sparkling Wine,Fleurs De Prairie Sparkling Rose
+2526,4,one_sided,rose,ASDA,Tesco,Pendium Rosé Sparkling Wine,Rivarose Sparkling Rose Wine 750Ml
+2526,4,one_sided,rose,Morrisons,Sains,Fleurs De Prairie Sparkling Rose,Sainsbury's Alcohol Free Rosé 75cl
+2526,4,one_sided,rose,Sains,Tesco,Sainsbury's Alcohol Free Rosé 75cl,Rivarose Sparkling Rose Wine 750Ml
+2559,4,one_sided,rose,ASDA,Morrisons,La Vieille Rosé,La Vieille Ferme Rose
+2559,4,one_sided,rose,ASDA,Tesco,La Vieille Rosé,La Vieille Ferme Rose Wine 750Ml
+2559,4,one_sided,rose,Morrisons,Sains,La Vieille Ferme Rose,La Vieille Ferme Rosé 75cl
+2559,4,one_sided,rose,Sains,Tesco,La Vieille Ferme Rosé 75cl,La Vieille Ferme Rose Wine 750Ml
+2570,4,one_sided,rose,ASDA,Morrisons,ASDA Extra Special Pinot Grigio Rosé,Morrisons The Best Pinot Grigio Rose
+2570,4,one_sided,rose,ASDA,Tesco,ASDA Extra Special Pinot Grigio Rosé,Tesco Finest Argentinian Malbec Rose 75Cl
+2570,4,one_sided,rose,Morrisons,Sains,Morrisons The Best Pinot Grigio Rose,"Sainsbury's Fronton Negrette Rosé, Taste The Difference 75cl"
+2570,4,one_sided,rose,Sains,Tesco,"Sainsbury's Fronton Negrette Rosé, Taste The Difference 75cl",Tesco Finest Argentinian Malbec Rose 75Cl
+2577,4,one_sided,rose,ASDA,Morrisons,Mateus The Original Rosé,Mateus Rose
+2577,4,one_sided,rose,ASDA,Tesco,Mateus The Original Rosé,Mateus Rose 75Cl
+2577,4,one_sided,rose,Morrisons,Sains,Mateus Rose,Mateus Rosé 75cl
+2577,4,one_sided,rose,Sains,Tesco,Mateus Rosé 75cl,Mateus Rose 75Cl
+2588,4,one_sided,rose,ASDA,Morrisons,ASDA Extra Special Côtes de Provence Rosé,Morrisons The Best Provence Rose
+2588,4,one_sided,rose,ASDA,Tesco,ASDA Extra Special Côtes de Provence Rosé,Tesco Finest Provence Rose 75Cl
+2588,4,one_sided,rose,Morrisons,Sains,Morrisons The Best Provence Rose,"Sainsbury's Côtes de Provence Rosé, Taste the Difference 75cl"
+2588,4,one_sided,rose,Sains,Tesco,"Sainsbury's Côtes de Provence Rosé, Taste the Difference 75cl",Tesco Finest Provence Rose 75Cl
+2594,4,one_sided,rose,ASDA,Morrisons,Kylie Minogue Rosé,Kylie Minogue Rose
+2594,4,one_sided,rose,ASDA,Tesco,Kylie Minogue Rosé,Kylie Minogue Cote De Provence Rose 75Cl
+2594,4,one_sided,rose,Morrisons,Sains,Kylie Minogue Rose,Kylie Minogue Rosé 75cl
+2594,4,one_sided,rose,Sains,Tesco,Kylie Minogue Rosé 75cl,Kylie Minogue Cote De Provence Rose 75Cl
+2600,4,one_sided,rose,ASDA,Morrisons,ASDA Extra Special Malbec Rosé,Nozeco Rose Spumante Alcohol Free
+2600,4,one_sided,rose,ASDA,Tesco,ASDA Extra Special Malbec Rosé,Nozeco Rose 750Ml
+2600,4,one_sided,rose,Morrisons,Sains,Nozeco Rose Spumante Alcohol Free,Nozeco Rosé 75cl
+2600,4,one_sided,rose,Sains,Tesco,Nozeco Rosé 75cl,Nozeco Rose 750Ml
+2607,4,one_sided,rose,ASDA,Morrisons,Hardys Stamp Shiraz Rosé,(VMD) Morrisons The Best Pinot Grigio Rose
+2607,4,one_sided,rose,ASDA,Sains,Hardys Stamp Shiraz Rosé,Hardys Stamp Shiraz Rose 75cl
+2607,4,one_sided,rose,ASDA,Tesco,Hardys Stamp Shiraz Rosé,The Straw Hat Rose 75Cl
+2611,4,one_sided,rose,ASDA,Morrisons,Canti Pinot Grigio Rosé,Garganega Pinot Grigio Rose
+2611,4,one_sided,rose,ASDA,Tesco,Canti Pinot Grigio Rosé,Canti Rose Extra Dry 75Cl
+2611,4,one_sided,rose,Morrisons,Sains,Garganega Pinot Grigio Rose,Bread & Butter Rosé 75cl
+2611,4,one_sided,rose,Sains,Tesco,Bread & Butter Rosé 75cl,Canti Rose Extra Dry 75Cl
+2614,4,one_sided,rose,ASDA,Morrisons,ASDA Extra Special Crémant de Loire Rosé Brut,Kumala Rose
+2614,4,one_sided,rose,ASDA,Sains,ASDA Extra Special Crémant de Loire Rosé Brut,"Sainsbury's Cremant De Loire Rose, Taste the Difference 75cl"
+2614,4,one_sided,rose,ASDA,Tesco,ASDA Extra Special Crémant de Loire Rosé Brut,Gratien & Meyer Cremant De Loire Brut Rose 75Cl
+2618,4,one_sided,rose,ASDA,Morrisons,Blossom Hill Rosé Wine 750ml,Myton Hill Rose
+2618,4,one_sided,rose,ASDA,Sains,Blossom Hill Rosé Wine 750ml,Blossom Hill Rose 75cl
+2618,4,one_sided,rose,ASDA,Tesco,Blossom Hill Rosé Wine 750ml,Blossom Hill Rose 75cl
+2625,4,one_sided,rose,ASDA,Morrisons,Jam Shed Rosé,Jam Shed Rose Australia
+2625,4,one_sided,rose,ASDA,Tesco,Jam Shed Rosé,Jam Shed Rose 75Cl
+2625,4,one_sided,rose,Morrisons,Sains,Jam Shed Rose Australia,Jam Shed Rosé 750ml
+2625,4,one_sided,rose,Sains,Tesco,Jam Shed Rosé 750ml,Jam Shed Rose 75Cl
+2626,4,one_sided,rose,ASDA,Tesco,Black Tower Rosé,Shloer Rose 750Ml
+2626,4,one_sided,rose,Morrisons,Tesco,Black Tower Rosé,Shloer Rose 750Ml
+2626,4,one_sided,rose,Sains,Tesco,Black Tower Rosé 75cl,Shloer Rose 750Ml
+2627,3,one_sided,rose,ASDA,Tesco,Thatchers Rosé Cider,Thatchers Apple Rose Cider 4X440ml Can
+2627,3,one_sided,rose,Sains,Tesco,Thatchers Rosé Sweet Sparkling Somerset Cider 4x440ml,Thatchers Apple Rose Cider 4X440ml Can
+2629,4,one_sided,rose,ASDA,Morrisons,Mud House Chile Sauvignon Blanc Rosé,Mud House Chile Rose
+2629,4,one_sided,rose,ASDA,Tesco,Mud House Chile Sauvignon Blanc Rosé,Mud House Chile Sauvignon Blanc Rose 750Ml
+2629,4,one_sided,rose,Morrisons,Sains,Mud House Chile Rose,Southlands Cool Climate Sauvignon Blanc Rosé 75cl
+2629,4,one_sided,rose,Sains,Tesco,Southlands Cool Climate Sauvignon Blanc Rosé 75cl,Mud House Chile Sauvignon Blanc Rose 750Ml
+2651,4,one_sided,rose,ASDA,Sains,Studio by Miraval Mediterranean Rose Wine,Studio by Miraval Rosé 750ml
+2651,4,one_sided,rose,Morrisons,Sains,Studio By Miraval Rose,Studio by Miraval Rosé 750ml
+2651,4,one_sided,rose,Sains,Tesco,Studio by Miraval Rosé 750ml,Studio By Miraval Mediterranean Rose Wine 750Ml
+2652,4,one_sided,rose,ASDA,Morrisons,Gallo Family Vineyards Summer Rosé,Gallo Family Vineyards Summer Rose Wine
+2652,4,one_sided,rose,ASDA,Sains,Gallo Family Vineyards Summer Rosé,Gallo Family Vineyards Summer Rose Wine 75cl
+2652,4,one_sided,rose,ASDA,Tesco,Gallo Family Vineyards Summer Rosé,Gallo Family Vineyards Summer Rose 75 Cl
+2654,4,one_sided,rose,ASDA,Morrisons,Wise Wolf Rosé,Mucho Mas Rose
+2654,4,one_sided,rose,ASDA,Sains,Wise Wolf Rosé,Wise Wolf Rose 75cl
+2654,4,one_sided,rose,ASDA,Tesco,Wise Wolf Rosé,Eisberg Rose 75Cl Alcohol Free
+2665,4,one_sided,rose,ASDA,Morrisons,Freixenet Italian Rosé,Freixenet Italian Rose
+2665,4,one_sided,rose,ASDA,Sains,Freixenet Italian Rosé,Freixenet Italian Still Rose 75cl
+2665,4,one_sided,rose,ASDA,Tesco,Freixenet Italian Rosé,Freixenet Italian Rose 75Cl.
+2671,4,one_sided,rose,ASDA,Morrisons,Barefoot Rosé 750ml,Barefoot Pink Moscato Rose Wine
+2671,4,one_sided,rose,ASDA,Tesco,Barefoot Rosé 750ml,Pepperbox Rose Wine 750Ml
+2671,4,one_sided,rose,Morrisons,Sains,Barefoot Pink Moscato Rose Wine,Barefoot Pink Moscato Rosé Wine 75cl
+2671,4,one_sided,rose,Sains,Tesco,Barefoot Pink Moscato Rosé Wine 75cl,Pepperbox Rose Wine 750Ml
+2675,4,one_sided,rose,ASDA,Morrisons,Gary Barlow Organic Rosé Wine,Gary Barlow Organic Rose
+2675,4,one_sided,rose,ASDA,Sains,Gary Barlow Organic Rosé Wine,Echo Falls Fruit Fusion Summer Berries Rose Wine 75cl
+2675,4,one_sided,rose,ASDA,Tesco,Gary Barlow Organic Rosé Wine,Love By Leoube Organic Rose Wine 75Cl
+2676,4,one_sided,rose,ASDA,Morrisons,Castillo De Ibiza Rosé Wine,Castillo D'ibiza Rose
+2676,4,one_sided,rose,ASDA,Tesco,Castillo De Ibiza Rosé Wine,Casillero Del Diablo Rose 75Cl
+2676,4,one_sided,rose,Morrisons,Sains,Castillo D'ibiza Rose,Vin de France Cruset Rosé 75cl
+2676,4,one_sided,rose,Sains,Tesco,Vin de France Cruset Rosé 75cl,Casillero Del Diablo Rose 75Cl
+2678,4,one_sided,rose,ASDA,Morrisons,Sancerre Rosé,Morrisons The Best Touraine Rose
+2678,4,one_sided,rose,ASDA,Tesco,Sancerre Rosé,Tesco Finest Sancerre Rose 75Cl
+2678,4,one_sided,rose,Morrisons,Sains,Morrisons The Best Touraine Rose,McGuigan Estate Rosé 75cl
+2678,4,one_sided,rose,Sains,Tesco,McGuigan Estate Rosé 75cl,Tesco Finest Sancerre Rose 75Cl
+2689,4,one_sided,rose,ASDA,Morrisons,Joy Fruity Rosé,Asconi Moscato Rose
+2689,4,one_sided,rose,Morrisons,Sains,Asconi Moscato Rose,Penguin Sands Rosé 75cl
+2689,4,one_sided,rose,Morrisons,Tesco,Asconi Moscato Rose,Not Guilty Rosé 750ml
+3592,4,one_sided,smoky,ASDA,Morrisons,ASDA Asda Sweet & Smoky Chicken Mini Fillets,Morrisons Piri Piri Chicken Mini Fillets
+3592,4,one_sided,smoky,ASDA,Tesco,ASDA Asda Sweet & Smoky Chicken Mini Fillets,Tesco BBQ Roast Chicken Mini Fillets 170g
+3592,4,one_sided,smoky,Morrisons,Sains,Morrisons Piri Piri Chicken Mini Fillets,Sainsbury's Sweet & Smoky BBQ Cooked British Chicken Breast Mini Fillets 170g
+3592,4,one_sided,smoky,Sains,Tesco,Sainsbury's Sweet & Smoky BBQ Cooked British Chicken Breast Mini Fillets 170g,Tesco BBQ Roast Chicken Mini Fillets 170g
+3596,4,one_sided,smoky,ASDA,Morrisons,Fridge Raiders Smoky BBQ Chicken Bites 3 x 22.5g,Fridge Raiders Hot & Spicy Chicken Bites
+3596,4,one_sided,smoky,ASDA,Sains,Fridge Raiders Smoky BBQ Chicken Bites 3 x 22.5g,Fridge Raiders Hot & Spicy Chicken Bites 70g
+3596,4,one_sided,smoky,Morrisons,Tesco,Fridge Raiders Hot & Spicy Chicken Bites,Fridge Raiders Smoky Bbq Chicken Bites 3X22.5G
+3596,4,one_sided,smoky,Sains,Tesco,Fridge Raiders Hot & Spicy Chicken Bites 70g,Fridge Raiders Smoky Bbq Chicken Bites 3X22.5G
+3632,4,one_sided,reduced,ASDA,Morrisons,Mattessons Smoked Pork Sausage Hint of Garlic,Mattessons Smoked Pork Sausage Reduced Fat
+3632,4,one_sided,reduced,ASDA,Sains,Mattessons Smoked Pork Sausage Hint of Garlic,Mattessons Smoked Pork Sausage Reduced Fat 160g
+3632,4,one_sided,reduced,ASDA,Tesco,Mattessons Smoked Pork Sausage Hint of Garlic,Mattessons Smoked Pork Sausages Reduced Fat 160G
+3635,4,one_sided,reduced,ASDA,Morrisons,ASDA Reduced Fat Smooth Brussels Pate,Morrisons Smooth Brussels & Garlic Pate
+3635,4,one_sided,reduced,ASDA,Sains,ASDA Reduced Fat Smooth Brussels Pate,Sainsbury's Brussels & Garlic Pate 170g
+3635,4,one_sided,reduced,ASDA,Tesco,ASDA Reduced Fat Smooth Brussels Pate,The Pizza Company Garlic Doughballs 165G
+3873,3,one_sided,rose,ASDA,Morrisons,Thatchers Rosé Somerset Cider,Galipette French Rose Cidre
+3873,3,one_sided,rose,Morrisons,Sains,Galipette French Rose Cidre,Thatchers Rosé Somerset Cider 500ml
+3904,4,one_sided,reduced,ASDA,Tesco,ASDA British Mild Cheddar Cheese 400g,Tesco 30% Reduced Fat Extra Mature Cheese 400G
+3904,4,one_sided,reduced,Morrisons,Tesco,Morrisons For Farmers Extra Mature Cheddar,Tesco 30% Reduced Fat Extra Mature Cheese 400G
+3904,4,one_sided,reduced,Sains,Tesco,Sainsbury's British Mature Cheddar Cheese 400g,Tesco 30% Reduced Fat Extra Mature Cheese 400G
+3973,4,named_flavour_clash,mozzarella vs cheddar,ASDA,Sains,ASDA Free From Grated Mozzarella Alternative,Sheese Grated Mild Cheddar Style 200g
+3973,4,named_flavour_clash,mozzarella vs cheddar,Morrisons,Sains,Morrisons Free From Grated Mozzarella Style,Sheese Grated Mild Cheddar Style 200g
+3973,4,named_flavour_clash,cheddar vs mozzarella,Sains,Tesco,Sheese Grated Mild Cheddar Style 200g,Tesco Plant Chef Alternative To Grated Mozzarella 200G
+3980,4,one_sided,reduced,ASDA,Tesco,Castello Tex Mex Cheese Spicy Mozzarella & Cheddar Grated Cheese 180g,Tesco Reduced Fat Mozzarella 200g
+3980,4,one_sided,reduced,Morrisons,Tesco,Morrisons Hot & Spicy Cheese Slices,Tesco Reduced Fat Mozzarella 200g
+3980,4,one_sided,reduced,Sains,Tesco,Castello Tex Mex Spicy Mozzarella & Cheddar Grated Cheese 180g,Tesco Reduced Fat Mozzarella 200g
+3982,4,named_flavour_clash,mozzarella vs salad,ASDA,Tesco,Castello Pizza Cheese Mozzarella Grated Cheese Cubes 180g,Tesco Reduced Fat Cheese Salad 200G
+3982,4,one_sided,reduced,Morrisons,Tesco,Tender'lish Chikn Cheese Escalope,Tesco Reduced Fat Cheese Salad 200G
+3982,4,named_flavour_clash,mozzarella vs salad,Sains,Tesco,Castello Pizza Mozzarella Grated Cheese Cubes 180g,Tesco Reduced Fat Cheese Salad 200G
+3987,4,one_sided,reduced,ASDA,Morrisons,ASDA 40% Less Fat Salad Cheese 200g,Morrisons 50% Reduced Fat Plain Soft Cheese
+3987,4,one_sided,reduced,Morrisons,Sains,Morrisons 50% Reduced Fat Plain Soft Cheese,Sainsbury's Somerset Brie Cheese 230g
+3987,4,one_sided,reduced,Morrisons,Tesco,Morrisons 50% Reduced Fat Plain Soft Cheese,Tesco 50% Less Fat Soft Cheese 200G
+4014,4,one_sided,smoky,ASDA,Morrisons,Applewood Vegan Smoky Cheese Alternative,Applewood Vegan Block
+4014,4,one_sided,smoky,Morrisons,Sains,Applewood Vegan Block,Applewood Vegan Smoky Cheese Alternative 200g
+4014,4,one_sided,smoky,Morrisons,Tesco,Applewood Vegan Block,Applewood Vegan Smoky Cheese Alternative 200G
+4026,4,one_sided,smoky,ASDA,Morrisons,Violife Cheddarton Cheddar Cheese Alternative,Violife Smoky Cheddar Flavour Slices…
+4026,4,one_sided,smoky,Morrisons,Sains,Violife Smoky Cheddar Flavour Slices…,Violife Cheddarton Cheddar Cheese Alternative
+4026,4,one_sided,smoky,Morrisons,Tesco,Violife Smoky Cheddar Flavour Slices…,Violife Vegan Epic Mature Cheddar Flavoured Block 200G
+4035,3,one_sided,smoky,ASDA,Sains,Applewood Creamy & Smoky Vegan Cheese Alternative Minis 75g,Sainsbury's Shaved Parmesan Cheese 80g
+4035,3,one_sided,smoky,Morrisons,Sains,Applewood Creamy & Smoky…,Sainsbury's Shaved Parmesan Cheese 80g
+4040,4,one_sided,smoky,ASDA,Morrisons,Violife Smoky Cheddar Flavour Slices,Violife Epic Mature Cheddar Flavour Block
+4040,4,one_sided,smoky,ASDA,Sains,Violife Smoky Cheddar Flavour Slices,Violife Epic Mature Cheddar Flavour Block Vegan Alternative to Cheese 200g
+4040,4,one_sided,smoky,ASDA,Tesco,Violife Smoky Cheddar Flavour Slices,Free From Violife Sliced Cheese Alternative 200G
+4056,4,one_sided,smoky,ASDA,Tesco,Applewood Vegan Slices,Applewood Smoky Vegan Cheese Alternative Grated 200G
+4056,4,one_sided,smoky,Morrisons,Tesco,Applewood Vegan Slices,Applewood Smoky Vegan Cheese Alternative Grated 200G
+4056,4,one_sided,smoky,Sains,Tesco,Applewood Vegan Slices 200g,Applewood Smoky Vegan Cheese Alternative Grated 200G
+4163,4,one_sided,smoky,ASDA,Morrisons,ASDA Smoky Pea & Ham Soup 400g,Morrisons Pea & Ham Soup
+4163,4,one_sided,smoky,ASDA,Sains,ASDA Smoky Pea & Ham Soup 400g,Sainsbury's Pea & Ham Soup 400g
+4163,4,one_sided,smoky,ASDA,Tesco,ASDA Smoky Pea & Ham Soup 400g,Tesco Pea And Ham Soup 400G
+4304,4,one_sided,smoky,ASDA,Morrisons,ASDA Mackerel Fillets in a Sweet and Smoky Barbecue Sauce,Morrisons Mackerel Fillets In T…
+4304,4,one_sided,smoky,ASDA,Sains,ASDA Mackerel Fillets in a Sweet and Smoky Barbecue Sauce,Sainsbury's Mackerel Fillets in Olive Oil 125g (90g*)
+4304,4,one_sided,smoky,ASDA,Tesco,ASDA Mackerel Fillets in a Sweet and Smoky Barbecue Sauce,Princes Skinless Boneless Mackerel Fillets Mustard Sauce 125G
+4391,3,one_sided,reduced,ASDA,Sains,Wall's Soft Scoop Light Vanilla Ice Cream,Wall's Soft Scoop Vanilla Light Reduced Fat Ice Cream Dessert Tub 1.8L
+4391,3,one_sided,reduced,Sains,Tesco,Wall's Soft Scoop Vanilla Light Reduced Fat Ice Cream Dessert Tub 1.8L,Walls Soft Scoop Vanilla Light Ice Cream Tub 1800ml
+4529,4,one_sided,reduced,ASDA,Morrisons,ASDA 70% Reduced Fat Salad Cream 420g,Morrisons Salad Cream
+4529,4,one_sided,reduced,ASDA,Sains,ASDA 70% Reduced Fat Salad Cream 420g,Sainsbury's Salad Cream 420g
+4529,4,one_sided,reduced,ASDA,Tesco,ASDA 70% Reduced Fat Salad Cream 420g,Tesco Salad Cream 450Ml
+4547,4,named_flavour_clash,"ketchup,mango vs thai",ASDA,Morrisons,Leon Mango’ed Ketchup,Loma Linda Thai Green Curry (284g)
+4547,4,named_flavour_clash,"thai vs ketchup,mango",Morrisons,Sains,Loma Linda Thai Green Curry (284g),LEON Mango’ed Ketchup 275g
+4547,4,named_flavour_clash,thai vs ketchup,Morrisons,Tesco,Loma Linda Thai Green Curry (284g),Ainsley Harriot Curried Red Pepper Ketchup 280G
+4576,3,named_flavour_clash,apple vs satay,ASDA,Tesco,Ocean Spray Apple Sauce,Tesco Satay Dipping Sauce 180G
+4576,3,named_flavour_clash,apple vs satay,Sains,Tesco,Ocean Spray Apple Sauce 210g,Tesco Satay Dipping Sauce 180G
+4690,4,named_flavour_clash,cajun vs jerk,ASDA,Tesco,Cape Herb & Spice Rub Louisiana Cajun Seasoning,Cape Herb & Spice Rub Caribbean Jerk Seasoning 100g
+4690,4,named_flavour_clash,cajun vs jerk,Morrisons,Tesco,Cape Herb & Spice Rub Louisiana Cajun Seasoning,Cape Herb & Spice Rub Caribbean Jerk Seasoning 100g
+4858,4,one_sided,smoky,ASDA,Morrisons,Schwartz Smoky Cajun Seasoning,Schwartz Moroccan Seasoning
+4858,4,one_sided,smoky,ASDA,Tesco,Schwartz Smoky Cajun Seasoning,Schwartz Moroccan Seasoning 40g
+4858,4,one_sided,smoky,Morrisons,Sains,Schwartz Moroccan Seasoning,"Sainsbury's Mild & Smoky BBQ, Inspired to Cook 44g"
+4858,4,one_sided,smoky,Sains,Tesco,"Sainsbury's Mild & Smoky BBQ, Inspired to Cook 44g",Schwartz Moroccan Seasoning 40g
+4870,4,named_flavour_clash,jerk vs cajun,ASDA,Tesco,Cape Herb & Spice Rub Caribbean Jerk Seasoning,Cape Herb & Spice Rub Louisiana Cajun Seasoning 100g
+4891,4,one_sided,smoky,ASDA,Tesco,ASDA Onion Relish,Tesco Fire Pit Smoky Onion Relish 300G
+4891,4,one_sided,smoky,Morrisons,Tesco,Morrisons Onion Relish (300g),Tesco Fire Pit Smoky Onion Relish 300G
+4891,4,one_sided,smoky,Sains,Tesco,Sainsbury's Onion Relish 320g,Tesco Fire Pit Smoky Onion Relish 300G
+4894,4,one_sided,smoky,ASDA,Morrisons,Cape Herb & Spice Chipotle Chilli Smoky Southwestern Seasoning,Cape Herb & Spice Chipotle Chilli S…
+4894,4,one_sided,smoky,ASDA,Tesco,Cape Herb & Spice Chipotle Chilli Smoky Southwestern Seasoning,Crespo Olives With Chilli Pepper 70G
+4894,4,one_sided,smoky,Morrisons,Sains,Cape Herb & Spice Chipotle Chilli S…,Cape Herb & Spice Chipotle Chilli Smoky Southwestern Seasoning 80g
+4894,4,one_sided,smoky,Sains,Tesco,Cape Herb & Spice Chipotle Chilli Smoky Southwestern Seasoning 80g,Crespo Olives With Chilli Pepper 70G
+4902,4,named_flavour_clash,teriyaki vs jerk,ASDA,Morrisons,Very Lazy Teriyaki Paste,Very Lazy Jerk Paste
+4902,4,named_flavour_clash,teriyaki vs jerk,ASDA,Tesco,Very Lazy Teriyaki Paste,Very Lazy Jerk Paste 120G
+4902,4,named_flavour_clash,jerk vs teriyaki,Morrisons,Sains,Very Lazy Jerk Paste,Very Lazy Teriyaki Paste 120g
+4902,4,named_flavour_clash,teriyaki vs jerk,Sains,Tesco,Very Lazy Teriyaki Paste 120g,Very Lazy Jerk Paste 120G
+4921,4,named_flavour_clash,"pickled vs cocktail,vinegar",ASDA,Sains,ASDA Pickled Silverskin Onions,Opies Cocktail Onions with Spirit Vinegar 227g (120g*)
+4933,4,one_sided,sour,ASDA,Sains,Mrs Elswood Sweet & Sour Gherkins,Mrs Elswood Whole Sweet Cucumber 670g
+4933,4,one_sided,sour,ASDA,Tesco,Mrs Elswood Sweet & Sour Gherkins,Mrs Elswood Whole Sweet Cucumbers 670G
+4933,4,one_sided,sour,Morrisons,Sains,Mrs Elswood Sweet & Sour Gherkins,Mrs Elswood Whole Sweet Cucumber 670g
+4933,4,one_sided,sour,Morrisons,Tesco,Mrs Elswood Sweet & Sour Gherkins,Mrs Elswood Whole Sweet Cucumbers 670G
+5004,3,one_sided,smoky,ASDA,Morrisons,Schwartz Nadiya Smoky Meatball Stew 30g,Schwartz Nadiya Smokey Meatball Stew
+5004,3,one_sided,smoky,Morrisons,Tesco,Schwartz Nadiya Smokey Meatball Stew,Schwartz Nadiya Smoky Meatball Stew 30g
+5046,4,one_sided,smoky,ASDA,Morrisons,Graze Smoky Barbecue Crunch,Graze BBQ Crunch
+5046,4,one_sided,smoky,ASDA,Sains,Graze Smoky Barbecue Crunch,Graze Smokehouse BBQ Crunch Flavoured Peas 104g
+5046,4,one_sided,smoky,Morrisons,Tesco,Graze BBQ Crunch,Graze Smoky Barbecue Crunch 100G
+5046,4,one_sided,smoky,Sains,Tesco,Graze Smokehouse BBQ Crunch Flavoured Peas 104g,Graze Smoky Barbecue Crunch 100G
+5062,4,one_sided,unsalted,ASDA,Sains,KP Unsalted Peanuts,KP Dry Roasted Peanuts 250g
+5062,4,one_sided,unsalted,Morrisons,Sains,KP Unsalted Peanuts,KP Dry Roasted Peanuts 250g
+5062,4,one_sided,unsalted,Sains,Tesco,KP Dry Roasted Peanuts 250g,Kp Unsalted Peanuts 250G
+5178,4,one_sided,reduced,ASDA,Morrisons,ASDA Fresh Single Cream 300ml,Morrisons British Reduced Fat Creme Fraiche
+5178,4,one_sided,reduced,Morrisons,Sains,Morrisons British Reduced Fat Creme Fraiche,Sainsbury's British Lighter Crème Fraîche 300ml
+5178,4,one_sided,reduced,Morrisons,Tesco,Morrisons British Reduced Fat Creme Fraiche,Tesco British Single Cream 300Ml
+5185,3,one_sided,reduced,ASDA,Morrisons,ASDA Creme Fraiche 300ml,Morrisons Reduced Fat Creme Fraiche
+5185,3,one_sided,reduced,Morrisons,Tesco,Morrisons Reduced Fat Creme Fraiche,Tesco 50% Less Fat Creme Fraiche 300Ml
+5233,4,one_sided,reduced,ASDA,Morrisons,BAKE by ASDA Best For Baking Cakes & Sponges Spread 500g,Morrisons Reduced Fat Sprea…
+5233,4,one_sided,reduced,Morrisons,Sains,Morrisons Reduced Fat Sprea…,JS Baking Spread 500g
+5233,4,one_sided,reduced,Morrisons,Tesco,Morrisons Reduced Fat Sprea…,Tesco Baking Spread 500G
+5308,3,named_flavour_clash,vinegar vs cheddar,Sains,Tesco,Jacob's Cracker Crisps Salt & Vinegar 150g,Jacobs Baked Cheddar Biscuits Cheese 150G
+5313,4,one_sided,sour,ASDA,Morrisons,Doritos Dippers Hint of Sour Cream & Onion Sharing Tortilla Chips Crisps 230g,Doritos Dippers Hint Of Paprika Sha…
+5313,4,one_sided,sour,Morrisons,Sains,Doritos Dippers Hint Of Paprika Sha…,Doritos Dippers Hint of Sour Cream & Onion Sharing Tortilla Crisps Chips 230g
+5313,4,one_sided,sour,Morrisons,Tesco,Doritos Dippers Hint Of Paprika Sha…,Doritos Dippers Tortilla Chips Sour Cream & Onion Crisps 230g
+5409,4,named_flavour_clash,vinegar vs cheddar,ASDA,Sains,Smiths Smiths Chipsticks Salt & Vinegar Sharing Snacks Crisps 105g,Sainsbury's Deliciously Free From Cheddar-Style & Spring Onion Crispbakes x2 227g
+5409,4,named_flavour_clash,cheddar vs vinegar,Sains,Tesco,Sainsbury's Deliciously Free From Cheddar-Style & Spring Onion Crispbakes x2 227g,Smiths Chipsticks Salt & Vinegar Sharing Bag Crisps 105g
+5419,4,one_sided,sour,ASDA,Tesco,Pringles Paprika Sharing Crisps,Pringles Sizzl'N Kickin' Sour Cream Sharing Crisps 180g
+5419,4,one_sided,sour,Morrisons,Tesco,Pringles Paprika Sharing Crisps,Pringles Sizzl'N Kickin' Sour Cream Sharing Crisps 180g
+5419,4,one_sided,sour,Sains,Tesco,Pringles Paprika Sharing Crisps 185g,Pringles Sizzl'N Kickin' Sour Cream Sharing Crisps 180g
+5445,4,one_sided,sour,ASDA,Morrisons,Pringles Sour Cream & Onion Sharing Crisps,Pringles Cheese & Onion Sharing Crisps
+5445,4,one_sided,sour,Morrisons,Sains,Pringles Cheese & Onion Sharing Crisps,Pringles Sour Cream & Onion Sharing Crisps 185g
+5445,4,one_sided,sour,Morrisons,Tesco,Pringles Cheese & Onion Sharing Crisps,Pringles Sour Cream & Onion Sharing Crisps 185g
+5447,4,one_sided,sour,ASDA,Morrisons,Pringles Texas BBQ Sauce Sharing Crisps,Pringles Sizzl'n Kicking Sour Cream Crisps
+5447,4,one_sided,sour,Morrisons,Sains,Pringles Sizzl'n Kicking Sour Cream Crisps,Pringles Texas BBQ Sauce Flavour Sharing Crisps 185g
+5447,4,one_sided,sour,Morrisons,Tesco,Pringles Sizzl'n Kicking Sour Cream Crisps,Pringles Texas Bbq Crisps 185G
+5465,4,one_sided,smoky,ASDA,Morrisons,Pringles Hot Smokin BBQ Ribs Flavour 160g,Pringles Hot Smoky BBQ Ribs
+5465,4,one_sided,smoky,Morrisons,Sains,Pringles Hot Smoky BBQ Ribs,Pringles Hot Smokin' BBQ Ribs Sharing Crisps 160g
+5465,4,one_sided,smoky,Morrisons,Tesco,Pringles Hot Smoky BBQ Ribs,Pringles Hot Smokin' BBQ Ribs Flavour Crisps 160g
+5475,4,one_sided,sour,ASDA,Tesco,Manomasa Chipotle & Lime 140g,Tesco Finest Sour Cream & Zingy Lime Tortilla Chips 150g
+5475,4,one_sided,sour,Morrisons,Tesco,Manomasa Chipotle and Lime…,Tesco Finest Sour Cream & Zingy Lime Tortilla Chips 150g
+5475,4,one_sided,sour,Sains,Tesco,Manomasa Chipotle & Lime 140g,Tesco Finest Sour Cream & Zingy Lime Tortilla Chips 150g
+5476,4,one_sided,sour,ASDA,Tesco,Harvest Snaps Sour Cream & Chive Crunchy Lentil Rings,Brave Crunchy Chickpeas Salt & Vinegar 115G
+5476,4,one_sided,sour,Morrisons,Tesco,Harvest Snaps Sour Cream & Chiv…,Brave Crunchy Chickpeas Salt & Vinegar 115G
+5476,4,one_sided,sour,Sains,Tesco,Love Corn Sour Cream & Chive Flavour Delicious Crunchy Corn 115g,Brave Crunchy Chickpeas Salt & Vinegar 115G
+5485,4,one_sided,sour,ASDA,Morrisons,Popchips Sour Cream & Onion Flavour Potato Snacks 23g,Popchips Sea Salt
+5485,4,one_sided,sour,Morrisons,Sains,Popchips Sea Salt,Popchips Sour Cream & Onion Crisps 23g
+5485,4,one_sided,sour,Morrisons,Tesco,Popchips Sea Salt,Emily Vegetable Thins Sour Cream & Onion Tortilla Chips 23G
+5562,3,one_sided,reduced,ASDA,Tesco,ASDA 4 Cheese & Bacon Potato Skins 262g,Tesco Reduced Fat & Salt 8 Bacon Unsmoked Medallions 240G
+5562,3,one_sided,reduced,Sains,Tesco,Sainsbury's Cheese & Bacon Potato Skins x4 256g,Tesco Reduced Fat & Salt 8 Bacon Unsmoked Medallions 240G
+5580,4,one_sided,reduced,ASDA,Morrisons,ASDA Potato Salad,Morrisons Reduced Fat Potato Salad
+5580,4,one_sided,reduced,Morrisons,Sains,Morrisons Reduced Fat Potato Salad,Sainsbury's Potato & Egg Salad 300g
+5580,4,one_sided,reduced,Morrisons,Tesco,Morrisons Reduced Fat Potato Salad,Tesco Potato & Egg Salad 300G
+5603,3,one_sided,smoky,ASDA,Tesco,The Tofoo Co. Marinated Smoky BBQ Strips 180g,The Tofoo Co. Marinated Smokey BBQ Strips 180g
+5603,3,one_sided,smoky,Sains,Tesco,The Tofoo Co. Marinated Smoky BBQ Strips 180g,The Tofoo Co. Marinated Smokey BBQ Strips 180g
+5645,4,one_sided,sour,ASDA,Morrisons,Skittles Vegan Chewy Sour Sweets Fruit Flavoured Pouch Bag,Skittles & Friends Selection Box
+5645,4,one_sided,sour,Morrisons,Sains,Skittles & Friends Selection Box,Skittles Vegan Chewy Crazy Sour Sweets Fruit Flavoured Pouch Bag 136g
+5645,4,one_sided,sour,Morrisons,Tesco,Skittles & Friends Selection Box,Skittles Crazy Sour Fruit Sweets 136G
+5646,4,one_sided,sour,ASDA,Morrisons,Skittles Vegan Chewy Crazy Sour Sweets Fruit Flavoured Pouch Bag,Skittles Chewies Vegan Sweets F…
+5646,4,one_sided,sour,ASDA,Sains,Skittles Vegan Chewy Crazy Sour Sweets Fruit Flavoured Pouch Bag,Skittles Vegan Chewy Sweets Fruit Flavoured Pouch Bag 136g
+5646,4,one_sided,sour,ASDA,Tesco,Skittles Vegan Chewy Crazy Sour Sweets Fruit Flavoured Pouch Bag,Skittles Chewies Vegan Sweets Fruit Pouch Bag 137g
+5678,4,one_sided,sour,ASDA,Morrisons,Blue Dragon Sweet & Sour Stir Fry Sauce,Blue Dragon Sticky Teriyaki Stir Fry Sauce
+5678,4,one_sided,sour,Morrisons,Sains,Blue Dragon Sticky Teriyaki Stir Fry Sauce,Blue Dragon Sweet & Sour Stir Fry Sauce 120g
+5678,4,one_sided,sour,Morrisons,Tesco,Blue Dragon Sticky Teriyaki Stir Fry Sauce,Blue Dragon Sweet & Sour Stir Fry Sauce 120G
+5707,4,one_sided,sour,ASDA,Morrisons,Mr Freeze Freezepops,Mr Freeze Sour Freezepops
+5707,4,one_sided,sour,Morrisons,Sains,Mr Freeze Sour Freezepops,Mr Freeze Sugar Free Freeze Pops 20x45ml
+5707,4,one_sided,sour,Morrisons,Tesco,Mr Freeze Sour Freezepops,Mr Freeze Sugar Free Freeze Pops 20 X 45Ml
+5725,4,one_sided,rose,ASDA,Morrisons,Kylie Minogue Alcohol Free Sparkling Rosé Wine,La Bellamente Pinot Grigio Rose
+5725,4,one_sided,rose,ASDA,Sains,Kylie Minogue Alcohol Free Sparkling Rosé Wine,Kylie Minogue Alcohol Free Sparkling Rose 75cl
+5725,4,one_sided,rose,ASDA,Tesco,Kylie Minogue Alcohol Free Sparkling Rosé Wine,Kylie Minogue Alcohol Free Sparkling Rose 75Cl
+5740,4,named_flavour_clash,satay vs teriyaki,ASDA,Sains,Blue Dragon Satay Stir Fry Sauce,Blue Dragon Teriyaki Stir Fry Sauce 120g
+5740,4,named_flavour_clash,satay vs teriyaki,Morrisons,Sains,Blue Dragon Satay Stir Fry Sauce,Blue Dragon Teriyaki Stir Fry Sauce 120g
+5740,4,named_flavour_clash,teriyaki vs satay,Sains,Tesco,Blue Dragon Teriyaki Stir Fry Sauce 120g,Blue Dragon Satay Stir Fry Sauce 120G
+5750,4,one_sided,smoky,ASDA,Sains,BOL Spanish Smoky Butter Bean Stew,BOL One Pot Meal Spanish Butter Bean Stew 450g
+5750,4,one_sided,smoky,Morrisons,Sains,Bol One Pot Meal Spanish Smoky Butter Bean Stew,BOL One Pot Meal Spanish Butter Bean Stew 450g
+5750,4,one_sided,smoky,Sains,Tesco,BOL One Pot Meal Spanish Butter Bean Stew 450g,Bol Spanish Smoky Butter Bean Stew Power Pot 450G
+5766,4,named_flavour_clash,"pad,thai vs teriyaki",ASDA,Morrisons,Wagamama Pad Thai Stir Fry Sauce 120g,Wagamama Teriyaki Stir Fry Sauce
+5766,4,named_flavour_clash,"pad,thai vs teriyaki",ASDA,Sains,Wagamama Pad Thai Stir Fry Sauce 120g,The Spice Tailor Sticky Soy Teriyaki Stir Fry Sauce 135g
+5766,4,named_flavour_clash,"teriyaki vs pad,thai",Morrisons,Tesco,Wagamama Teriyaki Stir Fry Sauce,Wagamama Pad Thai Stir Fry Mild Sauce 120G
+5766,4,named_flavour_clash,"teriyaki vs pad,thai",Sains,Tesco,The Spice Tailor Sticky Soy Teriyaki Stir Fry Sauce 135g,Wagamama Pad Thai Stir Fry Mild Sauce 120G
+5778,3,named_flavour_clash,satay vs katsu,Sains,Tesco,Blue Dragon Satay Stir Fry Sauce 120g,Blue Dragon Aromatic Katsu Stir Fry Sauce 120G
+5781,4,one_sided,sour,ASDA,Morrisons,Blue Dragon Fragrant Pad Thai Stir Fry Sauce,Blue Dragon Sweet & Sour Stir Fry Sauce
+5781,4,one_sided,sour,Morrisons,Sains,Blue Dragon Sweet & Sour Stir Fry Sauce,Blue Dragon Chow Mein Stir Fry Sauce 120g
+5781,4,one_sided,sour,Morrisons,Tesco,Blue Dragon Sweet & Sour Stir Fry Sauce,Blue Dragon Chow Mein Stir Fry Sauce 120G
+5797,3,one_sided,sour,ASDA,Sains,Mr Freeze Sour Freeze Pops,Calypso Mr Freeze Ice Pops 20x45ml
+5797,3,one_sided,sour,ASDA,Tesco,Mr Freeze Sour Freeze Pops,Mr Freeze Freeze Pops 20X45ml
+6310,4,one_sided,sour,ASDA,Tesco,Rowntree's Randoms Fizzy Cactuz 130g,Rowntree's Randoms Fizzy Cactuz Sour Sweets 130g
+6310,4,one_sided,sour,Morrisons,Tesco,Rowntree's Fruit Pastilles Vegan Fr…,Rowntree's Randoms Fizzy Cactuz Sour Sweets 130g
+6310,4,one_sided,sour,Sains,Tesco,Rowntree's Randoms Fizzy Cactuz Sweets Sharing Bag 130g,Rowntree's Randoms Fizzy Cactuz Sour Sweets 130g
+6319,4,one_sided,sour,ASDA,Morrisons,Lucozade Sport Drink Raspberry,Ske Crystal Blue Sour Raspberry 20Mg
+6319,4,one_sided,sour,Morrisons,Sains,Ske Crystal Blue Sour Raspberry 20Mg,Sainsbury's Raspberry French Vodka 70cl
+6319,4,one_sided,sour,Morrisons,Tesco,Ske Crystal Blue Sour Raspberry 20Mg,Lucozade Sport Raspberry 750Ml
+6455,4,one_sided,sour,ASDA,Tesco,Coppa Cocktails Mojito,Coppa Cocktails Whiskey Sour - 70cl
+6455,4,one_sided,sour,Morrisons,Tesco,The Duppy Share Caribbean Rum,Coppa Cocktails Whiskey Sour - 70cl
+6455,4,one_sided,sour,Sains,Tesco,"Sainsbury's Speyside Whisky, Taste the Difference 70cl",Coppa Cocktails Whiskey Sour - 70cl
+6488,4,one_sided,sour,ASDA,Morrisons,JUST ESSENTIALS by ASDA Sweet & Sour Cooking Sauce,Sharwood's Cooking Sauce Swee…
+6488,4,one_sided,sour,Morrisons,Sains,Sharwood's Cooking Sauce Swee…,Stamford Street Co. Sweet & Sour Sauce 500g
+6488,4,one_sided,sour,Morrisons,Tesco,Sharwood's Cooking Sauce Swee…,Hearty Food Co. Sweet & Sour Sauce 440G
+6504,4,one_sided,smoky,ASDA,Sains,Old El Paso Gluten Free Fajita Kit Smokey BBQ,Old El Paso Mexican Gluten Free Fajita Kit Smoky BBQ 462g
+6504,4,one_sided,smoky,Morrisons,Sains,Old El Paso Extra Mild Super Tasty Fajita Kit,Old El Paso Mexican Gluten Free Fajita Kit Smoky BBQ 462g
+6504,4,one_sided,smoky,Sains,Tesco,Old El Paso Mexican Gluten Free Fajita Kit Smoky BBQ 462g,Old El Paso Teriyaki Fajita Fusion Kit 451G
+6519,4,named_flavour_clash,carbonara vs bolognese,ASDA,Morrisons,ASDA Extra Special Carbonara Sauce,Morrisons Italian Bolognese Pasta Sauce
+6519,4,named_flavour_clash,bolognese vs carbonara,Morrisons,Sains,Morrisons Italian Bolognese Pasta Sauce,"Sainsbury's Carbonara Sauce, Taste the Difference 350g (Serves 2)"
+6519,4,named_flavour_clash,bolognese vs carbonara,Morrisons,Tesco,Morrisons Italian Bolognese Pasta Sauce,Tesco Finest Carbonara Pasta Sauce 340G
+6566,3,one_sided,smoky,ASDA,Tesco,Old El Paso Mexican Stand 'N' Stuff Smoky BBQ Soft Taco Kit,Old El Paso Smokey Bbq Stand ‘N’ Stuff Soft Taco Kit 350G
+6566,3,one_sided,smoky,Morrisons,Tesco,Old El Paso Stand 'N' Stuff Smoky BBQ Soft Taco Kit,Old El Paso Smokey Bbq Stand ‘N’ Stuff Soft Taco Kit 350G
+6569,4,named_flavour_clash,cajun vs salad,Morrisons,Sains,Bart Cajun Seasoning Refill,Just Spices Original Salad Topping Seasoning 35g
+6575,4,one_sided,sour,ASDA,Morrisons,Ben's Original Sweet and Sour Original No Added Sugar Sauce,Ben's Original Sweet And So…
+6575,4,one_sided,sour,ASDA,Tesco,Ben's Original Sweet and Sour Original No Added Sugar Sauce,Tesco Superberry Granola 500G
+6575,4,one_sided,sour,Morrisons,Sains,Ben's Original Sweet And So…,Bens Original Sweet and Sour No Added Sugar Sauce 440g
+6575,4,one_sided,sour,Sains,Tesco,Bens Original Sweet and Sour No Added Sugar Sauce 440g,Tesco Superberry Granola 500G
+6602,4,named_flavour_clash,carbonara vs bolognese,ASDA,Sains,Dolmio Pasta Bake Carbonara Pasta Sauce,Dolmio Bolognese Smooth Tomato Pasta Sauce 500g
+6605,4,named_flavour_clash,bolognese vs lasagne,ASDA,Morrisons,Heinz Tomato Pasta Sauce for Bolognese 490g,Heinz Tomato Sauce For Lasagne
+6605,4,named_flavour_clash,lasagne vs bolognese,Morrisons,Sains,Heinz Tomato Sauce For Lasagne,Heinz Tomato Pasta Sauce for Bolognese 490g
+6605,4,named_flavour_clash,lasagne vs bolognese,Morrisons,Tesco,Heinz Tomato Sauce For Lasagne,Tesco No Added Sugar Bolognese Pasta Sauce 500G
+6625,3,one_sided,sour,ASDA,Morrisons,Sharwood's 30% Less Sugar Sweet & Sour Stir Fry Sauce,Sharwood's Stir Fry Sauce 30% Less…
+6625,3,one_sided,sour,Morrisons,Tesco,Sharwood's Stir Fry Sauce 30% Less…,Sharwoods Stir Fry Sauce 30% Less Sugar Sweet & Sour 120G
+6643,4,one_sided,sour,ASDA,Morrisons,ASDA Sour Cream 280g,Crosse & Blackwell Cream Of…
+6643,4,one_sided,sour,Morrisons,Sains,Crosse & Blackwell Cream Of…,Sainsbury's Sour Cream 280g
+6643,4,one_sided,sour,Morrisons,Tesco,Crosse & Blackwell Cream Of…,Tesco Sour Cream Topping 280G
+6661,3,named_flavour_clash,teriyaki vs katsu,ASDA,Sains,Sharwood's East Asian Japanese Teriyaki 420g,Sharwoods Japanese Katsu Curry Sauce 415g
+6661,3,named_flavour_clash,teriyaki vs katsu,Morrisons,Sains,Sharwood's Japanese Teriyaki Sauce,Sharwoods Japanese Katsu Curry Sauce 415g
+6664,4,one_sided,reduced,ASDA,Morrisons,ASDA Coconut Milk 400ml,Morrisons Canned Reduced Fat Coconut Milk
+6664,4,one_sided,reduced,Morrisons,Sains,Morrisons Canned Reduced Fat Coconut Milk,Sainsbury's Coconut Milk 400ml
+6664,4,one_sided,reduced,Morrisons,Tesco,Morrisons Canned Reduced Fat Coconut Milk,Tesco Coconut Milk 400Ml
+6667,3,one_sided,reduced,ASDA,Morrisons,Amoy Coconut Milk,Amoy Reduced Fat Coconut Milk
+6667,3,one_sided,reduced,Morrisons,Sains,Amoy Reduced Fat Coconut Milk,Amoy Coconut Milk 400ml
+6669,2,one_sided,reduced,ASDA,Morrisons,Amoy Reduced Fat Coconut Milk,Amoy Rich Coconut Milk
+6677,4,named_flavour_clash,carbonara vs cheddar,ASDA,Sains,Homepride Pasta Bake Carbonara 485g,Homepride No Added Sugar Pasta Bake Sauce Tomato & Cheddar Cheese 485g
+6677,4,named_flavour_clash,carbonara vs cheddar,ASDA,Tesco,Homepride Pasta Bake Carbonara 485g,Homepride No Added Sugar Tomato Cheddar Pasta Bake Sauce 485G
+6702,3,one_sided,reduced,ASDA,Tesco,ASDA Ricotta & Red Pepper Pesto,Tesco Reduced Fat Red Pesto 190G
+6702,3,one_sided,reduced,Sains,Tesco,Sainsbury's Roasted Red Pepper Pesto 190g,Tesco Reduced Fat Red Pesto 190G
+6705,4,one_sided,reduced,ASDA,Tesco,ASDA Green Pesto,Tesco Reduced Fat Green Pesto 190G
+6705,4,one_sided,reduced,Morrisons,Tesco,Morrisons Green Pesto,Tesco Reduced Fat Green Pesto 190G
+6705,4,one_sided,reduced,Sains,Tesco,Sainsbury's Green Pesto 190g,Tesco Reduced Fat Green Pesto 190G
+6716,4,named_flavour_clash,pesto vs mozzarella,ASDA,Sains,Filippo Berio Tomato & Ricotta Pesto,Sainsbury's Free From Gluten Tomato & Mozzarella Arancini 200g
+6716,4,named_flavour_clash,mozzarella vs pesto,Sains,Tesco,Sainsbury's Free From Gluten Tomato & Mozzarella Arancini 200g,Filippo Berio Tomato & Ricotta Pesto 190G
+6851,4,one_sided,sour,ASDA,Tesco,ASDA Meal For One Sweet & Sour Crispy Chicken with Egg Fried Rice 400g,Tesco Chicken & Black Bean With Egg Fried Rice 400G
+6851,4,one_sided,sour,Morrisons,Tesco,Morrisons Sweet & Sour Chicken & Egg Fried Rice,Tesco Chicken & Black Bean With Egg Fried Rice 400G
+6851,4,one_sided,sour,Sains,Tesco,Sainsbury's Sweet & Sour Chicken with Rice Ready Meal for 1 400g,Tesco Chicken & Black Bean With Egg Fried Rice 400G
+6855,4,one_sided,sour,ASDA,Tesco,JUST ESSENTIALS by ASDA Chicken Curry & Rice,Hearty Food Co. Sweet & Sour Chicken & Rice 450G
+6855,4,one_sided,sour,Morrisons,Tesco,Morrisons Savers Chicken Curry,Hearty Food Co. Sweet & Sour Chicken & Rice 450G
+6855,4,one_sided,sour,Sains,Tesco,The Gym Kitchen Thai Green Chicken Curry 400g,Hearty Food Co. Sweet & Sour Chicken & Rice 450G
+6986,2,one_sided,reduced,ASDA,Sains,ASDA Reduced Fat Crustless Quiche Lorraine,Sainsbury's Crustless Quiche Lorraine 150g
+6993,4,one_sided,sour,ASDA,Sains,Haribo Tangfastics Sweets Sharing Bag,Haribo Sour Sparks Sweets Sharing Bag 175g
+6993,4,one_sided,sour,Morrisons,Sains,Haribo Tangfastics Sweets Share Bag,Haribo Sour Sparks Sweets Sharing Bag 175g
+6993,4,one_sided,sour,Sains,Tesco,Haribo Sour Sparks Sweets Sharing Bag 175g,Haribo Tangfastics 175G
+6999,4,one_sided,sour,ASDA,Tesco,Haribo Twin Snakes Sweets Sharing Bag,Haribo Sour Sparks 175G
+6999,4,one_sided,sour,Morrisons,Tesco,Haribo Share The Happy 11 Mini Bags Sweets Multipack,Haribo Sour Sparks 175G
+6999,4,one_sided,sour,Sains,Tesco,Haribo Twin Snakes Sweets Sharing Bag 175g,Haribo Sour Sparks 175G
+7003,4,one_sided,sour,ASDA,Sains,Haribo Sour Sparks Bag Sweets Sharing Bag,Merba Chocolate Cookies 200g
+7003,4,one_sided,sour,ASDA,Tesco,Haribo Sour Sparks Bag Sweets Sharing Bag,Revels Milk Chocolate Sharing Pouch Bag 205g
+7003,4,one_sided,sour,Morrisons,Sains,Haribo Sour Sparks Vegeta…,Merba Chocolate Cookies 200g
+7003,4,one_sided,sour,Morrisons,Tesco,Haribo Sour Sparks Vegeta…,Revels Milk Chocolate Sharing Pouch Bag 205g
+7043,4,one_sided,sour,ASDA,Morrisons,Candy Kittens Sour Watermelon Gourmet Sweets,Morrisons Watermelon Slices
+7043,4,one_sided,sour,Morrisons,Sains,Morrisons Watermelon Slices,Candy Kittens Sour Watermelon Gourmet Sweets 140g
+7043,4,one_sided,sour,Morrisons,Tesco,Morrisons Watermelon Slices,Candy Kitten Sour Watermelon Sweets 140G
+7049,3,one_sided,sour,ASDA,Sains,Haribo Starmix Multipack Bag 176g,Haribo Tangfastics Sour Sweets Bag 175g
+7049,3,one_sided,sour,Morrisons,Sains,Haribo Starmix 11 Mini Bags Sweets Multipack,Haribo Tangfastics Sour Sweets Bag 175g
+7064,4,one_sided,sour,ASDA,Sains,Skittles Squishy Cloudz Fruits Sweets Pouch Bag,Skittles Squishy Cloudz Sour Sweets Fruit Flavoured Sweets Pouch Bag 94g
+7064,4,one_sided,sour,ASDA,Tesco,Skittles Squishy Cloudz Fruits Sweets Pouch Bag,Skittles Squishy Cloudz Sour Sweets Fruit Sweets Pouch Bag 94g
+7064,4,one_sided,sour,Morrisons,Sains,Skittles Squishy Cloudz Chewy…,Skittles Squishy Cloudz Sour Sweets Fruit Flavoured Sweets Pouch Bag 94g
+7064,4,one_sided,sour,Morrisons,Tesco,Skittles Squishy Cloudz Chewy…,Skittles Squishy Cloudz Sour Sweets Fruit Sweets Pouch Bag 94g
+7278,3,one_sided,sour,ASDA,Tesco,Sour Punch Mini Bites Assorted Flavours 57g,Tesco Snack Pack Soft Apricots 50G
+7278,3,one_sided,sour,Morrisons,Tesco,Sour Punch Mini Bites Assorted Flavours,Tesco Snack Pack Soft Apricots 50G
+7279,4,one_sided,sour,ASDA,Tesco,Warheads Lil' Worms Candy,Warheads Sour Chewy Cubes Assorted Flavours 113G
+7279,4,one_sided,sour,Morrisons,Tesco,Warheads Lil Worms,Warheads Sour Chewy Cubes Assorted Flavours 113G
+7279,4,one_sided,sour,Sains,Tesco,Jolly Rancher Gummies Sours 99g,Warheads Sour Chewy Cubes Assorted Flavours 113G
+7351,4,one_sided,rose,ASDA,Morrisons,Vranken Champagne Brut Rosé,Bollinger Champagne Rose
+7351,4,one_sided,rose,ASDA,Tesco,Vranken Champagne Brut Rosé,Caparelli Italian Rose Blush 75Cl
+7351,4,one_sided,rose,Morrisons,Sains,Bollinger Champagne Rose,Bollinger Rosé Champagne 75cl
+7351,4,one_sided,rose,Sains,Tesco,Bollinger Rosé Champagne 75cl,Caparelli Italian Rose Blush 75Cl
+7355,4,one_sided,rose,ASDA,Morrisons,Lanson Rosé Champagne,Lanson Rose Label Champagne Rose NV
+7355,4,one_sided,rose,ASDA,Sains,Lanson Rosé Champagne,Chapel Down English Rose NV 75cl
+7355,4,one_sided,rose,ASDA,Tesco,Lanson Rosé Champagne,Piper Heidsieck Champagne Rose Sauvage 750Ml
+7460,3,one_sided,reduced,ASDA,Tesco,ASDA Ready to Serve Custard 30% Less Fat,Tesco Reduced Fat Custard 500G
+7460,3,one_sided,reduced,Sains,Tesco,Sainsbury's Ready To Eat Custard 500g,Tesco Reduced Fat Custard 500G
+7520,3,one_sided,reduced,ASDA,Morrisons,ASDA Organic Crunchy Peanut Butter,Morrisons Reduced Fat Peanut Butter
+7520,3,one_sided,reduced,Morrisons,Sains,Morrisons Reduced Fat Peanut Butter,Sainsbury's Peanut Butter Crunchy 340g
+7562,4,one_sided,rose,ASDA,Morrisons,Not Guilty Alcohol Free Rosé Wine,Not Guilty Alcohol Free Rose
+7562,4,one_sided,rose,ASDA,Sains,Not Guilty Alcohol Free Rosé Wine,Fête de Flaveurs Touraine Rose Wine 75cl
+7562,4,one_sided,rose,ASDA,Tesco,Not Guilty Alcohol Free Rosé Wine,Vineyards Juicy Rose Wine 75Cl
+7568,4,one_sided,rose,ASDA,Morrisons,Freixenet Italian Sparkling Rosé and Reed Diffuser Set,Freixenet Italian Rose Sparkling Wine
+7568,4,one_sided,rose,ASDA,Tesco,Freixenet Italian Sparkling Rosé and Reed Diffuser Set,Canvino Naturally Sparkling Rose Wine 200Ml
+7568,4,one_sided,rose,Morrisons,Sains,Freixenet Italian Rose Sparkling Wine,Freixenet Italian Sparkling Rosé Small Wine Bottle 20cl
+7568,4,one_sided,rose,Sains,Tesco,Freixenet Italian Sparkling Rosé Small Wine Bottle 20cl,Canvino Naturally Sparkling Rose Wine 200Ml
+7618,4,named_flavour_clash,paprika vs salad,ASDA,Tesco,Zaad Sliced Mortadella with Paprika,Providence Deli Lightly Spiced Iberian Salad 200G
+7618,4,named_flavour_clash,paprika vs salad,Morrisons,Tesco,Tahira Poultry Mortadella With Paprika,Providence Deli Lightly Spiced Iberian Salad 200G
+7724,4,one_sided,unsalted,ASDA,Sains,Cypressa Mixed Nuts & Raisins,Sainsbury's Unsalted Mixed Nuts & Raisins 200g
+7724,4,one_sided,unsalted,Morrisons,Sains,Morrisons Roasted Monkey Nuts,Sainsbury's Unsalted Mixed Nuts & Raisins 200g
+7724,4,one_sided,unsalted,Sains,Tesco,Sainsbury's Unsalted Mixed Nuts & Raisins 200g,Tesco Organic Mixed Nuts 200G
+7824,4,one_sided,smoky,ASDA,Morrisons,East End Very Hot Green Chilli Sauce,Jamie Oliver Smoky Veggie Chilli
+7824,4,one_sided,smoky,Morrisons,Sains,Jamie Oliver Smoky Veggie Chilli,Lingham's Chilli Sauce 280ml
+7824,4,one_sided,smoky,Morrisons,Tesco,Jamie Oliver Smoky Veggie Chilli,East End Very Hot Green Chilli Sauce 260G
+7861,4,one_sided,sour,ASDA,Morrisons,Mlekovita Sour Cream,Piatnica Smietana Soured Cream
+7861,4,one_sided,sour,ASDA,Sains,Mlekovita Sour Cream,Piatnica Soured Cream 400g
+7861,4,one_sided,sour,Morrisons,Tesco,Piatnica Smietana Soured Cream,Mlekovita 18% Fat Sour Cream 400G
+7861,4,one_sided,sour,Sains,Tesco,Piatnica Soured Cream 400g,Mlekovita 18% Fat Sour Cream 400G
+7925,4,one_sided,sour,ASDA,Morrisons,ASDA Sour Cream & Chive,Morrisons Soured Cream & Chive Dip
+7925,4,one_sided,sour,ASDA,Sains,ASDA Sour Cream & Chive,Sainsbury's Soured Cream & Chive Dip 200g
+7925,4,one_sided,reduced,ASDA,Tesco,ASDA Sour Cream & Chive,Tesco Reduced Fat Sour Cream & Chive Dip 200G
+7925,4,one_sided,reduced,Morrisons,Tesco,Morrisons Soured Cream & Chive Dip,Tesco Reduced Fat Sour Cream & Chive Dip 200G
+7925,4,one_sided,reduced,Sains,Tesco,Sainsbury's Soured Cream & Chive Dip 200g,Tesco Reduced Fat Sour Cream & Chive Dip 200G
+7930,4,one_sided,smoky,ASDA,Sains,Holy Moly Red Pepper & Tomato Salsa 150g,Holy Moly Smoky Red Pepper & Tomato Salsa 150g
+7930,4,one_sided,smoky,Morrisons,Sains,Morrisons Semi Dried Tomato & Mozzarella,Holy Moly Smoky Red Pepper & Tomato Salsa 150g
+7930,4,named_flavour_clash,mozzarella vs feta,Morrisons,Tesco,Morrisons Semi Dried Tomato & Mozzarella,Tesco Feta Stuffed Pepper 145G
+7930,4,one_sided,smoky,Sains,Tesco,Holy Moly Smoky Red Pepper & Tomato Salsa 150g,Tesco Feta Stuffed Pepper 145G
+7936,4,one_sided,reduced,ASDA,Tesco,JUST ESSENTIALS by ASDA Coleslaw,Tesco Reduced Fat Coleslaw 300G
+7936,4,one_sided,reduced,Morrisons,Tesco,Morrisons Savers Coleslaw,Tesco Reduced Fat Coleslaw 300G
+7936,4,one_sided,reduced,Sains,Tesco,Sainsbury's Deli-Style Traditional Coleslaw 300g,Tesco Reduced Fat Coleslaw 300G
+7944,4,one_sided,reduced,ASDA,Morrisons,ASDA Moroccan Style Spiced Houmous,Morrisons 30% Reduced Fat Houmous
+7944,4,one_sided,reduced,ASDA,Tesco,ASDA Moroccan Style Spiced Houmous,Tesco Reduced Fat Houmous 200G
+7944,4,one_sided,reduced,Morrisons,Sains,Morrisons 30% Reduced Fat Houmous,Sainsbury's Houmous 200g
+7944,4,one_sided,reduced,Sains,Tesco,Sainsbury's Houmous 200g,Tesco Reduced Fat Houmous 200G
+8036,4,one_sided,smoky,ASDA,Sains,Shazans Chicken Drumsticks,Sainsbury's Sweet & Smoky BBQ Chicken Drumsticks 900g
+8036,4,one_sided,smoky,Morrisons,Sains,Shazans Chicken Drumsticks,Sainsbury's Sweet & Smoky BBQ Chicken Drumsticks 900g
+8036,4,one_sided,smoky,Sains,Tesco,Sainsbury's Sweet & Smoky BBQ Chicken Drumsticks 900g,Tesco Room To Roam British Chicken Drumsticks 1Kg
+8050,4,one_sided,smoky,ASDA,Sains,Shazans Chicken Drumsticks & Thighs,Sainsbury's Sweet & Smoky British Chicken Drumsticks 900g
+8050,4,one_sided,smoky,Morrisons,Sains,Shazans Chicken Drumsticks & Thighs,Sainsbury's Sweet & Smoky British Chicken Drumsticks 900g
+8050,4,one_sided,smoky,Sains,Tesco,Sainsbury's Sweet & Smoky British Chicken Drumsticks 900g,Tesco Room To Roam British Chicken Thighs 1Kg
+8109,3,one_sided,smoky,ASDA,Sains,Richmond 8 Roast Chicken Sausages 410g,Sainsbury's Sweet & Smoky Cooked British Chicken Drumsticks 430g
+8109,3,one_sided,smoky,Sains,Tesco,Sainsbury's Sweet & Smoky Cooked British Chicken Drumsticks 430g,Richmond Roast Chicken Sausages 410g
+8305,4,one_sided,sour,ASDA,Morrisons,Siren Craft Brew Pompelmocello Juicy Grapefruit Sour IPA 440ml,Siren Craft Brew Pompelmocello
+8305,4,one_sided,sour,ASDA,Sains,Siren Craft Brew Pompelmocello Juicy Grapefruit Sour IPA 440ml,BBNo DDH Grapefruit Pale Ale 440ml
+8305,4,one_sided,sour,ASDA,Tesco,Siren Craft Brew Pompelmocello Juicy Grapefruit Sour IPA 440ml,Tesco Finest Prosecco Brut 37.5cl
+8360,4,one_sided,smoky,ASDA,Morrisons,Fridge Raiders Meat-Free Smoky BBQ Tasty Bites 60g,Fridge Raiders Pizza Flavou…
+8360,4,one_sided,smoky,ASDA,Sains,Fridge Raiders Meat-Free Smoky BBQ Tasty Bites 60g,Fridge Raiders Meat Free Slow Roasted Tasty Bites 60g
+8360,4,one_sided,smoky,Morrisons,Tesco,Fridge Raiders Pizza Flavou…,Fridge Raiders Meat Free Smoky Bbq Tasty Bites 60G
+8360,4,one_sided,smoky,Sains,Tesco,Fridge Raiders Meat Free Slow Roasted Tasty Bites 60g,Fridge Raiders Meat Free Smoky Bbq Tasty Bites 60G
+8398,4,one_sided,rose,ASDA,Morrisons,19 Crimes Revolutionary Rosé,19 Crimes Revolutionary Rose
+8398,4,one_sided,rose,ASDA,Tesco,19 Crimes Revolutionary Rosé,19 Crimes Revolutionary Rose Wine 750Ml
+8398,4,one_sided,rose,Morrisons,Sains,19 Crimes Revolutionary Rose,19 Crimes Revolutionary Rosé 750ml
+8398,4,one_sided,rose,Sains,Tesco,19 Crimes Revolutionary Rosé 750ml,19 Crimes Revolutionary Rose Wine 750Ml
+8632,4,one_sided,smoky,ASDA,Tesco,Violife Original Flavour Grated 200g,Violife Smoky Cheddar Flavour Slices 200G
+8632,4,one_sided,smoky,Morrisons,Tesco,Violife Original Grated,Violife Smoky Cheddar Flavour Slices 200G
+8632,4,one_sided,smoky,Sains,Tesco,Violife Original Flavour Grated 200g,Violife Smoky Cheddar Flavour Slices 200G
+8793,4,one_sided,sour,ASDA,Sains,Pringles Sizzl'n Kickin & Sour Cream Sharing Crisps,Tony's Chocolonely Fairtrade Milk Crispy Wafer 180g
+8793,4,one_sided,sour,ASDA,Tesco,Pringles Sizzl'n Kickin & Sour Cream Sharing Crisps,Pringles Original Sharing Crisps 185g
+8793,4,one_sided,sour,Morrisons,Sains,Pringles Sour Cream & Onion Sharing Crisps,Tony's Chocolonely Fairtrade Milk Crispy Wafer 180g
+8793,4,one_sided,sour,Morrisons,Tesco,Pringles Sour Cream & Onion Sharing Crisps,Pringles Original Sharing Crisps 185g
+8982,4,named_flavour_clash,carbonara vs bolognese,ASDA,Sains,La Famiglia Rana Filled Pan-Fry Gnocchi Carbonara,Rana La Famiglia Bolognese Fresh Tortelloni 250g
+8982,4,named_flavour_clash,carbonara vs bolognese,ASDA,Tesco,La Famiglia Rana Filled Pan-Fry Gnocchi Carbonara,La Famiglia Rana Bolognese Fresh Tortelloni 250g
+9003,3,one_sided,reduced,ASDA,Tesco,ASDA British Extra Mature Grated Cheddar 250g,Tesco 50% Reduced Fat Mature Grated Cheese 250G
+9003,3,one_sided,reduced,Sains,Tesco,Sainsbury's Lighter Mature Grated Cheese 250g,Tesco 50% Reduced Fat Mature Grated Cheese 250G
+9044,4,one_sided,rose,ASDA,Morrisons,B. INK Rosé,I Heart Rose
+9044,4,one_sided,rose,ASDA,Sains,B. INK Rosé,B. Ink Rose 75cl
+9044,4,one_sided,rose,ASDA,Tesco,B. INK Rosé,Tesco Finest Cinsault Rose 75Cl
+9156,4,one_sided,reduced,ASDA,Tesco,Sacla Classic Basil Pesto,Sacla' Reduced Fat Basil Pesto 190G
+9156,4,one_sided,reduced,Morrisons,Tesco,Sacla Vegan Basil Pesto,Sacla' Reduced Fat Basil Pesto 190G
+9156,4,one_sided,reduced,Sains,Tesco,Sacla Basil Pesto 190g,Sacla' Reduced Fat Basil Pesto 190G
+9205,4,one_sided,sour,ASDA,Tesco,Melis Pickled Peppers,Epicure Classic Pickle Spears Sweet & Sour 670G
+9205,4,one_sided,sour,Morrisons,Tesco,Polish Specialities Marinated Red Peppers,Epicure Classic Pickle Spears Sweet & Sour 670G
+9205,4,one_sided,sour,Sains,Tesco,Polish Marinated Red Peppers 720g,Epicure Classic Pickle Spears Sweet & Sour 670G
+9210,3,one_sided,sour,Morrisons,Tesco,Royal Chicken Karahi & Saffron Rice,Kirsty's Gluten Free Sweet & Sour Chicken & Rice 450G
+9210,3,one_sided,sour,Sains,Tesco,Royal Chicken Karahi with Saffron Rice 400g,Kirsty's Gluten Free Sweet & Sour Chicken & Rice 450G
+9234,3,one_sided,reduced,ASDA,Morrisons,ASDA Reduced Fat Coconut Milk 400ml,Niru Coconut Milk
+9234,3,one_sided,reduced,ASDA,Tesco,ASDA Reduced Fat Coconut Milk 400ml,Pride Coconut Milk 400Ml
+9269,4,one_sided,sour,ASDA,Tesco,Wikinger 8 Premium Sausages,Kuchnia Polska Sour Cucumber 700G
+9269,4,one_sided,sour,Morrisons,Tesco,Kuchnia Polska Pickled Cucumbers,Kuchnia Polska Sour Cucumber 700G
+9269,4,one_sided,sour,Sains,Tesco,Polish Specialities Sliced Gherkins 720ml,Kuchnia Polska Sour Cucumber 700G
+9272,3,named_flavour_clash,thai vs katsu,Morrisons,Tesco,Thai Taste Red Curry Paste Pouch,Tesco Katsu Curry Paste 200G
+9272,3,named_flavour_clash,thai vs katsu,Sains,Tesco,Thai Taste Red Curry Paste 200g,Tesco Katsu Curry Paste 200G
+9377,4,named_flavour_clash,paprika vs pickled,ASDA,Morrisons,Lay's Paprika,Parson's Pickled Cockles (155g)
+9378,3,one_sided,reduced,Morrisons,Tesco,Morrisons The Best Prawn Cocktail,Tesco 30% Reduced Fat Prawn Cocktail 170G
+9378,3,one_sided,reduced,Sains,Tesco,"Sainsbury's Prawn Cocktail Sauce, Taste the Difference 200g (Serves 4)",Tesco 30% Reduced Fat Prawn Cocktail 170G
+9434,4,one_sided,smoky,ASDA,Morrisons,ASDA Smoky Carbonara Pasta Sauce,Morrisons Carbonara Sauce
+9434,4,one_sided,smoky,ASDA,Sains,ASDA Smoky Carbonara Pasta Sauce,Sainsbury's Carbonara Sauce 350g (Serves 2)
+9434,4,one_sided,smoky,ASDA,Tesco,ASDA Smoky Carbonara Pasta Sauce,Tesco Carbonara Sauce 350G
+9441,4,one_sided,reduced,ASDA,Sains,ASDA Cheesy Singles,Sainsbury's Reduced Fat Cheesy Slices 200g
+9441,4,one_sided,reduced,Morrisons,Sains,Morrisons Cheesy Slices,Sainsbury's Reduced Fat Cheesy Slices 200g
+9441,4,one_sided,reduced,Sains,Tesco,Sainsbury's Reduced Fat Cheesy Slices 200g,Tesco Finest St. Felicien Cheese 180 G
+9445,4,named_flavour_clash,bolognese vs mozzarella,ASDA,Morrisons,ASDA Bolognese Tortelloni Serves 2 300g,Morrisons Tomato & Mozzarella Tortelloni
+9445,4,named_flavour_clash,bolognese vs mozzarella,ASDA,Sains,ASDA Bolognese Tortelloni Serves 2 300g,Sainsbury's Tomato & Mozzarella Tortelloni 300g
+9570,4,one_sided,reduced,ASDA,Tesco,Willow Spreadable 500g,Tesco Reduced Fat Butterpak Spreadable 500G
+9570,4,one_sided,reduced,Morrisons,Tesco,Morrisons Spreadable with Real Butter,Tesco Reduced Fat Butterpak Spreadable 500G
+9570,4,one_sided,reduced,Sains,Tesco,Sainsbury's Buttersoft Spreadable Butter 500g,Tesco Reduced Fat Butterpak Spreadable 500G
+9610,4,one_sided,reduced,ASDA,Morrisons,ASDA Cheese Coleslaw,Morrisons 55% Reduced Fat Coleslaw
+9610,4,one_sided,reduced,Morrisons,Sains,Morrisons 55% Reduced Fat Coleslaw,Sainsbury's Edam Cheese 310g
+9610,4,one_sided,reduced,Morrisons,Tesco,Morrisons 55% Reduced Fat Coleslaw,Tesco Cheese Coleslaw 300G
+9693,4,one_sided,reduced,ASDA,Morrisons,Mattessons Smoked Pork Sausage Reduced Fat,Mattessons Smoked Pork Sausage Original
+9693,4,one_sided,reduced,ASDA,Sains,Mattessons Smoked Pork Sausage Reduced Fat,Mattessons Smoked Pork Sausage Hint of Garlic 160g
+9693,4,one_sided,reduced,ASDA,Tesco,Mattessons Smoked Pork Sausage Reduced Fat,Mattessons Smoked Pork Sausage Original 160G
+9703,4,one_sided,reduced,ASDA,Morrisons,ASDA 6 Cracked Black Pepper Cheddar Cheese Slices,Yamas Reduced Fat Grilling Cheese
+9703,4,named_flavour_clash,cheddar vs salad,ASDA,Tesco,ASDA 6 Cracked Black Pepper Cheddar Cheese Slices,Tesco Reduced Fat Salad Cheese 200G
+9703,4,one_sided,reduced,Morrisons,Sains,Yamas Reduced Fat Grilling Cheese,Midas Grilling Cheese 200g
+9703,4,one_sided,reduced,Sains,Tesco,Midas Grilling Cheese 200g,Tesco Reduced Fat Salad Cheese 200G
+9706,4,named_flavour_clash,"mozzarella,pesto vs salad",ASDA,Sains,ASDA 8 Pesto & Mozzarella Pinwheels,Sainsbury's Italian Style Salad 100g
+9724,4,one_sided,unsalted,ASDA,Morrisons,The BAKERY at ASDA Hot Fudge Pudding 290g,Country Life Unsalted British Butter
+9724,4,one_sided,unsalted,ASDA,Sains,The BAKERY at ASDA Hot Fudge Pudding 290g,Country Life British Unsalted Butter 250g
+9724,4,one_sided,unsalted,ASDA,Tesco,The BAKERY at ASDA Hot Fudge Pudding 290g,Tesco Organic Unsalted Butter 250G
+9753,4,one_sided,reduced,ASDA,Tesco,ASDA Mature Grated Cheddar 250g,Tesco Grated 30% Reduced Fat Mature Cheese 250G
+9753,4,one_sided,reduced,Morrisons,Tesco,Morrisons Mature Coloured Cheddar,Tesco Grated 30% Reduced Fat Mature Cheese 250G
+9753,4,one_sided,reduced,Sains,Tesco,Sainsbury's Extra Mature Cheddar 220g,Tesco Grated 30% Reduced Fat Mature Cheese 250G
+9784,4,one_sided,smoky,ASDA,Morrisons,ASDA Smoky Cajun Chicken Breast Fillets 265g,Morrisons 2 Creamy Chicken Bakes
+9784,4,one_sided,smoky,ASDA,Sains,ASDA Smoky Cajun Chicken Breast Fillets 265g,The House of Chicken Bang Bang Crispy Chicken Breast Strips 300g
+9784,4,one_sided,smoky,ASDA,Tesco,ASDA Smoky Cajun Chicken Breast Fillets 265g,Tesco Crispy Chicken Bites 300g
+9872,3,one_sided,sour,Morrisons,Tesco,Kettle Chips Sweet Chilli & Sour Cream Sharing Crisps,Tesco Finest Chilli Salsa Roja Tortilla Chips 150g
+9872,3,one_sided,sour,Sains,Tesco,Kettle Chips Sweet Chilli & Sour Cream Sharing Crisps 130g,Tesco Finest Chilli Salsa Roja Tortilla Chips 150g
+9876,4,one_sided,decaf,ASDA,Morrisons,Black Sheep Riggwelter Strong Yorkshire Ale,Decaffeinated Yorkshire Tea Bags 160PK
+9876,4,one_sided,decaf,ASDA,Tesco,Black Sheep Riggwelter Strong Yorkshire Ale,Yorkshire Decaffeinated 160 Tea Bags 500G
+9876,4,one_sided,decaf,Morrisons,Sains,Decaffeinated Yorkshire Tea Bags 160PK,Yorkshire Tea Tea Bags x160
+9876,4,one_sided,decaf,Sains,Tesco,Yorkshire Tea Tea Bags x160,Yorkshire Decaffeinated 160 Tea Bags 500G
+9939,4,one_sided,sour,ASDA,Morrisons,Old El Paso Mexican Squeezy Soured Cream Topping,Old El Paso Squeezy Sour Cream
+9939,4,one_sided,sour,ASDA,Tesco,Old El Paso Mexican Squeezy Soured Cream Topping,Old El Paso Squeezy Sour Cream 230G
+9939,4,one_sided,sour,Morrisons,Sains,Old El Paso Squeezy Sour Cream,Old El Paso Squeezy Soured Cream Topping 230g
+9939,4,one_sided,sour,Sains,Tesco,Old El Paso Squeezy Soured Cream Topping 230g,Old El Paso Squeezy Sour Cream 230G
+10005,4,one_sided,sour,ASDA,Morrisons,Boundless Gut Happy Snacking Sour Cream & Onion Flavour Chips,Morrisons Onion Salt
+10005,4,one_sided,sour,ASDA,Sains,Boundless Gut Happy Snacking Sour Cream & Onion Flavour Chips,Sainsbury's Onion Salt 86g
+10005,4,one_sided,sour,ASDA,Tesco,Boundless Gut Happy Snacking Sour Cream & Onion Flavour Chips,Tesco Onion Salt 80G
+10020,4,one_sided,unsalted,ASDA,Morrisons,ASDA British Unsalted Butter 500g,Whole Earth Original Crunchy Peanut Butter
+10020,4,one_sided,unsalted,ASDA,Sains,ASDA British Unsalted Butter 500g,Whole Earth Crunchy Peanut Butter 454g
+10020,4,one_sided,unsalted,ASDA,Tesco,ASDA British Unsalted Butter 500g,Whole Earth Smooth Peanut Butter 454G
+10224,4,one_sided,smoky,ASDA,Sains,ASDA Mackerel Fillets in a Fiery Hot and Spicy Sauce 125g,Sainsbury's Mackerel Fillets in Smoky BBQ Sauce 125g
+10224,4,one_sided,smoky,Morrisons,Sains,Morrisons Mackerel Fillets In S…,Sainsbury's Mackerel Fillets in Smoky BBQ Sauce 125g
+10224,4,one_sided,smoky,Sains,Tesco,Sainsbury's Mackerel Fillets in Smoky BBQ Sauce 125g,Tesco Mackerel in Rapeseed Oil 125g
+10237,4,one_sided,reduced,ASDA,Morrisons,ASDA Reduced Fat Green Pesto,Green Giant Original Sweetcorn (198g)
+10237,4,one_sided,reduced,ASDA,Sains,ASDA Reduced Fat Green Pesto,Green Giant Salt Free Sweet Corn 198g (165g*)
+10237,4,one_sided,reduced,ASDA,Tesco,ASDA Reduced Fat Green Pesto,Green Giant Original Sweet Corn 198G
+10340,3,one_sided,sour,ASDA,Morrisons,ASDA Just Essentials Brown Sauce 460g,Sharwood's Sweet & Sour Chinese Cooking Sauce
+10340,3,one_sided,sour,Morrisons,Tesco,Sharwood's Sweet & Sour Chinese Cooking Sauce,Sharwoods Szechuan Kung Po Sauces 425G
+10381,4,one_sided,smoky,ASDA,Morrisons,Las Chicas Salsa Roja Mexican Smoky Sweet Dip 200g,Morrisons Tortilla Chips
+10381,4,one_sided,smoky,ASDA,Sains,Las Chicas Salsa Roja Mexican Smoky Sweet Dip 200g,Sainsbury's Tortilla Chips 200g
+10381,4,one_sided,smoky,ASDA,Tesco,Las Chicas Salsa Roja Mexican Smoky Sweet Dip 200g,Tesco Tortilla Chips Hot Chill Flavour 200G
+10389,4,one_sided,smoky,ASDA,Morrisons,Merchant Gourmet Smoky Spanish-Style Grains & Rice,Merchant Gourmet Spanish Quinoa
+10389,4,one_sided,smoky,ASDA,Tesco,Merchant Gourmet Smoky Spanish-Style Grains & Rice,Merchant Gourmet Spanish-Style Grains/Rice 250G
+10389,4,one_sided,smoky,Morrisons,Sains,Merchant Gourmet Spanish Quinoa,Merchant Gourmet Smoky Spanish Rice & Grains 250g
+10389,4,one_sided,smoky,Sains,Tesco,Merchant Gourmet Smoky Spanish Rice & Grains 250g,Merchant Gourmet Spanish-Style Grains/Rice 250G
+10398,4,one_sided,reduced,ASDA,Morrisons,Zest Vegan Basil Pesto with Cashew Nuts 165g,Morrisons Reduced Fat Basil Pesto
+10398,4,one_sided,reduced,Morrisons,Sains,Morrisons Reduced Fat Basil Pesto,"Sainsbury's Mozzarella, Tomato, Mayonnaise & Basil Pesto Tortilla Wrap"
+10398,4,one_sided,reduced,Morrisons,Tesco,Morrisons Reduced Fat Basil Pesto,Tesco Basil Pesto Cremoso 190G
+10411,4,named_flavour_clash,"pickled vs cocktail,vinegar",ASDA,Sains,ASDA Tangy & Crunchy Sliced Pickled Gherkins,Opies Cocktail Gherkins with Distilled Malt Vinegar 227g (115g*)
+10415,4,one_sided,sour,ASDA,Tesco,Naked Noodle Ramen Noodles Chinese Hot & Sour Soup,Tesco Broccoli & Stilton Soup In A Mug 5 Pack 120G
+10415,4,one_sided,sour,Morrisons,Tesco,Batchelors Cup A Soup Hot & Sour 4 Pack,Tesco Broccoli & Stilton Soup In A Mug 5 Pack 120G
+10415,4,one_sided,sour,Sains,Tesco,Batchelors Cup a Soup Szechuan Hot & Sour Sachets x4 92g,Tesco Broccoli & Stilton Soup In A Mug 5 Pack 120G
+10461,4,one_sided,sour,ASDA,Morrisons,Sharwood's Sweet & Sour Cooking Sauce,Sharwood's Chinese Curry Sauce
+10461,4,one_sided,sour,ASDA,Sains,Sharwood's Sweet & Sour Cooking Sauce,Sharwood's Chinese Curry Cooking Sauce 425g
+10461,4,one_sided,sour,ASDA,Tesco,Sharwood's Sweet & Sour Cooking Sauce,Tesco Chinese Style Curry Sauce 500G
+10469,4,named_flavour_clash,parmesan vs salad,ASDA,Sains,Hellmann's Sauce Parmesan & Roasted Garlic,"Sainsbury's Caesar Salad Dressing, Be Good To Yourself 250ml"
+10469,4,one_sided,reduced,ASDA,Tesco,Hellmann's Sauce Parmesan & Roasted Garlic,Tesco Reduced Fat French Dressing 250Ml
+10469,4,one_sided,reduced,Morrisons,Tesco,Morrisons Counted French Dressing,Tesco Reduced Fat French Dressing 250Ml
+10469,4,one_sided,reduced,Sains,Tesco,"Sainsbury's Caesar Salad Dressing, Be Good To Yourself 250ml",Tesco Reduced Fat French Dressing 250Ml
+10484,4,named_flavour_clash,pickled vs vinegar,ASDA,Sains,ASDA Pickled Gherkins,Sainsbury's Crinkle Gherkins in Vinegar 340g (180g*)
+10491,4,one_sided,decaf,ASDA,Sains,ASDA Extra Special Javan Volcanic Island Coffee Beans,"Sainsbury's Fairtrade Colombian Decaff Coffee, Taste the Difference, Strength 3 227g"
+10491,4,one_sided,decaf,ASDA,Tesco,ASDA Extra Special Javan Volcanic Island Coffee Beans,Tesco Finest Decaffeinated Colombian Coffee Beans 227G
+10491,4,one_sided,decaf,Morrisons,Sains,Morrisons The Best Columbian Coffee Beans,"Sainsbury's Fairtrade Colombian Decaff Coffee, Taste the Difference, Strength 3 227g"
+10491,4,one_sided,decaf,Morrisons,Tesco,Morrisons The Best Columbian Coffee Beans,Tesco Finest Decaffeinated Colombian Coffee Beans 227G
+10569,3,named_flavour_clash,szechuan vs thai,ASDA,Morrisons,Naked Rice Szechuan Style Sweet & Spicy,Naked Noodle Spicy Thai Style Sriracha Pot
+10569,3,named_flavour_clash,szechuan vs thai,ASDA,Tesco,Naked Rice Szechuan Style Sweet & Spicy,Naked Spicy Thai style Sriracha 78G
+10732,4,named_flavour_clash,"teriyaki vs pad,thai",ASDA,Morrisons,Wagamama Teriyaki Stir Fry Sauce 120g,Wagamama Pad Thai Stir Fry Sauce
+10732,4,named_flavour_clash,"pad,thai vs teriyaki",Morrisons,Tesco,Wagamama Pad Thai Stir Fry Sauce,Wagamama Teriyaki Stir Fry Sauce Mild 120G
+10751,3,one_sided,smoky,Morrisons,Sains,Herdez Barbacoa Taco Kit,Herdez Barbacoa Taco Kit Smoky Chipotle Black Pepper & Allspice 497g
+10751,3,one_sided,smoky,Sains,Tesco,Herdez Barbacoa Taco Kit Smoky Chipotle Black Pepper & Allspice 497g,Herdez Barbacoa Taco Kit 497G
+10862,3,one_sided,rose,ASDA,Sains,George Home White Rose Ball,Barefoot White Zinfandel Rosé Wine 18.7cl
+10862,3,one_sided,rose,Morrisons,Sains,Barefoot White Zinfandel Rose Wine,Barefoot White Zinfandel Rosé Wine 18.7cl
+10870,4,one_sided,rose,ASDA,Morrisons,Fillipo Sansovino Prosecco Rosé,Kylie Minogue Prosecco Rose
+10870,4,one_sided,rose,ASDA,Sains,Fillipo Sansovino Prosecco Rosé,Kylie Minogue Prosecco Rose 75cl
+10870,4,one_sided,rose,ASDA,Tesco,Fillipo Sansovino Prosecco Rosé,Kylie Minogue Prosecco Rose 75Cl
+10927,4,one_sided,rose,ASDA,Morrisons,Cotes de Provence Rosé,Kylie Minogue Alcohol Free 0% Rose Wine
+10927,4,one_sided,rose,ASDA,Tesco,Cotes de Provence Rosé,Kylie Minogue Rose Wine 75Cl
+10927,4,one_sided,rose,Morrisons,Sains,Kylie Minogue Alcohol Free 0% Rose Wine,Kylie Minogue Côtes de Provence Rosé 75cl
+10927,4,one_sided,rose,Sains,Tesco,Kylie Minogue Côtes de Provence Rosé 75cl,Kylie Minogue Rose Wine 75Cl
+10936,4,one_sided,rose,ASDA,Morrisons,Freixenet Cava Rosé,Freixenet Alcohol Free Sparkling Rose
+10936,4,one_sided,rose,ASDA,Tesco,Freixenet Cava Rosé,Croser Adelaide Hill Sparkling Rose 750Ml
+10936,4,one_sided,rose,Morrisons,Sains,Freixenet Alcohol Free Sparkling Rose,Freixenet 0.0% Alcohol Free Sparkling Rosé 75cl
+10936,4,one_sided,rose,Sains,Tesco,Freixenet 0.0% Alcohol Free Sparkling Rosé 75cl,Croser Adelaide Hill Sparkling Rose 750Ml
+10982,4,one_sided,rose,ASDA,Morrisons,Fresh & Juicy Rosé Wine,Barefoot Rose
+10982,4,one_sided,rose,ASDA,Sains,Fresh & Juicy Rosé Wine,Barefoot Rose Wine 75cl
+10982,4,one_sided,rose,ASDA,Tesco,Fresh & Juicy Rosé Wine,Pasqua 11 Minutes Rose Wine 750Ml
+10983,4,one_sided,rose,ASDA,Morrisons,Most Wanted Malbec Rosé,McGuigan Mid Rose
+10983,4,one_sided,rose,ASDA,Sains,Most Wanted Malbec Rosé,McGuigan Mid Rose 75cl
+10983,4,one_sided,rose,ASDA,Tesco,Most Wanted Malbec Rosé,Arbousset Tavel Rose 75Cl
+11020,4,one_sided,rose,ASDA,Morrisons,Le Cellier de Saint Louis Coteaux Varois en Provence Rosé,Maison Castel Cotes De Provence Rose 12.5%
+11020,4,one_sided,rose,ASDA,Tesco,Le Cellier de Saint Louis Coteaux Varois en Provence Rosé,Maison Castel Rose D'anjou 75Cl
+11020,4,one_sided,rose,Morrisons,Sains,Maison Castel Cotes De Provence Rose 12.5%,Miraval Côtes De Provence Rosé 75cl
+11020,4,one_sided,rose,Sains,Tesco,Miraval Côtes De Provence Rosé 75cl,Maison Castel Rose D'anjou 75Cl
+11043,4,one_sided,rose,ASDA,Morrisons,Hampton Water Rosé,Silver Bay Point Rose
+11043,4,one_sided,rose,ASDA,Tesco,Hampton Water Rosé,Silver Bay Point Rose 75Cl
+11043,4,one_sided,rose,Morrisons,Sains,Silver Bay Point Rose,Sainsbury's Taste the Difference Île-de-Beauté Rosé 75cl
+11043,4,one_sided,rose,Sains,Tesco,Sainsbury's Taste the Difference Île-de-Beauté Rosé 75cl,Silver Bay Point Rose 75Cl
+11050,3,one_sided,rose,ASDA,Morrisons,McGuigan Zero Rosé,McGuigan Zero Rose
+11050,3,one_sided,rose,Morrisons,Sains,McGuigan Zero Rose,McGuigan Zero Rosé 75cl
+11073,4,one_sided,rose,ASDA,Morrisons,Fillipo Sansovino Rosé Sparkling Wine,Yellow Tail Jammy Rose Roo
+11073,4,one_sided,rose,ASDA,Sains,Fillipo Sansovino Rosé Sparkling Wine,Yellow Tail Rose 75cl
+11073,4,one_sided,rose,ASDA,Tesco,Fillipo Sansovino Rosé Sparkling Wine,Yellow Tail Jammy Rose Roo Wine 750Ml
+11093,4,one_sided,rose,ASDA,Morrisons,24KT Prosecco Rosé Brut,Canti Prosecco Doc Rose Spumante
+11093,4,one_sided,rose,ASDA,Tesco,24KT Prosecco Rosé Brut,Plaza Prosecco Rose 75Cl
+11093,4,one_sided,rose,Morrisons,Sains,Canti Prosecco Doc Rose Spumante,Prosecco Rosé 75cl
+11093,4,one_sided,rose,Sains,Tesco,Prosecco Rosé 75cl,Plaza Prosecco Rose 75Cl
+11131,4,one_sided,rose,ASDA,Morrisons,Trivento Reserve Malbec Rosé,Trivento Rose
+11131,4,one_sided,rose,ASDA,Sains,Trivento Reserve Malbec Rosé,Trivento Reserve Malbec Rose Wine 75cl
+11131,4,one_sided,rose,ASDA,Tesco,Trivento Reserve Malbec Rosé,Trivento Malbec Rose Wine 75Cl
+11149,4,one_sided,rose,ASDA,Morrisons,Fillipo Sansovino Pinot Grigio Rosé 18.7cl,Mateus Rose Original
+11149,4,one_sided,rose,ASDA,Tesco,Fillipo Sansovino Pinot Grigio Rosé 18.7cl,Mateus Rose 18.7Cl
+11149,4,one_sided,rose,Morrisons,Sains,Mateus Rose Original,Mateus Rosé (Small bottle) 18.7cl
+11149,4,one_sided,rose,Sains,Tesco,Mateus Rosé (Small bottle) 18.7cl,Mateus Rose 18.7Cl
+11155,4,one_sided,rose,ASDA,Morrisons,Martini Rosé Sparkling Wine,Mirabeau La Folie Sparkling Rose
+11155,4,one_sided,rose,ASDA,Tesco,Martini Rosé Sparkling Wine,Mirabeau La Folie Sparkling Rose 750Ml
+11155,4,one_sided,rose,Morrisons,Sains,Mirabeau La Folie Sparkling Rose,Mirabeau La Folie Sparkling Rosé 750ml
+11155,4,one_sided,rose,Sains,Tesco,Mirabeau La Folie Sparkling Rosé 750ml,Mirabeau La Folie Sparkling Rose 750Ml
+11191,4,one_sided,rose,ASDA,Sains,Miracle Gro Rose & Shrub Concentrate Liquid Plant Feed,Time Keeper Rosé Wine 75cl
+11191,4,one_sided,rose,Morrisons,Sains,Crocodile Diamante Rose,Time Keeper Rosé Wine 75cl
+11191,4,one_sided,rose,Sains,Tesco,Time Keeper Rosé Wine 75cl,Crocodile Diamante Rose 750Ml
+11544,4,one_sided,sour,ASDA,Morrisons,Tuc Original Snack Crackers 150g,Sour Patch Kids Original
+11544,4,one_sided,sour,ASDA,Sains,Tuc Original Snack Crackers 150g,Sour Patch Kids Sweets Bag 140g
+11544,4,one_sided,sour,Morrisons,Tesco,Sour Patch Kids Original,Burts Potato Chips Mature Cheddar & Onion 150G
+11544,4,one_sided,sour,Sains,Tesco,Sour Patch Kids Sweets Bag 140g,Burts Potato Chips Mature Cheddar & Onion 150G
+11577,3,one_sided,sour,Morrisons,Sains,Skittles Giants Crazy Sours,Sour Patch Kids Soda Sweets Bag 130g
+11577,3,one_sided,sour,Morrisons,Tesco,Skittles Giants Crazy Sours,Skittles Giant Crazy Sour Vegan Sweets 132G
+11588,4,one_sided,sour,ASDA,Morrisons,Juicy Drop Chews with Sour Gel Pen,Airwaves Menthol & Eucalyptus Chewi…
+11588,4,one_sided,sour,ASDA,Sains,Juicy Drop Chews with Sour Gel Pen,Airwaves Menthol & Eucalyptus Sugar Free Chewing Gum Bottle 46 Pieces
+11588,4,one_sided,sour,ASDA,Tesco,Juicy Drop Chews with Sour Gel Pen,Airwaves Menthol & Eucalyptus Chewing Gum Bottle 46 Pieces
+11728,4,one_sided,smoky,ASDA,Morrisons,ASDA Smoky Hunter's Chicken Breast Fillets,Morrisons 2 Hunters Chicken
+11728,4,one_sided,smoky,ASDA,Sains,ASDA Smoky Hunter's Chicken Breast Fillets,Sainsbury’s Pub Classics Hunters Chicken 470g (Serves 1)
+11728,4,one_sided,smoky,ASDA,Tesco,ASDA Smoky Hunter's Chicken Breast Fillets,Tesco Finest Chicken Tagine 500G
+11753,4,one_sided,reduced,ASDA,Morrisons,ASDA Flavourful Reduced Fat Beef Steak Mince,Morrisons British Lean Diced Beef
+11753,4,one_sided,reduced,ASDA,Sains,ASDA Flavourful Reduced Fat Beef Steak Mince,Sainsbury's British or Irish Extra Lean Diced Beef 750g
+11753,4,one_sided,reduced,ASDA,Tesco,ASDA Flavourful Reduced Fat Beef Steak Mince,Tesco Lean Diced Beef 750g
+11768,3,one_sided,reduced,Morrisons,Tesco,The Jolly Hog Proper Porker Sausages,Tesco Finest 6 Reduced Fat Sausages 400G
+11768,3,one_sided,reduced,Sains,Tesco,The Jolly Hog The Porky Black Sausages 400g,Tesco Finest 6 Reduced Fat Sausages 400G
+11924,4,one_sided,decaf,ASDA,Sains,ASDA Americano Barista Style Coffee,Sainsbury's Gold Roast Decaffeinated Instant Coffee Granules 100g
+11924,4,one_sided,decaf,Morrisons,Sains,Nescafe Azera Americano,Sainsbury's Gold Roast Decaffeinated Instant Coffee Granules 100g
+11924,4,one_sided,decaf,Sains,Tesco,Sainsbury's Gold Roast Decaffeinated Instant Coffee Granules 100g,Nescafe Azera Americano Instant Coffee 90g
+11947,4,one_sided,smoky,ASDA,Tesco,Plant Based by ASDA Lentil Cottage Pie,Tesco Smoky Butternut & Bean Casserole 392G
+11947,4,one_sided,smoky,Morrisons,Tesco,Kirsty's Lentil Cottage Pie With Sweet Potato Mash,Tesco Smoky Butternut & Bean Casserole 392G
+11947,4,one_sided,smoky,Sains,Tesco,Kirstys Lentil Cottage Pie with Sweet Potato Mash 400g,Tesco Smoky Butternut & Bean Casserole 392G
+12100,2,one_sided,sour,Morrisons,Tesco,Hi Chew Watermelon,Hi-Chew Sweet & Sour Watermelon Chewy Sweets 50g
+12120,2,one_sided,rose,Morrisons,Sains,Gallo Family Vineyards White Zinfandel Rose Wine,Gallo Family White Zinfandel Rosé Wine 75cl
+12123,4,one_sided,rose,ASDA,Morrisons,B by Black Tower Rosé,The Beach Rose By Whispering Angel
+12123,4,one_sided,rose,ASDA,Tesco,B by Black Tower Rosé,The Beach By Whispering Angel Rose 75Cl
+12123,4,one_sided,rose,Morrisons,Sains,The Beach Rose By Whispering Angel,Whispering Angel Côtes de Provence Rosé 75cl
+12123,4,one_sided,rose,Sains,Tesco,Whispering Angel Côtes de Provence Rosé 75cl,The Beach By Whispering Angel Rose 75Cl
+12145,4,one_sided,sour,ASDA,Morrisons,Regal Candy Floss Strawberry Flavour,Paskesz Strawberry Sour Sticks
+12145,4,one_sided,sour,ASDA,Sains,Regal Candy Floss Strawberry Flavour,Paskesz Sour Sticks Strawberry 50g
+12145,4,one_sided,sour,Morrisons,Tesco,Paskesz Strawberry Sour Sticks,Candy Kittens Wild Strawberry Gourmet Sweets 54G
+12145,4,one_sided,sour,Sains,Tesco,Paskesz Sour Sticks Strawberry 50g,Candy Kittens Wild Strawberry Gourmet Sweets 54G
+12228,3,one_sided,reduced,ASDA,Morrisons,ASDA Delicious Reduced Fat Prawn Cocktail,Morrisons The Best Prawn Cocktail Sauce
+12228,3,one_sided,reduced,ASDA,Tesco,ASDA Delicious Reduced Fat Prawn Cocktail,Tesco Finest Prawn Cocktail 170G
+12368,4,one_sided,sour,ASDA,Morrisons,ASDA Cheesy Wiggles Multipack Snacks,Snack a Jacks Sour Cream & Chive Mu…
+12368,4,one_sided,sour,ASDA,Sains,ASDA Cheesy Wiggles Multipack Snacks,Snack a Jacks Sour Cream & Chive Multipack Rice Cakes
+12368,4,one_sided,sour,ASDA,Tesco,ASDA Cheesy Wiggles Multipack Snacks,Snack a Jacks Sour Cream & Chive Rice Cakes Multipack Snacks 5x19g
+12374,4,one_sided,reduced,ASDA,Sains,ASDA Real Mayonnaise,Sainsbury's Reduced Fat Mayonnaise 480ml
+12374,4,one_sided,reduced,Morrisons,Sains,Morrisons Mayonnaise Squeezy,Sainsbury's Reduced Fat Mayonnaise 480ml
+12374,4,one_sided,reduced,Sains,Tesco,Sainsbury's Reduced Fat Mayonnaise 480ml,Tesco Mayonnaise 500Ml
+12390,4,named_flavour_clash,salad vs ketchup,Morrisons,Sains,Heinz Salad Cream 30% Less Fat,Heinz Tomato Ketchup 700g
+12390,4,named_flavour_clash,salad vs ketchup,Morrisons,Tesco,Heinz Salad Cream 30% Less Fat,Heinz Top Down Squeezy Tomato Ketchup Sauce 700G
+12458,2,one_sided,reduced,Sains,Tesco,Sainsbury's Ready To Eat Custard 1kg,Tesco Reduced Fat Custard 1Kg
+12516,3,one_sided,unsalted,Morrisons,Sains,Gama Roasted Monkey Nuts,"KP Roasted Peanuts, Unsalted 250g"
+12516,3,one_sided,unsalted,Sains,Tesco,"KP Roasted Peanuts, Unsalted 250g",Kp Dry Roasted Peanuts 250G
+12518,2,one_sided,reduced,Sains,Tesco,Princes Lean Corned Beef 200g,Princes Lean Corned Beef Reduced Fat 200G
+12676,3,one_sided,sour,ASDA,Sains,Sharwood's Reduced Sugar Sweet & Sour Cooking Sauce,HP Reduced Salt Brown Sauce 450g
+12676,3,one_sided,sour,ASDA,Tesco,Sharwood's Reduced Sugar Sweet & Sour Cooking Sauce,Hp Top Down Reduced Sugar & Salt Brown Sauce 450G
+12680,4,one_sided,sour,ASDA,Morrisons,Kohinoor Savoury & Sour Lime Pickle,Sharwood's Lime Pickle
+12680,4,one_sided,sour,ASDA,Sains,Kohinoor Savoury & Sour Lime Pickle,Patak's Lime Pickle 283g
+12680,4,one_sided,sour,ASDA,Tesco,Kohinoor Savoury & Sour Lime Pickle,Pataks Lime Pickle Medium 283G
+12693,4,one_sided,sour,ASDA,Morrisons,ASDA Soy & Garlic Stir Fry Sauce,Morrisons Sweet And Sour Stir Fry Sauce
+12693,4,one_sided,sour,ASDA,Tesco,ASDA Soy & Garlic Stir Fry Sauce,Tesco Sweet & Sour Stir Fry Sauce 165g
+12693,4,one_sided,sour,Morrisons,Sains,Morrisons Sweet And Sour Stir Fry Sauce,Sainsbury's Sweet Pepper Stir-In Pasta Sauce 150g
+12693,4,one_sided,sour,Sains,Tesco,Sainsbury's Sweet Pepper Stir-In Pasta Sauce 150g,Tesco Sweet & Sour Stir Fry Sauce 165g
+12699,3,one_sided,smoky,ASDA,Sains,Newman's Own Mayonnaise Smoky Onion,Newman's Own Sticky BBQ Marinade 250ml
+12699,3,one_sided,smoky,Sains,Tesco,Newman's Own Sticky BBQ Marinade 250ml,Newman's Own Smoky Onion Mayonnaise 280Ml
+12746,3,one_sided,smoky,ASDA,Sains,Oxo Smoky BBQ Marinade Sauce,Bull's-Eye Original BBQ Sauce 300ml
+12746,3,one_sided,smoky,ASDA,Tesco,Oxo Smoky BBQ Marinade Sauce,Bull's-Eye Bbq Sauce Original 300Ml
+12764,3,one_sided,sour,Morrisons,Sains,Healthy Boy Brand Thick Oyster Sauce,Bens Original Sweet and Sour Sauce 675g
+12764,3,one_sided,sour,Morrisons,Tesco,Healthy Boy Brand Thick Oyster Sauce,Bens Original Sweet & Sour Sauce 675G
+12794,3,one_sided,sour,ASDA,Sains,Cape Herb & Spice Sriracha Chilli Sweet & Sour Hot Thai Seasoning,Properchips Sweet Sriracha Chilli Lentil Chips 85g
+12794,3,one_sided,sour,ASDA,Tesco,Cape Herb & Spice Sriracha Chilli Sweet & Sour Hot Thai Seasoning,Proper Chips 85G Sweet Sriracha Chilli
+12897,2,one_sided,smoky,Sains,Tesco,Gran Luchito Mexico Super Smoky Chipotle Salsa 300g,Gran Luchito Chipotle Salsa 300G
+12906,4,one_sided,smoky,ASDA,Sains,Homepride Chilli Cooking Sauce,Homepride American Texan Chilli Smoky BBQ Cooking Sauce 500g
+12906,4,one_sided,smoky,Morrisons,Sains,Homepride Family Favourite Chilli,Homepride American Texan Chilli Smoky BBQ Cooking Sauce 500g
+12906,4,one_sided,smoky,Sains,Tesco,Homepride American Texan Chilli Smoky BBQ Cooking Sauce 500g,Homepride Chilli Cooking Sauce 485G
+12939,3,one_sided,sour,ASDA,Sains,Kohinoor Savoury & Sour Mixed Pickle,Kohinoor Dal Tarka 300g
+12939,3,one_sided,sour,ASDA,Tesco,Kohinoor Savoury & Sour Mixed Pickle,Kohinoor Dal Tarka 300G
+12973,3,one_sided,sour,Morrisons,Sains,Warheads Sour Jelly Beans,Haribo Halal Happy Peaches Bag 100g
+12973,3,one_sided,sour,Morrisons,Tesco,Warheads Sour Jelly Beans,Haribo Halal Happy Peaches 100G
+13134,4,one_sided,smoky,ASDA,Sains,Fridge Raiders Meat-Free Slow Roasted Tasty Bites 60g,Fridge Raiders Meat-Free Smoky BBQ Tasty Bites 60g
+13134,4,one_sided,smoky,Morrisons,Sains,Fridge Raiders Slow Roast,Fridge Raiders Meat-Free Smoky BBQ Tasty Bites 60g
+13134,4,one_sided,smoky,Sains,Tesco,Fridge Raiders Meat-Free Smoky BBQ Tasty Bites 60g,Fridge Raiders Meat Free Slow Roasted Tasty Bites 60G
+13202,4,one_sided,sour,ASDA,Morrisons,ASDA Sweet & Sour Micro Rice,Thai Taste Thai Massaman Curry
+13202,4,one_sided,sour,Morrisons,Sains,Thai Taste Thai Massaman Curry,Lee Kum Kee Sweet & Sour Sauce 240g
+13202,4,one_sided,sour,Morrisons,Tesco,Thai Taste Thai Massaman Curry,Lee Kum Kee Sweet & Sour Sauce 240g
+13287,4,one_sided,rose,ASDA,Morrisons,ASDA Extra Special Prosecco Rosé Brut,Morrisons The Best Prosecco Rose DOC
+13287,4,one_sided,rose,ASDA,Sains,ASDA Extra Special Prosecco Rosé Brut,"Sainsbury's Prosecco Rose, Taste the Difference 75cl"
+13287,4,one_sided,rose,ASDA,Tesco,ASDA Extra Special Prosecco Rosé Brut,Tesco Finest Prosecco Rose 75Cl
+13361,3,one_sided,sour,ASDA,Sains,Sourz The Original Blackcurrant Sweet & Sour Spirit Drink 70cl,Robinsons Double Strength Blackcurrant Fruit Squash 750ml
+13361,3,one_sided,sour,ASDA,Tesco,Sourz The Original Blackcurrant Sweet & Sour Spirit Drink 70cl,Robinsons Double Strength Blackcurrant No Added Sugar Squash 750ml
+13362,4,one_sided,sour,ASDA,Morrisons,Lipton Raspberry Ice Tea,Slix Eco Sour Raspberry 20mg
+13362,4,one_sided,sour,Morrisons,Sains,Slix Eco Sour Raspberry 20mg,Dash British Sparkling Spring Water Infused with Raspberry 4 x 330ml
+13362,4,one_sided,sour,Morrisons,Tesco,Slix Eco Sour Raspberry 20mg,Dash Raspberry Infused Sparkling Water 4X330ml
+13374,4,one_sided,rose,ASDA,Morrisons,Liquid Diamond Prosecco D.O.C. Rosé & Glass,I Heart Prosecco Rose
+13374,4,one_sided,rose,ASDA,Sains,Liquid Diamond Prosecco D.O.C. Rosé & Glass,I Heart Prosecco Rose 75cl
+13374,4,one_sided,rose,ASDA,Tesco,Liquid Diamond Prosecco D.O.C. Rosé & Glass,I Heart Prosecco Rose 75Cl
+13430,4,one_sided,rose,ASDA,Sains,Rose Clear Rose Clear 3 in 1 Action 800ml,Lanson Le Rosé 75cl
+13430,4,one_sided,rose,Morrisons,Sains,Arc De Soleil Rose,Lanson Le Rosé 75cl
+13430,4,one_sided,rose,Sains,Tesco,Lanson Le Rosé 75cl,Lanson Le Rose Brut 75Cl
+13451,4,one_sided,rose,ASDA,Morrisons,The Wanted Zin Zinfandel Rosé,The Pale Rose
+13451,4,one_sided,rose,ASDA,Tesco,The Wanted Zin Zinfandel Rosé,Veuve Clicquot Brut Rose Champagne 75Cl
+13451,4,one_sided,rose,Morrisons,Sains,The Pale Rose,Veuve Clicquot Rosé Non Vintage Champagne 75cl
+13451,4,one_sided,rose,Sains,Tesco,Veuve Clicquot Rosé Non Vintage Champagne 75cl,Veuve Clicquot Brut Rose Champagne 75Cl
+13578,4,one_sided,rose,ASDA,Sains,Frozen Rose Prosecco D.O.C Rosé 75cl,Della Vite Prosecco D.O.C Treviso Rosé 75cl
+13578,4,one_sided,rose,Morrisons,Sains,(VMD) Morrisons The Best Prosecco Rose DOC,Della Vite Prosecco D.O.C Treviso Rosé 75cl
+13578,4,one_sided,rose,Sains,Tesco,Della Vite Prosecco D.O.C Treviso Rosé 75cl,Canti Prosecco Rose 75Cl
+13579,3,one_sided,sour,Morrisons,Sains,Tails Cocktails Whisky Sour,Tails Cocktails Espresso Martini Cocktail Premixed Vodka Cocktail 50cl
+13579,3,one_sided,sour,Morrisons,Tesco,Tails Cocktails Whisky Sour,Tails Cocktails Espresso Martini Cocktail 500Ml
+13592,3,one_sided,sour,Morrisons,Sains,Vault City Triple Fruited Mango (abv 6.2%),Vault City Triple Fruited Mango Modern Sour Beer 440ml
+13592,3,one_sided,sour,Morrisons,Tesco,Vault City Triple Fruited Mango (abv 6.2%),Vault City Triple Fruited Mango Sour Beer 440Ml
+13593,2,one_sided,rose,Sains,Tesco,Freixenet Italian Rosé 18.7cl,Freixenet Italian Rose 20Cl
+13656,4,named_flavour_clash,lasagne vs arrabbiata,Morrisons,Tesco,Morrisons Italian Vegetable Lasagne,Tesco Arrabbiata Sauce 350G
+13718,4,one_sided,reduced,ASDA,Morrisons,ASDA Reduced Fat Potato Salad,Morrisons Potato Salad
+13718,4,one_sided,reduced,ASDA,Sains,ASDA Reduced Fat Potato Salad,Sainsbury's Rich Potato Salad 300g
+13718,4,one_sided,reduced,ASDA,Tesco,ASDA Reduced Fat Potato Salad,Tesco Potato Salad 300g
+14060,4,named_flavour_clash,salad vs bolognese,ASDA,Morrisons,ASDA Aromatic Mixed Grain Salad,Little Dish Pasta Bolognese Kids Meal
+14060,4,named_flavour_clash,salad vs pesto,ASDA,Tesco,ASDA Aromatic Mixed Grain Salad,Tesco Pesto Pasta 200G
+14060,4,named_flavour_clash,"bolognese vs pesto,salad",Morrisons,Sains,Little Dish Pasta Bolognese Kids Meal,Sainsbury's Pesto Pasta Salad
+14060,4,named_flavour_clash,bolognese vs pesto,Morrisons,Tesco,Little Dish Pasta Bolognese Kids Meal,Tesco Pesto Pasta 200G
+14097,4,one_sided,sour,ASDA,Morrisons,ASDA Takeaway for One Chicken Curry & Sweet & Sour,Morrisons Takeaway Salt & Pepper Chicken Thigh Bites
+14097,4,one_sided,sour,ASDA,Sains,ASDA Takeaway for One Chicken Curry & Sweet & Sour,Sainsbury's Takeaway Fully Loaded BBQ Chicken Pizza 563g
+14097,4,one_sided,sour,ASDA,Tesco,ASDA Takeaway for One Chicken Curry & Sweet & Sour,Tesco Takeaway Bbq Chicken Pizza 509G
+14140,4,one_sided,smoky,ASDA,Morrisons,ASDA Smoky Loaded Mexican Chicken Mini Fillets,Morrisons 2 Breaded Chicken Fillets
+14140,4,one_sided,smoky,ASDA,Sains,ASDA Smoky Loaded Mexican Chicken Mini Fillets,Sainsbury's Breaded Fresh British Chicken Breast Fillets x2 350g
+14140,4,one_sided,smoky,ASDA,Tesco,ASDA Smoky Loaded Mexican Chicken Mini Fillets,Tesco 2 Breaded Chicken Breast Fillets 350G
+14160,4,one_sided,reduced,ASDA,Morrisons,ASDA Flavourful 8 Reduced Fat Pork Sausages,Morrisons 6 Fresh Bake Pork Sausage Rolls
+14160,4,one_sided,reduced,ASDA,Sains,ASDA Flavourful 8 Reduced Fat Pork Sausages,Wall's Thick Pork Sausages x8 410g
+14160,4,one_sided,reduced,ASDA,Tesco,ASDA Flavourful 8 Reduced Fat Pork Sausages,Walls 8 Thick Pork Sausages 410G
+14309,4,one_sided,sour,ASDA,Morrisons,ASDA Egg Hunt Box 360g,Sour Patch Kids Sweets Box
+14309,4,one_sided,sour,Morrisons,Sains,Sour Patch Kids Sweets Box,Cadbury Dairy Milk Easter Egg Hunt 317g
+14309,4,one_sided,sour,Morrisons,Tesco,Sour Patch Kids Sweets Box,Cadbury Dairy Milk Easter Egg Hunt 317G
+14313,4,one_sided,rose,ASDA,Morrisons,Porta 6 IG Lisboa Rosé,Mirabeau Forever Summer Rose
+14313,4,one_sided,rose,ASDA,Tesco,Porta 6 IG Lisboa Rosé,Mirabeau Belle Annee Rose 75Cl
+14313,4,one_sided,rose,Morrisons,Sains,Mirabeau Forever Summer Rose,Mirabeau Etoile Rosé 75cl
+14313,4,one_sided,rose,Sains,Tesco,Mirabeau Etoile Rosé 75cl,Mirabeau Belle Annee Rose 75Cl
+14362,4,one_sided,unsalted,ASDA,Sains,ASDA Side for Two Thin Cut Fries 250g,Isigny Unsalted Churned Butter 250g
+14362,4,one_sided,unsalted,ASDA,Tesco,ASDA Side for Two Thin Cut Fries 250g,Président French Unsalted Block Butter 250g
+14362,4,one_sided,unsalted,Morrisons,Sains,Morrisons French Fries,Isigny Unsalted Churned Butter 250g
+14362,4,one_sided,unsalted,Morrisons,Tesco,Morrisons French Fries,Président French Unsalted Block Butter 250g
+14365,3,one_sided,rose,ASDA,Tesco,ASDA Garden Plastic Watering Can Rose,Strongbow Rosé Cider Can 4x440ml
+14365,3,one_sided,rose,Sains,Tesco,Strongbow Rose Cider 4x440ml,Strongbow Rosé Cider Can 4x440ml
+14497,3,one_sided,decaf,ASDA,Tesco,Illy Espresso Roast Ground Coffee,Illy Espresso Decaffeinated Ground Coffee 250G
+14497,3,one_sided,decaf,Sains,Tesco,illy Espresso Roasted Coffee Beans 250g,Illy Espresso Decaffeinated Ground Coffee 250G
+14498,3,one_sided,decaf,ASDA,Morrisons,L'OR Decafeine Instant Coffee,L'OR Decaff Instant Coffee
+14498,3,one_sided,decaf,Morrisons,Tesco,L'OR Decaff Instant Coffee,L'or. Intense Instant Coffee 150G
+14500,3,named_flavour_clash,intenso vs americano,ASDA,Morrisons,Nescafe Azera Intenso Instant Coffee,Nescafe Azera Americano Decaff
+14500,3,named_flavour_clash,intenso vs americano,ASDA,Tesco,Nescafe Azera Intenso Instant Coffee,Nescafe Azera Americano Decaff Instant Coffee 90g
+14514,3,one_sided,decaf,ASDA,Morrisons,Nescafe Dolce Gusto Cafe au Lait Decaffeinated Coffee Pods,Nescafe Dolce Gusto Cafe Au Lait…
+14514,3,one_sided,decaf,Morrisons,Tesco,Nescafe Dolce Gusto Cafe Au Lait…,Nescafe Dolce Gusto Café Au Lait Decaff Coffee Pods x16 160g
+14762,4,one_sided,sour,ASDA,Morrisons,Weight Watchers from Heinz Chicken Sweet & Sour Frozen Ready Meal,Weight Watchers from Heinz Chicken & Le…
+14762,4,one_sided,sour,Morrisons,Sains,Weight Watchers from Heinz Chicken & Le…,Weight Watchers Sweet & Sour Chicken Ready Meal 320g
+14762,4,one_sided,sour,Morrisons,Tesco,Weight Watchers from Heinz Chicken & Le…,Weight Watchers Sweet & Sour Chicken 320G
+14939,2,one_sided,smoky,ASDA,Morrisons,Schwartz Perfect Shake Cajun Seasoning,Schwartz Perfect Shake Smoky…
+14961,2,one_sided,unsalted,ASDA,Morrisons,Flora Plant Butter Unsalted Block 200g,Flora Plant Butter
+15156,2,one_sided,sour,ASDA,Sains,Chupa Chups 10 Sour Assorted Flavour Lollipops 120g,Chupa Chups the Best Assorted Flavour Lollipops x10 120g
+15186,4,one_sided,unsalted,ASDA,Morrisons,Grace Sweet Plantain Chips,Grace Sweet Plantain Chips Unsalted
+15186,4,one_sided,unsalted,ASDA,Tesco,Grace Sweet Plantain Chips,Grace Sweet Ripe Plantain Chips Unsalted 85G
+15186,4,one_sided,unsalted,Morrisons,Sains,Grace Sweet Plantain Chips Unsalted,Grace Sweet Plantain Chips 85g
+15186,4,one_sided,unsalted,Sains,Tesco,Grace Sweet Plantain Chips 85g,Grace Sweet Ripe Plantain Chips Unsalted 85G
+15381,4,one_sided,reduced,Morrisons,Sains,Morrisons 30% Reduced Fat Red Pepper Houmous,Sainsbury's Roasted Red Pepper Houmous 200g
+15381,4,one_sided,reduced,Morrisons,Tesco,Morrisons 30% Reduced Fat Red Pepper Houmous,Tesco Houmous 200G
+15381,4,one_sided,reduced,Morrisons,ASDA,Morrisons 30% Reduced Fat Red Pepper Houmous,ASDA Red Pepper
+15385,3,one_sided,reduced,Morrisons,Tesco,Morrisons Savers Houmous,Eastman's Reduced Fat Houmous 200G
+15385,3,one_sided,reduced,Sains,Tesco,Stamford Street Co. Houmous 200g,Eastman's Reduced Fat Houmous 200G
+15402,4,one_sided,smoky,ASDA,Sains,ASDA Spicy Chorizo,Chorizo Puchero Picante Smoky & Spicey 110g
+15402,4,one_sided,smoky,Morrisons,Sains,Morrisons Spicy Chorizo,Chorizo Puchero Picante Smoky & Spicey 110g
+15402,4,one_sided,smoky,Sains,Tesco,Chorizo Puchero Picante Smoky & Spicey 110g,Noel El Cierzo Chorizo De Aragon 100G
+15403,4,one_sided,reduced,ASDA,Tesco,ASDA Pork Cocktail Sausages,Tesco 8 Reduced Fat Pork Sausages 454G
+15403,4,one_sided,reduced,Morrisons,Tesco,Morrisons 40 Pork Cocktail Sausages,Tesco 8 Reduced Fat Pork Sausages 454G
+15403,4,one_sided,reduced,Sains,Tesco,Sainsbury's Pork Cocktail Sausages 350g,Tesco 8 Reduced Fat Pork Sausages 454G
+15457,2,one_sided,decaf,Morrisons,Tesco,Cafe Direct Machu Picchu Ground Coffee,Cafedirect Machu Picchu Fairtrade Decaffeinated Ground Coffee 200g
+15540,3,one_sided,decaf,ASDA,Sains,L'OR Artiste Delicato Instant Coffee,L'OR Decaffeinated Instant Coffee 100g
+15540,3,one_sided,decaf,Morrisons,Sains,L'OR Intense Instant Coffee,L'OR Decaffeinated Instant Coffee 100g
+15936,2,one_sided,decaf,ASDA,Sains,Nescafé Original Decaff Instant Coffee,Nescafé Original Instant Coffee 300g
+16062,2,one_sided,sour,Morrisons,Sains,Sharwood's Cooking Sauc…,Sharwood's Sweet & Sour Cooking Sauce 425g
+16231,3,one_sided,sour,ASDA,Morrisons,Doritos Dippers Hint of Paprika Sharing Tortilla Chips Crisps 230g,Doritos Dippers Hint Of Sour Cr…
+16231,3,one_sided,sour,Sains,Morrisons,Doritos Dippers Hint of Paprika Sharing Tortilla Chips 230g,Doritos Dippers Hint Of Sour Cr…
+16242,2,one_sided,decaf,ASDA,Sains,Taylors of Harrogate Decaffé Beans Roast Coffee 200g,Taylors of Harrogate Rich Italian Beans Roast Coffee 200g
+16273,2,one_sided,smoky,Sains,Tesco,Fridge Raiders Smoky BBQ Chicken Snack Bites 3x22.5g,Fridge Raiders Katsu Curry Chicken Bites 70G
+16368,3,one_sided,decaf,ASDA,Sains,Taylors of Harrogate Decaffé Coffee Bags 10 Enveloped Bags,Taylors of Harrogate Decaffe Coffee Bags x10
+16368,3,one_sided,decaf,Morrisons,Sains,Taylors of Harrogate Decaff Coffee Bags 10s,Taylors of Harrogate Decaffe Coffee Bags x10
+16546,2,one_sided,reduced,Sains,Tesco,Sainsbury's Lighter Mature Cheese Slices 240g,Tesco 30% Reduced Fat Mature Cheese Slices 250G
+16805,3,one_sided,reduced,ASDA,Morrisons,ASDA Reduced Fat Rice Pudding,Morrisons Sharing Bread & Butter Pudding
+16805,3,one_sided,reduced,Tesco,Morrisons,Tesco Reduced Fat Rice Pudding 400G,Morrisons Sharing Bread & Butter Pudding
+16868,4,one_sided,reduced,ASDA,Morrisons,ASDA 2 Garlic & Herb Baguettes,Morrisons Reduced Fat Garlic Baguettes
+16868,4,one_sided,reduced,Morrisons,Tesco,Morrisons Reduced Fat Garlic Baguettes,Tesco 2 Garlic Baguettes 410g
+16868,4,one_sided,reduced,Morrisons,Sains,Morrisons Reduced Fat Garlic Baguettes,Sainsbury's Garlic x4
+16936,3,one_sided,reduced,ASDA,Morrisons,ASDA 30% Less Fat Sour Cream & Chive Dip,Morrisons Reduced Fat Soured Cream & Chive Dip
+16936,3,one_sided,reduced,Tesco,Morrisons,Tesco Sour Cream & Chive Dip 200G,Morrisons Reduced Fat Soured Cream & Chive Dip
+16945,4,one_sided,reduced,ASDA,Sains,Sharwood's 30% Less Fat Korma Curry Sauce,Sharwood's Korma Reduced Fat Curry Sauce 420g
+16945,4,one_sided,reduced,Morrisons,Sains,Sharwood's Korma Mild Curry Sauce,Sharwood's Korma Reduced Fat Curry Sauce 420g
+16945,4,one_sided,reduced,Sains,Tesco,Sharwood's Korma Reduced Fat Curry Sauce 420g,Sharwoods Korma Sauce 420G
+16946,3,one_sided,reduced,ASDA,Tesco,Sharwood's Tikka Masala Reduced Fat Curry Sauce,Sharwoods Tikka Masala 30% Less Fat Cooking Sauce 420G
+16946,3,one_sided,reduced,Sains,Tesco,Sharwood's Tikka Masala Reduced Fat Curry Sauce 420g,Sharwoods Tikka Masala 30% Less Fat Cooking Sauce 420G
+17134,4,one_sided,sour,Sains,Morrisons,Sainsbury's Sweet & Sour Chicken Ready Meal For 2 400g,Morrisons Chicken & Mus…
+17134,4,one_sided,sour,Tesco,Morrisons,Tesco Sweet And Sour Chicken 400G,Morrisons Chicken & Mus…
+17134,4,one_sided,sour,ASDA,Morrisons,ASDA Meal For One Sweet & Sour Chicken with Egg Fried Rice 400g,Morrisons Chicken & Mus…
+17239,2,one_sided,smoky,Sains,Tesco,Fridge Raiders Slow Roasted Chicken Bites Meal Deal 45g,Fridge Raiders Smoky BBQ Chicken Bites 45g
+17357,3,one_sided,smoky,Morrisons,ASDA,Morrisons Chicken & Chorizo Tortelloni,ASDA 4 Smoky Chorizo & Chicken Kebabs 320g
+17357,3,one_sided,smoky,Tesco,ASDA,Tesco Chicken & Chorizo Fresh Tortelloni 300g,ASDA 4 Smoky Chorizo & Chicken Kebabs 320g
