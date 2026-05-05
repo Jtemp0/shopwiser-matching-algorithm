@@ -25,7 +25,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from shopwiser.ml_matching.features import build_pairwise_features
+from shopwiser.ml_matcher.features import build_pairwise_features
 from shopwiser.paths import DATA_OUTPUTS
 
 MODEL_PATH = DATA_OUTPUTS / 'ensemble' / 'ranker_model.pkl'

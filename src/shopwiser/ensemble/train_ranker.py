@@ -21,11 +21,11 @@ import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 
-from shopwiser.clustering.data_prep import load_prepared_dataframe
-from shopwiser.ml_matching.config import EMBEDDING_MODEL, LGBM_NUM_BOOST_ROUNDS, LGBM_PARAMS
-from shopwiser.ml_matching.features import build_pairwise_features
-from shopwiser.ml_matching.ranker import FEATURE_COLS
-from shopwiser.ml_matching.retrieval import create_embedding_text
+from shopwiser.rule_matcher.data_prep import load_prepared_dataframe
+from shopwiser.ml_matcher.config import EMBEDDING_MODEL, LGBM_NUM_BOOST_ROUNDS, LGBM_PARAMS
+from shopwiser.ml_matcher.features import build_pairwise_features
+from shopwiser.ml_matcher.ranker import FEATURE_COLS
+from shopwiser.ml_matcher.retrieval import create_embedding_text
 from shopwiser.paths import DATA_OUTPUTS
 
 R4_CSV = DATA_OUTPUTS / 'ensemble' / 'ensemble_clusters_r4.csv'

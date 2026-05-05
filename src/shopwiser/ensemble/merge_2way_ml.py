@@ -22,10 +22,10 @@ import pandas as pd
 import faiss
 from sentence_transformers import SentenceTransformer
 
-from shopwiser.clustering.data_prep import load_prepared_dataframe
-from shopwiser.ml_matching.features import check_hard_conflict
-from shopwiser.ml_matching.retrieval import create_embedding_text
-from shopwiser.ml_matching.config import EMBEDDING_MODEL
+from shopwiser.rule_matcher.data_prep import load_prepared_dataframe
+from shopwiser.ml_matcher.features import check_hard_conflict
+from shopwiser.ml_matcher.retrieval import create_embedding_text
+from shopwiser.ml_matcher.config import EMBEDDING_MODEL
 from shopwiser.paths import DATA_OUTPUTS
 
 ALL_SMS = frozenset(('ASDA', 'Morrisons', 'Sains', 'Tesco'))

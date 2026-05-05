@@ -5,7 +5,7 @@ Run via the CLI: ``uv run python main.py test-similarity``
 
 Or: ``uv run python -m tests.test_similarity`` (repo root on path; package ``shopwiser`` installed).
 
-When ``shopwiser.clustering.config`` thresholds change, re-verify expected outcomes here.
+When ``shopwiser.rule_matcher.config`` thresholds change, re-verify expected outcomes here.
 """
 
 import sys
@@ -354,12 +354,12 @@ if __name__ == '__main__':
     from shopwiser.paths import ensure_repo_on_syspath
 
     ensure_repo_on_syspath()
-    from shopwiser.clustering.config import (
+    from shopwiser.rule_matcher.config import (
         UNIT_TOLERANCE_BRANDED,
         UNIT_TOLERANCE_OWN_BRAND,
         UNIT_TOLERANCE_UNBRANDED,
     )
-    from shopwiser.clustering.similarity import compute_similarity
+    from shopwiser.rule_matcher.similarity import compute_similarity
 
     print('\nRunning ALL similarity self-tests...')
     _all_pass = run_tests(

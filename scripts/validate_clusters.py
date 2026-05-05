@@ -1,5 +1,5 @@
 """
-Validation script for ensemble_clusters_final.csv.
+Validation script for ensemble cluster CSVs.
 
 Tests agreement clause 4.2 success criteria across N random samples
 of 50 four-way clusters, each drawn with a different seed.
@@ -25,12 +25,12 @@ import pandas as pd
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from shopwiser.ml_matching.features import check_hard_conflict  # noqa: E402
+from shopwiser.ml_matcher.features import check_hard_conflict  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
-DEFAULT_CSV = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters_final.csv"
+DEFAULT_CSV = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters.csv"
 KNOWN_TIERS = frozenset({"value", "standard", "premium", "dietary"})
 PASS_THRESHOLD = 0.90  # 90 % of sampled clusters must pass
 
@@ -141,7 +141,7 @@ def main() -> None:
     parser.add_argument(
         "--csv",
         default=str(DEFAULT_CSV),
-        help="Path to the clusters CSV (default: data/outputs/ensemble/ensemble_clusters_final.csv)",
+        help="Path to ensemble CSV (default: data/outputs/ensemble/ensemble_clusters.csv)",
     )
     parser.add_argument(
         "--n",

@@ -15,3 +15,6 @@ docs/
 papers/
 resources/
 meetings/
+
+.DS_Store
+**/.DS_Store

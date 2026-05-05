@@ -29,14 +29,14 @@ import pandas as pd
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from shopwiser.clustering.config import (  # noqa: E402
+from shopwiser.conflict_tokens import (  # noqa: E402
     FLAVOR_NAMED_TOKENS,
     HARD_CONFLICT_NORM,
     ONE_SIDED_CONFLICT_TOKENS,
 )
 
-CLUSTERS = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters_final.csv"
-OUT = REPO_ROOT / "data/outputs/improvements/flavour_failures.csv"
+CLUSTERS = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters.csv"
+OUT = REPO_ROOT / "data/outputs/fp_analys/flavour_failures.csv"
 
 
 def tokenise(name: str) -> frozenset[str]:
@@ -51,7 +51,10 @@ def main() -> None:
     df = pd.read_csv(CLUSTERS, low_memory=False)
     print(f"  {len(df):,} rows / {df['ensemble_cluster_id'].nunique():,} clusters\n")
 
-    df["_tok"] = df["names"].apply(tokenise)
+    # Use normalized_name (matches what the pipeline actually sees — attributes
+    # like 'organic' are stripped during normalisation, so the raw `names` view
+    # over-reports conflicts the matcher cannot act on).
+    df["_tok"] = df["normalized_name"].apply(tokenise)
 
     failures: list[dict] = []
 

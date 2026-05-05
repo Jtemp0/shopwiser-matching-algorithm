@@ -4,115 +4,23 @@ import numpy as np
 import pandas as pd
 from rapidfuzz import fuzz
 
-FLAVOR_NAMED_TOKENS = frozenset({
-    # Fruit / flavours
-    'ginger', 'mint', 'raspberry', 'lemon', 'orange', 'cherry', 'strawberry',
-    'blueberry', 'mango', 'blackcurrant', 'blackberry', 'elderflower', 'rhubarb',
-    'lime', 'peach', 'apricot', 'vanilla', 'caramel', 'toffee', 'honey', 'maple',
-    'cinnamon', 'cola', 'lychee', 'basil', 'chilli', 'banana', 'syrup', 'kiwi',
-    'berry', 'melon', 'grape', 'pear', 'pineapple', 'pomegranate', 'watermelon',
-    'passion', 'fig', 'plum',
-    # Meat / fish (FLAVOR CLASH: both products have different protein → different product)
-    'lamb', 'ham', 'pork', 'beef', 'chicken', 'turkey', 'duck', 'venison', 'bacon',
-    'salmon', 'tuna', 'cod', 'haddock', 'prawn', 'shrimp', 'crab', 'mackerel',
-    'trout', 'sardine', 'anchovy',
-    # Italian brand-variant / coffee-range tokens (mirrored from clustering/config.py)
-    'rossa', 'oro', 'intenso', 'americano',
-    # v11: snack / sauce / curry / cheese variant tokens
-    # Catches Pringles "Sour Cream & Onion" vs "Cheese & Onion" style mismatches.
-    'paprika', 'vinegar', 'pickled', 'marmite', 'worcester',
-    'ketchup', 'mustard', 'horseradish', 'wasabi',
-    'cheddar', 'parmesan', 'mozzarella', 'feta', 'halloumi',
-    'tikka', 'korma', 'masala', 'jalfrezi', 'madras', 'vindaloo',
-    'rogan', 'biryani', 'pad', 'thai', 'szechuan', 'teriyaki',
-    'hoisin', 'satay', 'katsu',
-    'pesto', 'arrabbiata', 'carbonara', 'bolognese', 'lasagne',
-    'jerk', 'cajun', 'creole', 'piri',
-    'cocktail', 'salad', 'ranch',
-    'apple',
-})
-
-# ONE_SIDED tokens: present in exactly one name → likely different product variant.
-# Intentionally INCLUDES all FLAVOR_NAMED_TOKENS: the FLAVOR CLASH branch only fires
-# when BOTH products have a flavour token (but different ones).  Including them here
-# also catches the "one product has a flavour, the other doesn't" case, which is
-# equally strong evidence of a different product
-# (e.g. "Magnum Classic" vs "Magnum Almond", "Pringles Original" vs "Pringles Chilli").
-ONE_SIDED_CONFLICT_TOKENS = frozenset({
-    # ── Dietary / preparation ──
-    'baby', 'reduced', 'decaf', 'decaffeinated', 'vegan', 'organic',
-    'wholemeal', 'wholegrain', 'skimmed', 'lite', 'light', 'zero',
-    # ── Bread variants ──
-    'granary', 'seeded', 'sourdough', 'multigrain',
-    # ── Product-type markers ──
-    'soup', 'jam', 'juice', 'buttons',
-    # ── Drink / wine variants ──
-    'rose', 'blonde',
-    # ── Misc ──
-    'eyed',
-    # ── Nut & confectionery variants (not in FLAVOR, but strongly differentiating) ──
-    'almond', 'hazelnut', 'pistachio', 'walnut', 'pecan', 'coconut', 'salted',
-    # ── Chocolate/bread colour variants ──
-    'white', 'dark',
-    # ── Indian cuisine style variants — highly specific, always product-discriminating ──
-    # "Chicken Tikka Masala" ≠ "Chicken Masala", "Jalfrezi Mix" ≠ "London Mix", etc.
-    'tikka', 'masala', 'jalfrezi', 'korma', 'vindaloo', 'madras',
-    'balti', 'biryani', 'pilau', 'tandoori', 'gujarati', 'bhuna',
-    # ── Smoked variant (unsmoked omitted — not consistently labelled across SMs) ──
-    'smoked',
-    # ── Preparation format: DIY kits, dry mixes, and sliced variants are different
-    # products from the ready-made or whole-format counterpart.
-    # "Cake Mix" vs "Cake Slices", "Cupcake Kit" vs "Cupcakes".
-    'kit', 'mix',
-    # ── Protein/dish format — same category but different prepared dishes.
-    # "Salmon Quiche" vs "Salmon Fish Cakes", "Lamb Moussaka" vs "Lamb Shanks".
-    'quiche', 'moussaka', 'shanks', 'kebab', 'goujons', 'nuggets', 'fishcakes',
-    # ── Rice variety — distinct grains that consumers don't substitute.
-    'basmati', 'jasmine',
-    # ── Confectionery / Easter variants.
-    'sherbet', 'sherbets', 'bunny',
-    # ── All FLAVOR_NAMED_TOKENS (union) — catches one-sided flavour/protein ──
-    'ginger', 'mint', 'raspberry', 'lemon', 'orange', 'cherry', 'strawberry',
-    'blueberry', 'mango', 'blackcurrant', 'blackberry', 'elderflower', 'rhubarb',
-    'lime', 'peach', 'apricot', 'vanilla', 'caramel', 'toffee', 'honey', 'maple',
-    'cinnamon', 'cola', 'lychee', 'basil', 'chilli', 'banana', 'syrup', 'kiwi',
-    'berry', 'melon', 'grape', 'pear', 'pineapple', 'pomegranate', 'watermelon',
-    'passion', 'fig', 'plum',
-    'lamb', 'ham', 'pork', 'beef', 'chicken', 'turkey', 'duck', 'venison', 'bacon',
-    'salmon', 'tuna', 'cod', 'haddock', 'prawn', 'shrimp', 'crab', 'mackerel',
-    'trout', 'sardine', 'anchovy',
-    # v11: variant tokens (mirrored from clustering/config.py ONE_SIDED_CONFLICT_TOKENS)
-    'sour', 'unsalted', 'smoky',
-    # v11: snack / sauce / curry / cheese — also in FLAVOR_NAMED_TOKENS so the
-    # FLAVOR CLASH branch catches both-have-but-differ; adding here catches
-    # the asymmetric "one has, other doesn't" case (Pringles Original vs Cheese).
-    'paprika', 'vinegar', 'pickled', 'marmite', 'worcester',
-    'ketchup', 'mustard', 'horseradish', 'wasabi',
-    'cheddar', 'parmesan', 'mozzarella', 'feta', 'halloumi',
-    'jalfrezi', 'rogan', 'biryani', 'szechuan', 'teriyaki',
-    'hoisin', 'satay', 'katsu',
-    'pesto', 'arrabbiata', 'carbonara', 'bolognese', 'lasagne',
-    'jerk', 'cajun', 'creole', 'piri',
-})
+# Conflict vocabulary lives in shopwiser.conflict_tokens (single source of truth).
+# Re-exported here so existing call-sites that import from this module keep working.
+from shopwiser.conflict_tokens import (
+    FLAVOR_NAMED_TOKENS,
+    ONE_SIDED_CONFLICT_TOKENS,
+    check_hard_conflict as _check_hard_conflict_bool,
+)
 
 
 def check_hard_conflict(name_a: str, name_b: str) -> int:
-    """Returns 1 if a hard semantic conflict is detected, else 0."""
-    toks_a = set(str(name_a).lower().split())
-    toks_b = set(str(name_b).lower().split())
+    """1 when any hard-conflict gate fires between the two product names, else 0.
 
-    # 1. Flavor / Meat Clash (Only if both have a flavor token but different ones)
-    flav_a = toks_a & FLAVOR_NAMED_TOKENS
-    flav_b = toks_b & FLAVOR_NAMED_TOKENS
-    if flav_a and flav_b and not (flav_a & flav_b):
-        return 1
-
-    # 2. One-sided descriptors (e.g. one is 'vegan', other is not)
-    for tok in ONE_SIDED_CONFLICT_TOKENS:
-        if (tok in toks_a) != (tok in toks_b):
-            return 1
-
-    return 0
+    Thin int-returning wrapper around the canonical implementation in
+    ``shopwiser.conflict_tokens.check_hard_conflict``. Kept as int because
+    the value feeds directly into the LightGBM ranker as a numeric feature.
+    """
+    return int(_check_hard_conflict_bool(name_a, name_b))
 
 
 def _own_brand_int(series: pd.Series) -> pd.Series:
