@@ -38,8 +38,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 NORMALIZED = REPO_ROOT / "data/processed/normalized_products.csv"
-CLUSTERS = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters_v11.csv"
-OUT = REPO_ROOT / "data/outputs/improvements/recovered_pairs_v11.csv"
+CLUSTERS = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters.csv"
+OUT = REPO_ROOT / "data/outputs/improvements/recovered_pairs.csv"
 
 SIM_THRESHOLD = 0.85
 SIZE_RATIO_MAX = 1.20

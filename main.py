@@ -8,8 +8,8 @@ Examples:
     uv run python main.py audit --sample
     uv run python main.py test-similarity
 
-Module entrypoints remain available, e.g. ``python -m shopwiser.clustering.main --sample`` or
-``python -m shopwiser.ml_matching.main --sample``.
+Module entrypoints remain available, e.g. ``python -m shopwiser.rule_matcher.main --sample`` or
+``python -m shopwiser.ml_matcher.main --sample``.
 """
 
 from __future__ import annotations
@@ -26,13 +26,13 @@ def _cmd_normalise(args: argparse.Namespace) -> None:
 
 
 def _cmd_cluster(args: argparse.Namespace) -> None:
-    from shopwiser.clustering.main import main
+    from shopwiser.rule_matcher.main import main
 
     main(sample=args.sample)
 
 
 def _cmd_ml_match(args: argparse.Namespace) -> None:
-    from shopwiser.ml_matching.main import run_ml_matching
+    from shopwiser.ml_matcher.main import run_ml_matching
 
     run_ml_matching(sample=args.sample)
 
@@ -98,12 +98,12 @@ def _cmd_audit(args: argparse.Namespace) -> None:
 
 
 def _cmd_test_similarity(_args: argparse.Namespace) -> None:
-    from shopwiser.clustering.config import (
+    from shopwiser.rule_matcher.config import (
         UNIT_TOLERANCE_BRANDED,
         UNIT_TOLERANCE_OWN_BRAND,
         UNIT_TOLERANCE_UNBRANDED,
     )
-    from shopwiser.clustering.similarity import compute_similarity
+    from shopwiser.rule_matcher.similarity import compute_similarity
     from shopwiser.paths import ensure_repo_on_syspath
 
     ensure_repo_on_syspath()

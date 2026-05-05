@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from rapidfuzz import fuzz
 
-from shopwiser.clustering.data_prep import load_prepared_dataframe
+from shopwiser.rule_matcher.data_prep import load_prepared_dataframe
 
 from .config import (
     ACCEPT_SIZE_GATE,
@@ -17,6 +17,7 @@ from .config import (
     CLUSTER_GUIDED_TOP_K,
     COMPLETION_MAX_DELTA,
     COMPLETION_THRESHOLD,
+    MARGIN_THRESHOLD,
     MAX_CLUSTER_SIZE,
     OUTPUT_DIR,
     REVERSE_THRESHOLD,
@@ -537,12 +538,53 @@ def build_final_clusters(
     directed['target_sm'] = directed['target'].map(sm_map)
 
     # Step 1: Argmax — each anchor's single best match per target SM, above threshold.
-    best_matches = directed.sort_values(
+    # Also enforce MARGIN_THRESHOLD: when the anchor has multiple candidates in the
+    # same target supermarket, require the top-1 score to lead the runner-up by at
+    # least MARGIN_THRESHOLD. This is the "decisive winner" criterion in Darius's
+    # spec (acceptance condition: `margin over runner-up exceeds τ_margin`). It
+    # eliminates edges where two retailer SKUs score nearly identically against
+    # one anchor — those are guesses, not matches.
+    ranked = directed.sort_values(
         ['anchor', 'target_sm', 'match_prob'],
         ascending=[True, True, False],
     )
-    best_matches = best_matches.groupby(['anchor', 'target_sm'], sort=False).head(1)
+    top2 = ranked.groupby(['anchor', 'target_sm'], sort=False).head(2)
+    top1 = top2.groupby(['anchor', 'target_sm'], sort=False).head(1)
+
+    # Compute margin (top1.match_prob - top2.match_prob) per (anchor, target_sm).
+    # Singletons (only one candidate) get margin = top1 score, i.e. trivially pass.
+    margin_df = (
+        top2.groupby(['anchor', 'target_sm'])['match_prob']
+        .agg(top1='first', top2='last')
+        .reset_index()
+    )
+    # When only 1 candidate, first == last → margin = 0 but there is no rival to
+    # rule against, so treat margin as "pass" (set to threshold value to skip filter).
+    same_count = (
+        directed.groupby(['anchor', 'target_sm']).size().reset_index(name='_n')
+    )
+    margin_df = margin_df.merge(same_count, on=['anchor', 'target_sm'], how='left')
+    margin_df['margin'] = (margin_df['top1'] - margin_df['top2']).where(
+        margin_df['_n'] > 1, MARGIN_THRESHOLD
+    )
+
+    best_matches = top1.merge(
+        margin_df[['anchor', 'target_sm', 'margin']],
+        on=['anchor', 'target_sm'], how='left',
+    )
+
+    n_pre_threshold = len(best_matches)
     best_matches = best_matches[best_matches['match_prob'] >= ACCEPT_THRESHOLD]
+    n_pre_margin = len(best_matches)
+    best_matches = best_matches[best_matches['margin'] >= MARGIN_THRESHOLD]
+    n_margin_rejected = n_pre_margin - len(best_matches)
+    if n_margin_rejected > 0:
+        print(
+            f'Margin gate rejected {n_margin_rejected:,} edges where top-1 score '
+            f'lead over runner-up was below {MARGIN_THRESHOLD} '
+            f'(of {n_pre_margin:,} above ACCEPT_THRESHOLD).'
+        )
+    best_matches = best_matches.drop(columns=['margin'])
 
     # Hard size gate: pairs where both unit values are known and the relative
     # TOTAL size difference exceeds ACCEPT_SIZE_GATE are rejected regardless of
@@ -957,7 +999,7 @@ def run_ml_matching(*, sample: bool = False) -> None:
 
 
 def main(*, sample: bool = False) -> None:
-    """CLI-compatible entry (same signature as ``shopwiser.clustering.main.main``)."""
+    """CLI-compatible entry (same signature as ``shopwiser.rule_matcher.main.main``)."""
     run_ml_matching(sample=sample)
 
 

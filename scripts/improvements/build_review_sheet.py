@@ -21,7 +21,7 @@ weighted by the deliverable's distribution to mirror what we ship.
 
 Inputs
 ------
-  data/outputs/ensemble/ensemble_clusters_final.csv
+  data/outputs/ensemble/ensemble_clusters.csv
 
 Outputs
 -------
@@ -46,7 +46,7 @@ import numpy as np
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-CLUSTERS = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters_v11.csv"
+CLUSTERS = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters.csv"
 OUT_HTML = REPO_ROOT / "data/outputs/improvements/review_sheet.html"
 OUT_SAMPLE = REPO_ROOT / "data/outputs/improvements/review_sample.csv"
 OUT_BLANK = REPO_ROOT / "data/outputs/improvements/review_results_blank.csv"

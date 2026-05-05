@@ -51,7 +51,7 @@ warnings.filterwarnings("ignore")
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-DEFAULT_CLUSTERS = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters_final.csv"
+DEFAULT_CLUSTERS = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters.csv"
 DEFAULT_RAW = REPO_ROOT / "data/raw/raw.csv"
 DEFAULT_OUT_DIR = REPO_ROOT / "data/outputs/ensemble"
 
@@ -467,7 +467,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--clusters",
         default=str(DEFAULT_CLUSTERS),
-        help="Path to ensemble clusters CSV (default: ensemble_clusters_final.csv)",
+        help="Path to ensemble clusters CSV (default: ensemble_clusters.csv)",
     )
     p.add_argument(
         "--raw",

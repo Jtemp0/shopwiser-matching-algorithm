@@ -1,15 +1,15 @@
 """
-Enrich ensemble_clusters_final.csv with a per-cluster confidence_score column.
+Enrich ensemble_clusters.csv with per-cluster confidence_score columns.
 
 Inputs
 ------
-  data/outputs/ensemble/ensemble_clusters_final.csv      one row per product
+  data/outputs/ensemble/ensemble_clusters.csv             one row per product
   data/outputs/ensemble/cluster_review_metrics.csv        one row per cluster
                                                           (produced by scripts/review_metrics.py)
 
 Output
 ------
-  data/outputs/improvements/ensemble_clusters_final_v2.csv
+  data/outputs/improvements/ensemble_clusters_with_confidence.csv
       same rows + columns:
         confidence_score  in [0, 1]
         confidence_band   one of {high, medium, low}
@@ -33,9 +33,9 @@ from pathlib import Path
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-CLUSTERS = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters_v11.csv"
+CLUSTERS = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters.csv"
 METRICS = REPO_ROOT / "data/outputs/ensemble/cluster_review_metrics.csv"
-OUT = REPO_ROOT / "data/outputs/improvements/ensemble_clusters_v11_with_confidence.csv"
+OUT = REPO_ROOT / "data/outputs/improvements/ensemble_clusters_with_confidence.csv"
 
 
 def _band(score: float) -> str:

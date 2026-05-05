@@ -31,7 +31,7 @@ import numpy as np
 import pandas as pd
 from rapidfuzz import fuzz
 
-from shopwiser.ml_matching.features import check_hard_conflict
+from shopwiser.ml_matcher.features import check_hard_conflict
 from shopwiser.paths import DATA_OUTPUTS
 
 # ── paths ─────────────────────────────────────────────────────────────────────

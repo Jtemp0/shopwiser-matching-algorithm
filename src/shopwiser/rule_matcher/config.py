@@ -61,128 +61,19 @@ ALCOHOL_FREE_PATTERNS  = [
     '0% alcohol', 'low alcohol', 'alcohol_marker',
 ]
 
-# ── v5: Hard conflict token sets ──────────────────────────────────────────────
-# FLAVOR_NAMED_TOKENS: named fruit / herb / spice flavours AND meat/seafood
-# ingredient varieties that, when present in BOTH products with no overlap,
-# indicate irreconcilably different variants.
-#
-# Meat/ingredient tokens (v6): enables lowering SHORT_STRIPPED_THRESHOLD
-# from 0.92 → 0.87 because "lamb stock cubes" vs "ham stock cubes" is now
-# caught here (both have named ingredient tokens that don't overlap) BEFORE
-# the threshold guard is evaluated.
-FLAVOR_NAMED_TOKENS = frozenset({
-    # Fruit, herb, spice flavours
-    'ginger', 'mint', 'raspberry', 'lemon', 'orange', 'cherry',
-    'strawberry', 'blueberry', 'mango', 'blackcurrant', 'blackberry',
-    'elderflower', 'rhubarb', 'lime', 'peach', 'apricot', 'vanilla',
-    'caramel', 'toffee', 'honey', 'maple', 'cinnamon', 'cola',
-    'lychee', 'basil', 'chilli',   # v5.1: audit fixes
-    'banana', 'syrup',             # v5.2: banana vs golden-syrup transitive FP
-    # Additional fruit varieties (audit v10): kiwi/berry/melon/grape prevent
-    # "Ripe & Ready Kiwi" matching "Ripe & Ready Mango" and Huel Vanilla vs Berry
-    'kiwi', 'berry', 'melon', 'grape', 'pear', 'pineapple',
-    'pomegranate', 'watermelon', 'passion', 'fig', 'plum',
-    # Meat / poultry / seafood variety tokens (v6)
-    'lamb', 'ham', 'pork', 'beef', 'chicken', 'turkey', 'duck',
-    'venison', 'bacon',
-    'salmon', 'tuna', 'cod', 'haddock', 'prawn', 'shrimp', 'crab',
-    'mackerel', 'trout', 'sardine', 'anchovy',
-    # Italian brand-variant / coffee-range tokens (v9)
-    # Lavazza: Qualità Rossa (red) vs Qualità Oro (gold) — distinct product lines
-    'rossa', 'oro',
-    # Nescafe Azera: Intenso vs Americano — distinct coffee-style variants
-    'intenso', 'americano',
-    # v11: Snack / crisp / condiment flavour distinguishers
-    # Catches Pringles "Sour Cream & Onion" vs "Cheese & Onion" style mismatches
-    # by ensuring named flavour vocabulary fires on both sides for variant-rich
-    # categories (crisps, snacks, sauces, ready-meals).
-    'paprika', 'vinegar', 'pickled', 'marmite', 'worcester',
-    'ketchup', 'mustard', 'horseradish', 'wasabi',
-    'cheddar', 'parmesan', 'mozzarella', 'feta', 'halloumi',
-    'tikka', 'korma', 'masala', 'jalfrezi', 'madras', 'vindaloo',
-    'rogan', 'biryani', 'pad', 'thai', 'szechuan', 'teriyaki',
-    'hoisin', 'satay', 'katsu',
-    'pesto', 'arrabbiata', 'carbonara', 'bolognese', 'lasagne',
-    'jerk', 'cajun', 'creole', 'piri',
-    'cocktail', 'salad', 'ranch',
-    'apple', 'pear',
-})
-
-# MILK_BASE_TOKENS: milk alternatives — mutually exclusive bases.
-MILK_BASE_TOKENS = frozenset({
-    'soy',          # canonical (we normalise 'soya' → 'soy' below)
-    'oat', 'almond', 'hazelnut', 'cashew', 'rice', 'coconut',
-    'hemp', 'pea', 'macadamia', 'pistachio',
-    'ricotta', 'mascarpone',   # v5.1: pasta filling mutual exclusivity
-})
-
-# COOKING_STATE_TOKENS: mutually exclusive cooking / processing states.
-COOKING_STATE_TOKENS = frozenset({
-    'raw', 'roast', 'smoked', 'unsmoked', 'dried', 'cured',
-})
-
-# Normalise variant spellings to canonical form before set lookup.
-HARD_CONFLICT_NORM = {
-    'soya':          'soy',
-    'roasted':       'roast',
-    'cans':          'can',           # v5.2: packaging normalisation (plural → singular)
-    'bottles':       'bottle',        # v5.2: packaging normalisation
-    'decaffeinated': 'decaf',         # v8: treat long form as equivalent to 'decaf'
-    'decaff':        'decaf',         # v8: treat UK abbreviation as equivalent to 'decaf'
-}
-
-# ONE_SIDED_CONFLICT_TOKENS: presence in ONE product but not the other
-# is always a hard conflict (e.g. "baby carrots" vs "carrots").
-# NOTE: the check uses _normalised_ token sets so synonym mappings in
-#       HARD_CONFLICT_NORM are applied first (e.g. decaffeinated→decaf).
-ONE_SIDED_CONFLICT_TOKENS = frozenset({
-    'baby',
-    'reduced',   # v5.1: "reduced fat/sugar" vs standard
-    'granary',   # v5.1: Hovis Granary vs plain Wholemeal
-    'buttons',   # v5.1: chocolate buttons vs chocolate block
-    'rose',      # v5.1: rosé wine vs non-rosé (unaccented spelling)
-    'light',     # v5.2: "light" variant vs full-fat/standard
-    'lite',      # v9: variant spelling of 'light' (e.g. Sprite Lite) — kept in norm_name
-    'decaf',     # v5.2/v8: catches decaf/decaff/decaffeinated (via HARD_CONFLICT_NORM)
-    'blonde',    # v9: Starbucks Blonde Espresso vs regular Espresso — distinct roast
-    'zero',      # v10: "zero sugar" / "zero calorie" vs standard — distinct product
-                 #      (DIET_PENALTY alone insufficient; hard-reject is correct)
-    # 'cup' removed v8: caused false rejections for pot-noodle naming variants
-    #   ("cup noodles pot" vs "noodles pot" blocked incorrectly)
-    # Product-category discriminators: if one product names the category type and the
-    # other doesn't, they are different things (e.g. "Tomato Soup" ≠ "Tomato Sauce").
-    'soup',      # "Tomato Soup" vs "Tomato Sauce" / "Tomato Paste"
-    'jam',       # "Strawberry Jam" vs "Strawberry Yogurt" / "Strawberry Sauce"
-    'juice',     # "Apple Juice" vs "Apple Sauce" / "Apple Cider"
-    'eyed',      # "black-eyed beans" vs "black beans" — distinct legume variety
-    'plum',      # "plum tomatoes" vs "chopped/tinned tomatoes" — distinct variety
-    # Meat / poultry / fish directional tokens: present in one but absent in the
-    # other is always a hard differentiator (e.g. "chicken pizza" ≠ "four cheese pizza").
-    # These are also in FLAVOR_NAMED_TOKENS (fires when BOTH products have named
-    # tokens that differ); ONE_SIDED adds the asymmetric case.
-    'chicken', 'beef', 'pork', 'lamb', 'turkey', 'duck',
-    'salmon', 'tuna', 'cod', 'bacon', 'prawn',
-    # v11: variant tokens that distinguish snack / sauce / dressing variants
-    # one-sided presence is a near-certain mismatch
-    'sour',       # "Sour Cream & Onion" vs "Cheese & Onion" — catches Pringles bug
-    'salted',     # "Salted" crisps vs ready-salted intensity / unsalted variants
-    'unsalted',
-    'smoky',      # "Smoky BBQ" vs plain BBQ flavours
-    # Intentionally NOT added: 'hot', 'sweet', 'spicy' — too broad,
-    # they generate false positives on use-case words ("Hot Chocolate")
-    # and on brand names ("Sweet Freedom"). Keep them in DESCRIPTORS only.
-})
-
-# PREPARATION_CONFLICT_PAIRS: mutually-exclusive preparation tokens —
-# only fires when BOTH products contain a token from the same pair but
-# they disagree (e.g. "in juice" vs "in syrup").
-PREPARATION_CONFLICT_PAIRS = [frozenset({'juice', 'syrup'})]   # v5.1
-
-# PACKAGING_FORMAT_TOKENS: mutually-exclusive physical container types.
-# 'cans'/'bottles' are normalised to 'can'/'bottle' via HARD_CONFLICT_NORM.
-PACKAGING_FORMAT_TOKENS = frozenset({'can', 'bottle'})          # v5.2
-
-# ── End v5 hard conflict sets ─────────────────────────────────────────────────
+# ── Hard conflict token sets ──────────────────────────────────────────────────
+# Canonical home: ``shopwiser.conflict_tokens``. Re-exported here so existing
+# imports (``from shopwiser.rule_matcher.config import FLAVOR_NAMED_TOKENS, …``)
+# keep working without churn. Edit the vocabulary in conflict_tokens.py.
+from shopwiser.conflict_tokens import (  # noqa: E402
+    COOKING_STATE_TOKENS,
+    FLAVOR_NAMED_TOKENS,
+    HARD_CONFLICT_NORM,
+    MILK_BASE_TOKENS,
+    ONE_SIDED_CONFLICT_TOKENS,
+    PACKAGING_FORMAT_TOKENS,
+    PREPARATION_CONFLICT_PAIRS,
+)
 
 WINE_TYPE_TOKENS = {'red', 'white', 'rose', 'rosé', 'sparkling', 'prosecco', 'champagne', 'blush'}
 

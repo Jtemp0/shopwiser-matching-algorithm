@@ -20,13 +20,96 @@ from __future__ import annotations
 
 from itertools import combinations
 from pathlib import Path
+import re
 
 import pandas as pd
 
 from shopwiser.paths import DATA_OUTPUTS, cluster_outputs_path, ml_matching_outputs_path
+from shopwiser.conflict_tokens import check_hard_conflict
 
 MAX_CLUSTER_SIZE = 4
 
+_STOP = frozenset({
+    "the", "a", "of", "and", "to", "in", "on", "for", "with", "by", "from",
+    "pack", "x", "g", "kg", "ml", "l", "litre", "litres", "grams",
+    "large", "small", "medium", "extra", "special", "best", "finest",
+    "essentials", "just", "tesco", "sains", "sainsbury", "sainsburys",
+    "asda", "morrisons", "morrison", "pcs", "count", "ct", "co", "home",
+    "each", "new", "original", "everyday", "our", "more", "plus",
+    "quality", "value", "range",
+})
+
+def _toks(name: str) -> set[str]:
+    s = re.sub(r"[^a-zA-Z' ]", " ", str(name).lower())
+    return set(t for t in s.split() if t not in _STOP and len(t) > 2)
+
+def _jaccard(a: set[str], b: set[str]) -> float:
+    u = len(a | b)
+    return len(a & b) / u if u else 0.0
+
+def build_validator(meta_map: dict[int, dict]) -> callable:
+    def _smart_pair_delta(uv_a, pq_a, uv_b, pq_b) -> float:
+        if pd.isna(uv_a) or pd.isna(uv_b): return 0.0
+        def _rd(x, y):
+            hi = max(abs(x), abs(y))
+            return 0.0 if hi < 1e-6 else abs(x - y) / hi
+        pu_a = float(uv_a) / float(pq_a) if pd.notna(pq_a) and pq_a else float(uv_a)
+        pu_b = float(uv_b) / float(pq_b) if pd.notna(pq_b) and pq_b else float(uv_b)
+        return min(
+            _rd(float(uv_a), float(uv_b)),
+            _rd(pu_a, pu_b),
+            _rd(float(uv_a), pu_b),
+            _rd(pu_a, float(uv_b)),
+        )
+
+    def is_valid(members: set[int]) -> bool:
+        items = [meta_map[m] for m in members if m in meta_map]
+        if len(items) < 2: return True
+        
+        names = [str(i['normalized_name']) for i in items if pd.notna(i['normalized_name'])]
+        tsets = [_toks(n) for n in names]
+        
+        for i in range(len(items)):
+            for j in range(i + 1, len(items)):
+                # 1. Hard conflict & Jaccard
+                if i < len(names) and j < len(names):
+                    if check_hard_conflict(names[i], names[j]):
+                        return False
+                    if _jaccard(tsets[i], tsets[j]) < 0.50:
+                        return False
+                        
+                # 2. Size mismatch > 15%
+                if _smart_pair_delta(
+                    items[i]['unit_value'], items[i]['pack_quantity'],
+                    items[j]['unit_value'], items[j]['pack_quantity']
+                ) > 0.15:
+                    return False
+                    
+        # 3. Brand mismatch
+        brands = {str(i['known_brand_clean']).strip().lower() for i in items if pd.notna(i['known_brand_clean'])}
+        brands = {b for b in brands if b}
+        if len(brands) >= 2:
+            return False
+            
+        # 4. Tier mismatch
+        ob_items = [i for i in items if str(i['product_type']) in ('own_brand', 'unbranded')]
+        tiers = {str(i['tier_type']).lower() for i in ob_items if pd.notna(i['tier_type'])}
+        if len(tiers) >= 2:
+            return False
+            
+        # 5. Branded vs own-brand mix
+        types = {str(i['product_type']) for i in items if pd.notna(i['product_type'])}
+        if "branded" in types and "own_brand" in types:
+            branded_items = [i for i in items if str(i['product_type']) == 'branded']
+            branded_known = [str(i['known_brand_clean']) for i in branded_items if pd.notna(i['known_brand_clean'])]
+            if branded_known:
+                primary = branded_known[0].strip().split()[0].lower()
+                if len(primary) >= 3:
+                    if any(primary not in set(str(i['normalized_name']).split()) for i in items if pd.notna(i['normalized_name'])):
+                        return False
+                        
+        return True
+    return is_valid
 
 def _pairs_from_clusters(
     df: pd.DataFrame,
@@ -51,6 +134,7 @@ def _pairs_from_clusters(
 def _kruskal_one_per_sm(
     edges: pd.DataFrame,
     sm_map: dict[int, str],
+    is_valid_cluster: callable | None = None,
     *,
     max_cluster_size: int = MAX_CLUSTER_SIZE,
 ) -> dict[int, int]:
@@ -58,12 +142,14 @@ def _kruskal_one_per_sm(
     parent: dict[int, int] = {}
     cluster_sms: dict[int, set[str]] = {}
     cluster_size: dict[int, int] = {}
+    cluster_members: dict[int, set[int]] = {}
 
     def ensure(x: int) -> None:
         if x not in parent:
             parent[x] = x
             cluster_sms[x] = {sm_map[x]}
             cluster_size[x] = 1
+            cluster_members[x] = {x}
 
     def find(x: int) -> int:
         root = x
@@ -82,13 +168,20 @@ def _kruskal_one_per_sm(
             continue
         merged_sms = cluster_sms[ru] | cluster_sms[rv]
         merged_n = cluster_size[ru] + cluster_size[rv]
+        merged_members = cluster_members[ru] | cluster_members[rv]
+        
         if len(merged_sms) != merged_n:  # SM collision
             continue
         if merged_n > max_cluster_size:
             continue
+            
+        if is_valid_cluster and not is_valid_cluster(merged_members):
+            continue
+            
         parent[rv] = ru
         cluster_sms[ru] = merged_sms
         cluster_size[ru] = merged_n
+        cluster_members[ru] = merged_members
 
     return {node: find(node) for node in parent}
 
@@ -132,8 +225,15 @@ def run_ensemble(
     for pid, sm in zip(rule_df['product_idx'].astype(int), rule_df['supermarket']):
         sm_map.setdefault(pid, sm)
 
-    print('Running Kruskal union-find with one-per-SM constraint...')
-    root_map = _kruskal_one_per_sm(edges, sm_map, max_cluster_size=MAX_CLUSTER_SIZE)
+    print('Running Kruskal union-find with one-per-SM constraint and strict structural validation...')
+    
+    meta_df = ml_df.set_index('product_idx')[
+        ['normalized_name', 'unit_value', 'pack_quantity', 'known_brand_clean', 'product_type', 'tier_type']
+    ]
+    meta_map = meta_df.to_dict('index')
+    validator = build_validator(meta_map)
+    
+    root_map = _kruskal_one_per_sm(edges, sm_map, is_valid_cluster=validator, max_cluster_size=MAX_CLUSTER_SIZE)
     cid_map = _assign_cluster_ids(root_map)
 
     # Build output cluster assignments.  Only products that ended up in a
