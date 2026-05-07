@@ -36,6 +36,8 @@ check_hard_conflict
 
 from __future__ import annotations
 
+import re
+
 # ---------------------------------------------------------------------------
 # Synonym / spelling normalisation (applied before every set lookup)
 # ---------------------------------------------------------------------------
@@ -88,6 +90,9 @@ HARD_CONFLICT_NORM: dict[str, str] = {
     "bulgar": "bulgur",
     "macaroni": "pasta",
     "spaghetti": "pasta",
+    # BBQ / barbecue spelling variants (all → canonical "bbq")
+    "barbecue": "bbq",
+    "barbeque": "bbq",
 }
 
 
@@ -128,6 +133,8 @@ FLAVOR_NAMED_TOKENS: frozenset[str] = frozenset({
     "pesto", "arrabbiata", "carbonara", "bolognese", "lasagne",
     "jerk", "cajun", "creole", "piri",
     "cocktail", "salad", "ranch",
+    # Snack flavour discriminators — BBQ is a distinct flavour variant
+    "bbq",
     # Wine grape varieties — distinct varietals never substitute
     "chardonnay", "cabernet", "sauvignon", "merlot", "pinot",
     "shiraz", "malbec", "riesling", "zinfandel", "prosecco",
@@ -160,6 +167,8 @@ PACKAGING_FORMAT_TOKENS: frozenset[str] = frozenset({"can", "bottle"})
 # side picks a different token from the same group.
 PREPARATION_CONFLICT_PAIRS: list[frozenset[str]] = [
     frozenset({"juice", "syrup"}),
+    # Preservation / cooking medium: "sardines in sunflower oil" ≠ "sardines in tomato sauce"
+    frozenset({"oil", "sauce"}),
 ]
 
 
@@ -221,6 +230,12 @@ ONE_SIDED_CONFLICT_TOKENS: frozenset[str] = frozenset(set({
     "chardonnay", "cabernet", "sauvignon", "merlot", "pinot",
     "shiraz", "malbec", "riesling", "prosecco", "champagne",
     "tempranillo", "sangiovese",
+    # Pastry type — puff and shortcrust are different products
+    "puff", "shortcrust",
+    # BBQ is a distinct flavour variant (Pringles BBQ vs Cheese & Onion)
+    "bbq",
+    # Bean / legume variety — different beans are different products
+    "cannellini", "haricot", "kidney", "borlotti", "flageolet", "edamame",
 }) | FLAVOR_NAMED_TOKENS)
 # Including the union of FLAVOR_NAMED_TOKENS catches asymmetric flavour
 # presence ("Pringles Original" vs "Pringles Cheese & Onion").
@@ -243,6 +258,11 @@ def _tokenise(name: str) -> tuple[set[str], set[str]]:
     return raw, norm
 
 
+# Phrase-level patterns that individual token checks can't catch.
+# These are checked against RAW product names (before normalisation strips them).
+_NAS_RE = re.compile(r'\bno\s+added\s+sugar\b', re.I)
+
+
 def check_hard_conflict(name_a: str, name_b: str) -> bool:
     """True when any hard-conflict gate fires between the two product names.
 
@@ -253,6 +273,9 @@ def check_hard_conflict(name_a: str, name_b: str) -> bool:
       4. One-sided token (decaf in one but not the other)
       5. Mutually-exclusive preparation pair (in juice vs in syrup …)
       6. Packaging format mismatch (can vs bottle)
+
+    Note: "No Added Sugar" phrase conflicts require raw names — use
+    ``check_phrase_conflict`` on the original product names alongside this.
     """
     raw_a, toks_a = _tokenise(name_a)
     raw_b, toks_b = _tokenise(name_b)
@@ -299,4 +322,22 @@ def check_hard_conflict(name_a: str, name_b: str) -> bool:
     if pkg_a and pkg_b and not (pkg_a & pkg_b):
         return True
 
+    return False
+
+
+def check_phrase_conflict(raw_name_a: str, raw_name_b: str) -> bool:
+    """Catch conflicts visible only in raw product names that normalisation strips.
+
+    Use this alongside ``check_hard_conflict`` on the *normalised* names when
+    the raw names are available.  The checks here are phrase-level patterns that
+    cannot be expressed as individual token lookups.
+
+    Currently checks:
+      - "No Added Sugar" asymmetry: if exactly one side carries this phrase,
+        the products are different dietary variants.
+    """
+    has_nas_a = bool(_NAS_RE.search(raw_name_a))
+    has_nas_b = bool(_NAS_RE.search(raw_name_b))
+    if has_nas_a != has_nas_b:
+        return True
     return False

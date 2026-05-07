@@ -25,7 +25,7 @@ import re
 import pandas as pd
 
 from shopwiser.paths import DATA_OUTPUTS, cluster_outputs_path, ml_matching_outputs_path
-from shopwiser.conflict_tokens import check_hard_conflict
+from shopwiser.conflict_tokens import check_hard_conflict, check_phrase_conflict
 
 MAX_CLUSTER_SIZE = 4
 
@@ -65,15 +65,20 @@ def build_validator(meta_map: dict[int, dict]) -> callable:
     def is_valid(members: set[int]) -> bool:
         items = [meta_map[m] for m in members if m in meta_map]
         if len(items) < 2: return True
-        
+
         names = [str(i['normalized_name']) for i in items if pd.notna(i['normalized_name'])]
+        raw_names = [str(i.get('names', '')) for i in items]
         tsets = [_toks(n) for n in names]
-        
+
         for i in range(len(items)):
             for j in range(i + 1, len(items)):
                 # 1. Hard conflict & Jaccard
                 if i < len(names) and j < len(names):
                     if check_hard_conflict(names[i], names[j]):
+                        return False
+                    # Phrase-level check on raw names (e.g. "No Added Sugar"
+                    # is stripped by normalisation but must still block matches).
+                    if check_phrase_conflict(raw_names[i], raw_names[j]):
                         return False
                     if _jaccard(tsets[i], tsets[j]) < 0.50:
                         return False
@@ -228,7 +233,7 @@ def run_ensemble(
     print('Running Kruskal union-find with one-per-SM constraint and strict structural validation...')
     
     meta_df = ml_df.set_index('product_idx')[
-        ['normalized_name', 'unit_value', 'pack_quantity', 'known_brand_clean', 'product_type', 'tier_type']
+        ['normalized_name', 'names', 'unit_value', 'pack_quantity', 'known_brand_clean', 'product_type', 'tier_type']
     ]
     meta_map = meta_df.to_dict('index')
     validator = build_validator(meta_map)
