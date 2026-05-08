@@ -72,7 +72,7 @@ def build_validator(meta_map: dict[int, dict]) -> callable:
 
         for i in range(len(items)):
             for j in range(i + 1, len(items)):
-                # 1. Hard conflict & Jaccard
+                # 1. Hard conflict + absolute Jaccard floor (catches completely unrelated pairs)
                 if i < len(names) and j < len(names):
                     if check_hard_conflict(names[i], names[j]):
                         return False
@@ -80,28 +80,41 @@ def build_validator(meta_map: dict[int, dict]) -> callable:
                     # is stripped by normalisation but must still block matches).
                     if check_phrase_conflict(raw_names[i], raw_names[j]):
                         return False
-                    if _jaccard(tsets[i], tsets[j]) <= 0.50:
+                    # Only reject at a very low floor; borderline pairs (0.15–0.65)
+                    # are verified by the LLM filter pass rather than ruled out here.
+                    if _jaccard(tsets[i], tsets[j]) < 0.15:
                         return False
-                        
+
                 # 2. Size mismatch > 15%
                 if _smart_pair_delta(
                     items[i]['unit_value'], items[i]['pack_quantity'],
                     items[j]['unit_value'], items[j]['pack_quantity']
                 ) > 0.15:
                     return False
-                    
-        # 3. Brand mismatch
+
+        # 3. Brand mismatch — two distinct recognised brands
         brands = {str(i['known_brand_clean']).strip().lower() for i in items if pd.notna(i['known_brand_clean'])}
         brands = {b for b in brands if b}
         if len(brands) >= 2:
             return False
-            
+
+        # 3b. Brand propagation — if any item has a recognised brand, every
+        #     item's normalised name must contain the brand's first token.
+        #     Catches unknown-brand products mixed with a known brand
+        #     (e.g. "J.J. Gin" silently grouped with "Gordon's Gin").
+        if brands:
+            primary = list(brands)[0].split()[0].lower()
+            if len(primary) >= 3:
+                if any(primary not in set(str(i['normalized_name']).split())
+                       for i in items if pd.notna(i['normalized_name'])):
+                    return False
+
         # 4. Tier mismatch
         ob_items = [i for i in items if str(i['product_type']) in ('own_brand', 'unbranded')]
         tiers = {str(i['tier_type']).lower() for i in ob_items if pd.notna(i['tier_type'])}
         if len(tiers) >= 2:
             return False
-            
+
         # 5. Branded vs own-brand mix
         types = {str(i['product_type']) for i in items if pd.notna(i['product_type'])}
         if "branded" in types and "own_brand" in types:
@@ -112,7 +125,7 @@ def build_validator(meta_map: dict[int, dict]) -> callable:
                 if len(primary) >= 3:
                     if any(primary not in set(str(i['normalized_name']).split()) for i in items if pd.notna(i['normalized_name'])):
                         return False
-                        
+
         return True
     return is_valid
 
