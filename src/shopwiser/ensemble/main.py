@@ -80,7 +80,7 @@ def build_validator(meta_map: dict[int, dict]) -> callable:
                     # is stripped by normalisation but must still block matches).
                     if check_phrase_conflict(raw_names[i], raw_names[j]):
                         return False
-                    if _jaccard(tsets[i], tsets[j]) < 0.50:
+                    if _jaccard(tsets[i], tsets[j]) <= 0.50:
                         return False
                         
                 # 2. Size mismatch > 15%

@@ -1,0 +1,3430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ShopWiser · Personal Review (seed 42)</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+     margin:0;padding:0;background:#f0f2f7;color:#1d2433;}
+
+/* ── top bar ── */
+#topbar{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid #2E86AB;
+         display:flex;align-items:center;gap:1rem;padding:.6rem 1.25rem;}
+#topbar h1{margin:0;font-size:1.1rem;color:#2E86AB;white-space:nowrap;}
+#progress-wrap{flex:1;}
+#progress-bar-outer{background:#e3e8f0;border-radius:99px;height:10px;overflow:hidden;}
+#progress-bar{background:#2E86AB;height:100%;border-radius:99px;transition:width .3s;width:0;}
+#progress-label{font-size:.8rem;color:#6a7488;margin-top:2px;}
+#kbd-hint{font-size:.78rem;color:#aab;white-space:nowrap;}
+
+/* ── main layout ── */
+#main{max-width:980px;margin:1.5rem auto;padding:0 1rem;}
+
+/* ── cluster card ── */
+.cluster{background:#fff;border:1px solid #dfe4ee;border-radius:12px;
+          margin-bottom:1.25rem;overflow:hidden;transition:box-shadow .2s;}
+.cluster.done{border-color:#27ae60;}
+.cluster.failed{border-color:#e74c3c;}
+.cluster-header{padding:.75rem 1rem .5rem;border-bottom:1px solid #ecf0f6;
+                  background:#f8fafc;}
+.cluster-title{display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem;}
+.cluster-num{font-size:.82rem;color:#aab;}
+.cluster-sz{font-size:.72rem;font-weight:700;padding:.15rem .45rem;border-radius:99px;}
+.sz2{background:#e8f4fd;color:#2E86AB;}
+.sz3{background:#fef3cd;color:#b8860b;}
+.sz4{background:#fde8e8;color:#c0392b;}
+.cid{font-size:.78rem;color:#bbb;}
+.cluster-meta-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.2rem;}
+.meta-tag{font-size:.75rem;background:#eef0fa;color:#555;padding:.1rem .45rem;border-radius:4px;}
+.brand-tag{background:#fdf0e8;color:#b35a00;}
+.core-name{font-size:.85rem;font-weight:600;color:#444;}
+
+/* ── table ── */
+table{width:100%;border-collapse:collapse;font-size:.9rem;}
+th,td{text-align:left;padding:.4rem .65rem;border-bottom:1px solid #ecf0f6;}
+th{background:#f8fafc;font-weight:600;font-size:.8rem;text-transform:uppercase;
+    letter-spacing:.03em;color:#6a7488;}
+.name-cell{max-width:340px;}
+.norm-name{font-size:.75rem;color:#9aa;margin-top:2px;font-style:italic;}
+.num{text-align:right;white-space:nowrap;}
+
+/* ── tier / type badges ── */
+.tier{font-size:.75rem;padding:.1rem .4rem;border-radius:4px;}
+.tier-premium{background:#f8e0ff;color:#7b2fa1;}
+.tier-std{background:#e8f0ff;color:#3452a0;}
+.tier-value{background:#e8ffe8;color:#1a7a1a;}
+.tier-none{color:#ccc;}
+.badge{font-size:.72rem;padding:.1rem .4rem;border-radius:4px;}
+.badge-br{background:#fff3e0;color:#b35a00;}
+.badge-ob{background:#e3f2fd;color:#1565c0;}
+.badge-ub{background:#f3e5f5;color:#6a1b9a;}
+
+/* ── questions ── */
+.questions{padding:.7rem 1rem .8rem;}
+.q-row{display:flex;align-items:center;gap:.5rem;margin:.35rem 0;flex-wrap:wrap;}
+.q-label{font-size:.82rem;font-weight:600;color:#444;min-width:220px;}
+.pill{display:inline-flex;align-items:center;gap:.3rem;cursor:pointer;
+       font-size:.85rem;background:#f4f6fb;border:1.5px solid #dfe4ee;
+       border-radius:99px;padding:.25rem .75rem;transition:all .15s;user-select:none;}
+.pill:hover{border-color:#2E86AB;background:#eaf4ff;}
+.pill input{display:none;}
+.pill.selected-yes{background:#e6f9ef;border-color:#27ae60;color:#1a6e40;font-weight:600;}
+.pill.selected-no{background:#fde8e8;border-color:#e74c3c;color:#a0000a;font-weight:600;}
+.pill.na.selected-yes{background:#f0f0f0;border-color:#aaa;color:#555;}
+.note-row{margin-top:.5rem;}
+.note-row input{width:100%;padding:.35rem .6rem;border:1.5px solid #dfe4ee;
+                 border-radius:6px;font-size:.85rem;}
+.note-row input:focus{outline:none;border-color:#2E86AB;}
+
+/* ── summary / sticky footer ── */
+#summary{position:sticky;bottom:0;background:rgba(255,255,255,.97);
+          border-top:2px solid #dfe4ee;padding:.6rem 1.25rem;
+          display:flex;align-items:center;gap:1rem;max-width:980px;margin:0 auto;}
+#summary-text{flex:1;font-size:.85rem;color:#555;}
+#dl-btn{background:#2E86AB;color:#fff;border:0;padding:.55rem 1.2rem;
+          border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;}
+#dl-btn:hover{background:#226d8e;}
+#dl-btn:disabled{background:#aaa;cursor:default;}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <h1>ShopWiser · Personal Review</h1>
+  <div id="progress-wrap">
+    <div id="progress-bar-outer"><div id="progress-bar"></div></div>
+    <div id="progress-label">0 / 50 answered</div>
+  </div>
+  <div id="kbd-hint">y/n = Q1 · u/j = Q2 · i/k = Q3 · Tab = next</div>
+</div>
+
+<div id="main">
+  <section class="cluster" id="c1050" data-cid="1050" data-idx="1">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">1 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#1050</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Wright&#x27;s Baking Madeira Cake Mix</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Wright&#x27;s Baking Madeira Cake Mix 500g
+            <div class="norm-name">wrights baking madeira cake mix</div>
+          </td>
+          <td class="num">500.0 g</td>
+          <td class="num">£2.6</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Wright&#x27;s Baking Madeira Cake Mix
+            <div class="norm-name">wrights baking madeira cake mix</div>
+          </td>
+          <td class="num">500.0 g</td>
+          <td class="num">£2.19</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Wright&#x27;s Madeira Cake Mix 500g
+            <div class="norm-name">wrights madeira cake mix</div>
+          </td>
+          <td class="num">500.0 g</td>
+          <td class="num">£2.6</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q1050">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_1050" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_1050" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_1050" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_1050" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_1050" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_1050" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_1050" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_1050" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c1594" data-cid="1594" data-idx="2">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">2 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#1594</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      <span class="meta-tag brand-tag">mcvities</span>
+    </div>
+    <div class="core-name">Rich Tea The Classic One Twin Pack</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">McVitie&#x27;s Rich Tea The Classic One Twin Pack 2x300g, 600g
+            <div class="norm-name">mcvities rich tea the classic one twin pack</div>
+          </td>
+          <td class="num">600.0 g × 2</td>
+          <td class="num">£3.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">McVitie&#x27;s Rich Tea The Classic One Twin Pack
+            <div class="norm-name">mcvities rich tea the classic one twin pack</div>
+          </td>
+          <td class="num">600.0 g</td>
+          <td class="num">£3.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q1594">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_1594" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_1594" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_1594" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_1594" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_1594" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_1594" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_1594" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_1594" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c1643" data-cid="1643" data-idx="3">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">3 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#1643</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      <span class="meta-tag brand-tag">jacobs</span>
+    </div>
+    <div class="core-name">Crispbreads Chive</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Jacob&#x27;s Crispbreads Chive Crackers 5 x 30g, 190g
+            <div class="norm-name">jacobs crispbreads chive crackers</div>
+          </td>
+          <td class="num">190.0 g × 5</td>
+          <td class="num">£1.25</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Jacob&#x27;s Crispbreads Chive
+            <div class="norm-name">jacobs crispbreads chive</div>
+          </td>
+          <td class="num">190.0 g</td>
+          <td class="num">£1.25</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q1643">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_1643" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_1643" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_1643" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_1643" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_1643" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_1643" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_1643" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_1643" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c1662" data-cid="1662" data-idx="4">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">4 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#1662</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Milk Chocolate Digestives</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">ASDA Milk Chocolate Digestives
+            <div class="norm-name">milk chocolate digestives</div>
+          </td>
+          <td class="num">300.0 g</td>
+          <td class="num">£0.85</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Morrisons Milk Chocolate Digestives
+            <div class="norm-name">milk chocolate digestives</div>
+          </td>
+          <td class="num">300.0 g</td>
+          <td class="num">£0.85</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Sainsbury&#x27;s Milk Chocolate Digestives 300g
+            <div class="norm-name">milk chocolate digestives</div>
+          </td>
+          <td class="num">300.0 g</td>
+          <td class="num">£0.85</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q1662">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_1662" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_1662" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_1662" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_1662" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_1662" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_1662" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_1662" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_1662" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c1726" data-cid="1726" data-idx="5">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">5 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#1726</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      <span class="meta-tag brand-tag">belvita</span>
+    </div>
+    <div class="core-name">Breakfast Biscuits Golden Oats</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Belvita Breakfast Biscuits Golden Oats 5 Pack
+            <div class="norm-name">belvita breakfast biscuits golden oats</div>
+          </td>
+          <td class="num">220.0 g × 5</td>
+          <td class="num">£1.25</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">BelVita Breakfast Biscuits Golden Oats 5 Pack
+            <div class="norm-name">belvita breakfast biscuits golden oats</div>
+          </td>
+          <td class="num">225.0 g × 5</td>
+          <td class="num">£1.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q1726">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_1726" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_1726" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_1726" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_1726" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_1726" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_1726" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_1726" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_1726" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c2406" data-cid="2406" data-idx="6">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">6 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#2406</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">drinks</span>
+      <span class="meta-tag brand-tag">sipsmith</span>
+    </div>
+    <div class="core-name">London Limited Edition Very Berry Gin</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Sipsmith London Limited Edition Very Berry Gin 700ml
+            <div class="norm-name">sipsmith london limited edition very berry gin</div>
+          </td>
+          <td class="num">700.0 ml</td>
+          <td class="num">£30.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Sipsmith London Limited Edition Very Berry Gin 700ml
+            <div class="norm-name">sipsmith london limited edition very berry gin</div>
+          </td>
+          <td class="num">700.0 ml</td>
+          <td class="num">£30.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q2406">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_2406" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_2406" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_2406" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_2406" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_2406" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_2406" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_2406" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_2406" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c2460" data-cid="2460" data-idx="7">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">7 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#2460</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">drinks</span>
+      <span class="meta-tag brand-tag">glenfiddich</span>
+    </div>
+    <div class="core-name">12 Year Old Single Malt Scotch Whisky</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Glenfiddich 12 Year Old Single Malt Scotch Whisky
+            <div class="norm-name">glenfiddich 12 year old single malt scotch whisky</div>
+          </td>
+          <td class="num">355.0 ml</td>
+          <td class="num">£20.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Glenfiddich 12 Year Old Single Malt Scotch Whisky
+            <div class="norm-name">glenfiddich 12 year old single malt scotch whisky</div>
+          </td>
+          <td class="num">355.0 ml</td>
+          <td class="num">£20.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Glenfiddich 12 Year Old Single Malt Scotch Whisky 35cl
+            <div class="norm-name">glenfiddich 12 year old single malt scotch whisky</div>
+          </td>
+          <td class="num">350.0 ml</td>
+          <td class="num">£16.5</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q2460">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_2460" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_2460" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_2460" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_2460" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_2460" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_2460" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_2460" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_2460" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c3403" data-cid="3403" data-idx="8">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">8 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#3403</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">frozen</span>
+      <span class="meta-tag brand-tag">cartedor</span>
+    </div>
+    <div class="core-name">Mini Indulgence Ice Cream Dessert Chocolate Cookie</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Carte D&#x27;Or Mini Indulgence Ice Cream Dessert Chocolate Cookie 200 ml
+            <div class="norm-name">carte dor mini indulgence ice cream dessert chocolate cookie</div>
+          </td>
+          <td class="num">200.0 ml</td>
+          <td class="num">£1.25</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Carte D&#x27;or Mini Indulgence Ice Cream Dessert Chocolate Cookie 200ml
+            <div class="norm-name">carte dor mini indulgence ice cream dessert chocolate cookie</div>
+          </td>
+          <td class="num">200.0 ml</td>
+          <td class="num">£1.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q3403">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_3403" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_3403" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_3403" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_3403" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_3403" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_3403" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_3403" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_3403" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c3725" data-cid="3725" data-idx="9">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">9 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#3725</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">fresh_food</span>
+      
+    </div>
+    <div class="core-name">Honey Roast Ham Slices</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">ASDA Wafer Thin Honey Roast Ham Slices
+            <div class="norm-name">wafer thin honey roast ham slices</div>
+          </td>
+          <td class="num">200.0 g</td>
+          <td class="num">£2.0</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Morrisons Honey Roast Ham Slices
+            <div class="norm-name">honey roast ham slices</div>
+          </td>
+          <td class="num">200.0 g</td>
+          <td class="num">£3.25</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q3725">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_3725" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_3725" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_3725" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_3725" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_3725" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_3725" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_3725" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_3725" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c4476" data-cid="4476" data-idx="10">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">10 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#4476</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Rio Mare Tuna In Olive Oil</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Rio Mare Tuna in Olive Oil 3 x 80g
+            <div class="norm-name">rio mare tuna in olive oil</div>
+          </td>
+          <td class="num">240.0 g × 3</td>
+          <td class="num">£4.85</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Rio Mare Tuna In Olive Oil Tins (3x80g)
+            <div class="norm-name">rio mare tuna in olive oil tins</div>
+          </td>
+          <td class="num">240.0 g × 3</td>
+          <td class="num">£4.85</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Rio Mare Tuna In Olive Oil 3X80g
+            <div class="norm-name">rio mare tuna in olive oil</div>
+          </td>
+          <td class="num">240.0 g × 3</td>
+          <td class="num">£5.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q4476">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_4476" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_4476" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_4476" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_4476" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_4476" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_4476" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_4476" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_4476" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c4682" data-cid="4682" data-idx="11">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">11 / 50</span>
+      <span class="cluster-sz sz4">4-way</span>
+      <span class="cid">#4682</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Light Mayonnaise</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">ASDA Light Mayonnaise
+            <div class="norm-name">light mayonnaise</div>
+          </td>
+          <td class="num">500.0 ml</td>
+          <td class="num">£1.2</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Morrisons Light Mayonnaise Squeezy
+            <div class="norm-name">light mayonnaise squeezy</div>
+          </td>
+          <td class="num">500.0 ml</td>
+          <td class="num">£1.25</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Sainsbury&#x27;s Mayonnaise Light Squeezy 500ml
+            <div class="norm-name">mayonnaise light squeezy</div>
+          </td>
+          <td class="num">500.0 ml</td>
+          <td class="num">£1.25</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco Light Mayonnaise 450Ml
+            <div class="norm-name">light mayonnaise</div>
+          </td>
+          <td class="num">450.0 ml</td>
+          <td class="num">£0.89</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q4682">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_4682" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_4682" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_4682" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_4682" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_4682" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_4682" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_4682" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_4682" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c4952" data-cid="4952" data-idx="12">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">12 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#4952</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Ground Fenugreek</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">COOK by ASDA Ground Fenugreek 58g
+            <div class="norm-name">ground fenugreek</div>
+          </td>
+          <td class="num">58.0 g</td>
+          <td class="num">£1.0</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Sainsbury&#x27;s Ground Fenugreek 50g
+            <div class="norm-name">ground fenugreek</div>
+          </td>
+          <td class="num">50.0 g</td>
+          <td class="num">£1.1</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco Ground Fenugreek 55G
+            <div class="norm-name">ground fenugreek</div>
+          </td>
+          <td class="num">55.0 g</td>
+          <td class="num">£1.0</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q4952">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_4952" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_4952" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_4952" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_4952" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_4952" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_4952" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_4952" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_4952" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c4991" data-cid="4991" data-idx="13">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">13 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#4991</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      <span class="meta-tag brand-tag">schwartz</span>
+    </div>
+    <div class="core-name">Garlic Pepper Jar</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Schwartz Garlic Pepper
+            <div class="norm-name">schwartz garlic pepper</div>
+          </td>
+          <td class="num">45.5 g</td>
+          <td class="num">£2.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Schwartz Garlic Pepper Jar
+            <div class="norm-name">schwartz garlic pepper jar</div>
+          </td>
+          <td class="num">44.8 g</td>
+          <td class="num">£2.15</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Schwartz Garlic Pepper 45G Jar
+            <div class="norm-name">schwartz garlic pepper jar</div>
+          </td>
+          <td class="num">45.0 g</td>
+          <td class="num">£2.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q4991">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_4991" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_4991" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_4991" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_4991" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_4991" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_4991" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_4991" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_4991" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c5378" data-cid="5378" data-idx="14">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">14 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#5378</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">fresh_food</span>
+      
+    </div>
+    <div class="core-name">Shaken Udder Strawberry Dream Milkshake</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Shaken Udder Strawberry Dream Milkshake
+            <div class="norm-name">shaken udder strawberry dream milkshake</div>
+          </td>
+          <td class="num">750.0 ml</td>
+          <td class="num">£2.45</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Shaken Udder Strawberry Dream Milkshake 750ml
+            <div class="norm-name">shaken udder strawberry dream milkshake</div>
+          </td>
+          <td class="num">750.0 ml</td>
+          <td class="num">£2.45</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Shaken Udder Strawberry Dream Milkshake 750ml
+            <div class="norm-name">shaken udder strawberry dream milkshake</div>
+          </td>
+          <td class="num">750.0 ml</td>
+          <td class="num">£2.45</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q5378">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_5378" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_5378" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_5378" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_5378" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_5378" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_5378" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_5378" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_5378" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c6073" data-cid="6073" data-idx="15">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">15 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#6073</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">bakery</span>
+      <span class="meta-tag brand-tag">warburtons</span>
+    </div>
+    <div class="core-name">Farmhouse Soft White Bread</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Warburtons Farmhouse Soft White Bread
+            <div class="norm-name">warburtons farmhouse soft white bread</div>
+          </td>
+          <td class="num">800.0 g</td>
+          <td class="num">£1.6</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Warburtons Soft Farmhouse Thick Sliced White Bread 800g
+            <div class="norm-name">warburtons soft farmhouse thick sliced white bread</div>
+          </td>
+          <td class="num">800.0 g</td>
+          <td class="num">£1.6</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Warburtons Farmhouse White Bread 800G
+            <div class="norm-name">warburtons farmhouse white bread</div>
+          </td>
+          <td class="num">800.0 g</td>
+          <td class="num">£1.6</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q6073">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_6073" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_6073" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_6073" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_6073" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_6073" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_6073" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_6073" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_6073" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c6142" data-cid="6142" data-idx="16">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">16 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#6142</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">bakery</span>
+      
+    </div>
+    <div class="core-name">Coffee and Walnut Cake</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">ASDA Extra Special Coffee and Walnut Cake
+            <div class="norm-name">coffee and walnut cake</div>
+          </td>
+          <td class="num">—</td>
+          <td class="num">£3.0</td>
+          <td><span class="tier tier-premium">Extra Special</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Sainsbury&#x27;s Columbian Coffee &amp; Walnut Cake, Taste the Difference 400g
+            <div class="norm-name">columbian coffee and walnut cake</div>
+          </td>
+          <td class="num">400.0 g</td>
+          <td class="num">£2.25</td>
+          <td><span class="tier tier-premium">Taste The Difference</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco Finest Coffee &amp; Walnut Cake
+            <div class="norm-name">coffee and walnut cake</div>
+          </td>
+          <td class="num">—</td>
+          <td class="num">£2.5</td>
+          <td><span class="tier tier-premium">Finest</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q6142">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_6142" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_6142" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_6142" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_6142" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_6142" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_6142" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_6142" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_6142" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c6894" data-cid="6894" data-idx="17">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">17 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#6894</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      <span class="meta-tag brand-tag">bensoriginal</span>
+    </div>
+    <div class="core-name">Sweet and Sour Original Sauce</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Ben&#x27;s Original Sweet and Sour Original No Added Sugar Sauce
+            <div class="norm-name">bens original sweet and sour original sauce</div>
+          </td>
+          <td class="num">450.0 g</td>
+          <td class="num">£2.5</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Bens Original Sweet and Sour No Added Sugar Sauce 440g
+            <div class="norm-name">bens original sweet and sour sauce</div>
+          </td>
+          <td class="num">440.0 g</td>
+          <td class="num">£2.5</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q6894">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_6894" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_6894" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_6894" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_6894" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_6894" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_6894" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_6894" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_6894" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c7609" data-cid="7609" data-idx="18">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">18 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#7609</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Tony&#x27;s Chocolonely Dark Chocolate Almond Sea Salt 51%</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Tony&#x27;s Chocolonely Fairtrade Dark Chocolate Almond Sea Salt 51%
+            <div class="norm-name">tonys chocolonely dark chocolate almond sea salt 51</div>
+          </td>
+          <td class="num">175.0 g</td>
+          <td class="num">£3.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Tony&#x27;s Chocolonely Dark Chocolate Almond Sea Salt 51% 180g
+            <div class="norm-name">tonys chocolonely dark chocolate almond sea salt 51</div>
+          </td>
+          <td class="num">180.0 g</td>
+          <td class="num">£3.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q7609">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_7609" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_7609" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_7609" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_7609" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_7609" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_7609" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_7609" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_7609" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c8144" data-cid="8144" data-idx="19">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">19 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#8144</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Africa&#x27;s Finest Plantain Fufu</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Africa&#x27;s Finest Plantain Fufu
+            <div class="norm-name">africas finest plantain fufu</div>
+          </td>
+          <td class="num">680.0 g</td>
+          <td class="num">£3.75</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Africa&#x27;s Finest Plantain Fufu 680G
+            <div class="norm-name">africas finest plantain fufu</div>
+          </td>
+          <td class="num">680.0 g</td>
+          <td class="num">£4.2</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q8144">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_8144" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_8144" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_8144" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_8144" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_8144" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_8144" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_8144" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_8144" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c8223" data-cid="8223" data-idx="20">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">20 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#8223</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      <span class="meta-tag brand-tag">encona</span>
+    </div>
+    <div class="core-name">African Peri Peri Sauce</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Encona African Peri Peri Sauce
+            <div class="norm-name">encona african peri peri sauce</div>
+          </td>
+          <td class="num">142.9 ml</td>
+          <td class="num">£1.2</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Encona Peri Peri Sauce
+            <div class="norm-name">encona peri peri sauce</div>
+          </td>
+          <td class="num">140.0 g</td>
+          <td class="num">£1.39</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q8223">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_8223" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_8223" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_8223" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_8223" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_8223" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_8223" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_8223" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_8223" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c8312" data-cid="8312" data-idx="21">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">21 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#8312</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">fresh_food</span>
+      
+    </div>
+    <div class="core-name">Coleslaw</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">JUST ESSENTIALS by ASDA Coleslaw
+            <div class="norm-name">coleslaw</div>
+          </td>
+          <td class="num">300.0 g</td>
+          <td class="num">£0.5</td>
+          <td><span class="tier tier-value">Just Essentials</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Morrisons Savers Coleslaw
+            <div class="norm-name">coleslaw</div>
+          </td>
+          <td class="num">300.0 g</td>
+          <td class="num">£0.5</td>
+          <td><span class="tier tier-value">Savers</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q8312">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_8312" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_8312" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_8312" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_8312" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_8312" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_8312" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_8312" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_8312" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c8431" data-cid="8431" data-idx="22">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">22 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#8431</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">fresh_food</span>
+      
+    </div>
+    <div class="core-name">British Chicken Thigh Fillets</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Shazans Chicken Thigh Fillets
+            <div class="norm-name">shazans chicken thigh fillets</div>
+          </td>
+          <td class="num">600.0 g</td>
+          <td class="num">£4.5</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco British Chicken Thigh Fillets 600G
+            <div class="norm-name">british chicken thigh fillets</div>
+          </td>
+          <td class="num">600.0 g</td>
+          <td class="num">£5.0</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q8431">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_8431" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_8431" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_8431" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_8431" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_8431" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_8431" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_8431" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_8431" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c8445" data-cid="8445" data-idx="23">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">23 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#8445</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">fresh_food</span>
+      
+    </div>
+    <div class="core-name">Lamb Leg Steaks</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">ASDA Tender Lamb Leg Steaks
+            <div class="norm-name">tender lamb leg steaks</div>
+          </td>
+          <td class="num">340.0 g</td>
+          <td class="num">£5.0</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco 4 Lamb Leg Steaks 400g
+            <div class="norm-name">lamb leg steaks</div>
+          </td>
+          <td class="num">400.0 g × 4</td>
+          <td class="num">£5.75</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q8445">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_8445" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_8445" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_8445" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_8445" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_8445" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_8445" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_8445" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_8445" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c8481" data-cid="8481" data-idx="24">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">24 / 50</span>
+      <span class="cluster-sz sz4">4-way</span>
+      <span class="cid">#8481</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">fresh_food</span>
+      <span class="meta-tag brand-tag">richmond</span>
+    </div>
+    <div class="core-name">12 Thick Pork Sausages</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Richmond 12 Thick Pork Sausages
+            <div class="norm-name">richmond 12 thick pork sausages</div>
+          </td>
+          <td class="num">600.0 g</td>
+          <td class="num">£3.6</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Richmond 12 Thick Pork Sausages
+            <div class="norm-name">richmond 12 thick pork sausages</div>
+          </td>
+          <td class="num">600.0 g</td>
+          <td class="num">£3.6</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Richmond Thick Pork Sausages x12 615g
+            <div class="norm-name">richmond thick pork sausages</div>
+          </td>
+          <td class="num">615.0 g × 12</td>
+          <td class="num">£2.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Richmond 12 Thick Pork Sausages 615G
+            <div class="norm-name">richmond 12 thick pork sausages</div>
+          </td>
+          <td class="num">615.0 g</td>
+          <td class="num">£3.6</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q8481">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_8481" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_8481" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_8481" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_8481" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_8481" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_8481" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_8481" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_8481" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c9100" data-cid="9100" data-idx="25">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">25 / 50</span>
+      <span class="cluster-sz sz4">4-way</span>
+      <span class="cid">#9100</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">frozen</span>
+      <span class="meta-tag brand-tag">magnum</span>
+    </div>
+    <div class="core-name">Almond Ice Cream Sticks</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Magnum Ice Cream Sticks Almond 3x100ml
+            <div class="norm-name">magnum ice cream sticks almond</div>
+          </td>
+          <td class="num">300.0 ml × 3</td>
+          <td class="num">£2.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Magnum Almond Ice Cream Sticks
+            <div class="norm-name">magnum almond ice cream sticks</div>
+          </td>
+          <td class="num">300.0 ml</td>
+          <td class="num">£2.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Magnum Almond Ice Cream Sticks 3x100ml
+            <div class="norm-name">magnum almond ice cream sticks</div>
+          </td>
+          <td class="num">300.0 ml × 3</td>
+          <td class="num">£3.25</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Magnum Almond Ice Cream Sticks 3x100ml
+            <div class="norm-name">magnum almond ice cream sticks</div>
+          </td>
+          <td class="num">300.0 ml × 3</td>
+          <td class="num">£3.25</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q9100">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_9100" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_9100" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_9100" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_9100" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_9100" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_9100" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_9100" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_9100" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c9369" data-cid="9369" data-idx="26">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">26 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#9369</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Scotch Broth</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">ASDA Scotch Broth
+            <div class="norm-name">scotch broth</div>
+          </td>
+          <td class="num">400.0 g</td>
+          <td class="num">£0.75</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Morrisons Scotch Broth with Mut…
+            <div class="norm-name">scotch broth with mut</div>
+          </td>
+          <td class="num">400.0 g</td>
+          <td class="num">£0.75</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q9369">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_9369" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_9369" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_9369" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_9369" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_9369" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_9369" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_9369" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_9369" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c9494" data-cid="9494" data-idx="27">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">27 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#9494</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">fresh_food</span>
+      <span class="meta-tag brand-tag">heck</span>
+    </div>
+    <div class="core-name">Simply Chicken Chipolatas</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">HECK Simply Chicken Chipolatas
+            <div class="norm-name">heck simply chicken chipolatas</div>
+          </td>
+          <td class="num">340.0 g</td>
+          <td class="num">£2.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Heck Simply Chicken Chipolatas x10 340g
+            <div class="norm-name">heck simply chicken chipolatas</div>
+          </td>
+          <td class="num">340.0 g × 10</td>
+          <td class="num">£2.5</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Heck Simply Chicken Chipolatas 340G
+            <div class="norm-name">heck simply chicken chipolatas</div>
+          </td>
+          <td class="num">340.0 g</td>
+          <td class="num">£2.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q9494">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_9494" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_9494" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_9494" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_9494" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_9494" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_9494" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_9494" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_9494" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c9658" data-cid="9658" data-idx="28">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">28 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#9658</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">free-from</span>
+      <span class="meta-tag brand-tag">arla</span>
+    </div>
+    <div class="core-name">Jord Chilled Oat and Hemp Drink</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Arla Jord Chilled Oat &amp; Hemp Drink
+            <div class="norm-name">arla jord chilled oat and hemp drink</div>
+          </td>
+          <td class="num">1000.0 ml</td>
+          <td class="num">£1.9</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Arla Jord Chilled Oat &amp; Hemp Drink 1L
+            <div class="norm-name">arla jord chilled oat and hemp drink</div>
+          </td>
+          <td class="num">1000.0 ml</td>
+          <td class="num">£1.9</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q9658">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_9658" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_9658" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_9658" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_9658" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_9658" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_9658" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_9658" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_9658" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c9848" data-cid="9848" data-idx="29">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">29 / 50</span>
+      <span class="cluster-sz sz4">4-way</span>
+      <span class="cid">#9848</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Thai Green Curry Paste</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">ASDA Thai Green Curry Paste 200g
+            <div class="norm-name">thai green curry paste</div>
+          </td>
+          <td class="num">200.0 g</td>
+          <td class="num">£2.4</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Thai Taste Green Curry Paste Pouch
+            <div class="norm-name">thai taste green curry paste pouch</div>
+          </td>
+          <td class="num">200.0 g</td>
+          <td class="num">£2.45</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Thai Taste Green Curry Paste 200g
+            <div class="norm-name">thai taste green curry paste</div>
+          </td>
+          <td class="num">200.0 g</td>
+          <td class="num">£2.45</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco Thai Green Curry Paste 200G
+            <div class="norm-name">thai green curry paste</div>
+          </td>
+          <td class="num">200.0 g</td>
+          <td class="num">£2.4</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q9848">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_9848" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_9848" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_9848" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_9848" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_9848" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_9848" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_9848" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_9848" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c9874" data-cid="9874" data-idx="30">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">30 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#9874</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      <span class="meta-tag brand-tag">mccain</span>
+    </div>
+    <div class="core-name">Quick Cook French Fries</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">McCain Quick Cook French Fries
+            <div class="norm-name">mccain quick cook french fries</div>
+          </td>
+          <td class="num">750.0 g</td>
+          <td class="num">£3.19</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">McCain Quick Cook French Fries 750G
+            <div class="norm-name">mccain quick cook french fries</div>
+          </td>
+          <td class="num">750.0 g</td>
+          <td class="num">£3.35</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q9874">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_9874" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_9874" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_9874" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_9874" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_9874" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_9874" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_9874" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_9874" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c10326" data-cid="10326" data-idx="31">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">31 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#10326</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">fresh_food</span>
+      
+    </div>
+    <div class="core-name">Jarlsberg Cheese Slices</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Jarlsberg Original Cheese Slices
+            <div class="norm-name">jarlsberg original cheese slices</div>
+          </td>
+          <td class="num">160.0 g</td>
+          <td class="num">£2.45</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Jarlsberg Cheese Slices 160g
+            <div class="norm-name">jarlsberg cheese slices</div>
+          </td>
+          <td class="num">160.0 g</td>
+          <td class="num">£2.45</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q10326">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_10326" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_10326" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_10326" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_10326" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_10326" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_10326" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_10326" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_10326" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c10552" data-cid="10552" data-idx="32">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">32 / 50</span>
+      <span class="cluster-sz sz4">4-way</span>
+      <span class="cid">#10552</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">fresh_food</span>
+      
+    </div>
+    <div class="core-name">La Famiglia Rana Spinach and Ricotta Fresh Tortelloni</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Rana Spinach &amp; Ricotta Fresh Tortelloni
+            <div class="norm-name">rana spinach and ricotta fresh tortelloni</div>
+          </td>
+          <td class="num">250.0 g</td>
+          <td class="num">£3.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">La Famiglia Rana Spinach &amp; Ricotta Tortelloni
+            <div class="norm-name">la famiglia rana spinach and ricotta tortelloni</div>
+          </td>
+          <td class="num">250.0 g</td>
+          <td class="num">£2.99</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">La Famiglia Rana Spinach &amp; Ricotta Fresh Tortelloni 250g
+            <div class="norm-name">la famiglia rana spinach and ricotta fresh tortelloni</div>
+          </td>
+          <td class="num">250.0 g</td>
+          <td class="num">£3.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">La Famiglia Rana Spinach &amp; Ricotta Fresh Tortelloni 250g
+            <div class="norm-name">la famiglia rana spinach and ricotta fresh tortelloni</div>
+          </td>
+          <td class="num">250.0 g</td>
+          <td class="num">£3.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q10552">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_10552" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_10552" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_10552" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_10552" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_10552" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_10552" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_10552" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_10552" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c11022" data-cid="11022" data-idx="33">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">33 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#11022</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      <span class="meta-tag brand-tag">veetee</span>
+    </div>
+    <div class="core-name">Heat and Eat Pilau Rice Pots</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Veetee Heat &amp; Eat Pilau Rice Pots
+            <div class="norm-name">veetee heat and eat pilau rice pots</div>
+          </td>
+          <td class="num">250.0 g</td>
+          <td class="num">£1.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Veetee Heat &amp; Eat Pilau Rice Pots x2 250g
+            <div class="norm-name">veetee heat and eat pilau rice pots</div>
+          </td>
+          <td class="num">250.0 g × 2</td>
+          <td class="num">£1.15</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Veetee Heat &amp; Eat Pilau Rice Pots 2X125g
+            <div class="norm-name">veetee heat and eat pilau rice pots</div>
+          </td>
+          <td class="num">250.0 g × 2</td>
+          <td class="num">£1.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q11022">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_11022" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_11022" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_11022" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_11022" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_11022" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_11022" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_11022" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_11022" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c11907" data-cid="11907" data-idx="34">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">34 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#11907</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Karyatis Roasted Red Peppers</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Peppadew Red Roasted Peppers (465g)
+            <div class="norm-name">peppadew red roasted peppers</div>
+          </td>
+          <td class="num">465.0 g</td>
+          <td class="num">£3.75</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Karyatis Roasted Red Peppers 450g (350g*)
+            <div class="norm-name">karyatis roasted red peppers</div>
+          </td>
+          <td class="num">450.0 g</td>
+          <td class="num">£2.35</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Peppadew Roasted Red Peppers 465g
+            <div class="norm-name">peppadew roasted red peppers</div>
+          </td>
+          <td class="num">465.0 g</td>
+          <td class="num">£2.5</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q11907">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_11907" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_11907" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_11907" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_11907" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_11907" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_11907" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_11907" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_11907" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c12506" data-cid="12506" data-idx="35">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">35 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#12506</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Comptons Gravy Salt</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Comptons Gravy Salt
+            <div class="norm-name">comptons gravy salt</div>
+          </td>
+          <td class="num">125.0 g</td>
+          <td class="num">£0.6</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Comptons Gravy Salt 128G
+            <div class="norm-name">comptons gravy salt</div>
+          </td>
+          <td class="num">128.0 g</td>
+          <td class="num">£0.6</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q12506">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_12506" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_12506" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_12506" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_12506" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_12506" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_12506" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_12506" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_12506" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c12680" data-cid="12680" data-idx="36">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">36 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#12680</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">drinks</span>
+      
+    </div>
+    <div class="core-name">Greene King Abbot Ale</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Greene King Abbot Ale Bottle
+            <div class="norm-name">greene king abbot ale bottle</div>
+          </td>
+          <td class="num">500.0 ml</td>
+          <td class="num">£2.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Greene King Abbot Ale 500ml
+            <div class="norm-name">greene king abbot ale</div>
+          </td>
+          <td class="num">500.0 ml</td>
+          <td class="num">£2.25</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q12680">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_12680" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_12680" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_12680" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_12680" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_12680" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_12680" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_12680" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_12680" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c13521" data-cid="13521" data-idx="37">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">37 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#13521</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">frozen</span>
+      <span class="meta-tag brand-tag">oreo</span>
+    </div>
+    <div class="core-name">Cheesecake</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Oreo Cheesecake
+            <div class="norm-name">oreo cheesecake</div>
+          </td>
+          <td class="num">425.0 g</td>
+          <td class="num">£3.99</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Oreo Cheesecake 425g
+            <div class="norm-name">oreo cheesecake</div>
+          </td>
+          <td class="num">425.0 g</td>
+          <td class="num">£4.5</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q13521">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_13521" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_13521" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_13521" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_13521" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_13521" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_13521" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_13521" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_13521" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c14044" data-cid="14044" data-idx="38">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">38 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#14044</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">drinks</span>
+      <span class="meta-tag brand-tag">tango</span>
+    </div>
+    <div class="core-name">Paradise Punch Bottle</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Tango Paradise Punch Sugar Free Bottle
+            <div class="norm-name">tango paradise punch bottle</div>
+          </td>
+          <td class="num">2000.0 ml</td>
+          <td class="num">£2.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tango Paradise Punch Sugar Free Bottle 2L
+            <div class="norm-name">tango paradise punch bottle</div>
+          </td>
+          <td class="num">2000.0 ml</td>
+          <td class="num">£1.25</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q14044">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_14044" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_14044" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_14044" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_14044" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_14044" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_14044" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_14044" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_14044" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c14329" data-cid="14329" data-idx="39">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">39 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#14329</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">fresh_food</span>
+      
+    </div>
+    <div class="core-name">Blueberries</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Morrisons The Best Blueberries
+            <div class="norm-name">blueberries</div>
+          </td>
+          <td class="num">150.0 g</td>
+          <td class="num">£2.49</td>
+          <td><span class="tier tier-premium">The Best</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Sainsbury&#x27;s Blueberries, Taste the Difference
+            <div class="norm-name">blueberries</div>
+          </td>
+          <td class="num">150.0 g</td>
+          <td class="num">£2.5</td>
+          <td><span class="tier tier-premium">Taste The Difference</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco Finest Blueberries 150G
+            <div class="norm-name">blueberries</div>
+          </td>
+          <td class="num">150.0 g</td>
+          <td class="num">£2.5</td>
+          <td><span class="tier tier-premium">Finest</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q14329">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_14329" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_14329" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_14329" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_14329" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_14329" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_14329" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_14329" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_14329" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c14418" data-cid="14418" data-idx="40">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">40 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#14418</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">fresh_food</span>
+      
+    </div>
+    <div class="core-name">Ripe And Ready Mango</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Morrisons Ripe &amp; Ready To Eat Mango
+            <div class="norm-name">ripe and mango</div>
+          </td>
+          <td class="num">—</td>
+          <td class="num">£2.5</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco Ripe And Ready 2 Pack Mango
+            <div class="norm-name">ripe and ready mango</div>
+          </td>
+          <td class="num">—</td>
+          <td class="num">£2.3</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q14418">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_14418" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_14418" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_14418" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_14418" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_14418" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_14418" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_14418" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_14418" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c15016" data-cid="15016" data-idx="41">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">41 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#15016</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">drinks</span>
+      <span class="meta-tag brand-tag">fevertree</span>
+    </div>
+    <div class="core-name">Premium Lemonade</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Morrisons</strong></td>
+          <td class="name-cell">Fever-Tree Premium Lemonade
+            <div class="norm-name">fever tree premium lemonade</div>
+          </td>
+          <td class="num">900.0 ml</td>
+          <td class="num">£3.7</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Fever-Tree Premium Sicilian Lemonade 4x250ml
+            <div class="norm-name">fever tree premium sicilian lemonade</div>
+          </td>
+          <td class="num">1000.0 ml × 4</td>
+          <td class="num">£4.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q15016">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_15016" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_15016" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_15016" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_15016" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_15016" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_15016" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_15016" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_15016" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c15299" data-cid="15299" data-idx="42">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">42 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#15299</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">British Single Cream</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Sainsbury&#x27;s British Single Cream 300ml
+            <div class="norm-name">british single cream</div>
+          </td>
+          <td class="num">300.0 ml</td>
+          <td class="num">£0.99</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco British Single Cream 300Ml
+            <div class="norm-name">british single cream</div>
+          </td>
+          <td class="num">300.0 ml</td>
+          <td class="num">£1.2</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q15299">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_15299" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_15299" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_15299" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_15299" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_15299" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_15299" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_15299" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_15299" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c15494" data-cid="15494" data-idx="43">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">43 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#15494</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Biscuits For Cheese</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Sainsbury&#x27;s Biscuits For Cheese 500g
+            <div class="norm-name">biscuits for cheese</div>
+          </td>
+          <td class="num">500.0 g</td>
+          <td class="num">£3.65</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco Biscuits For Cheese 500G
+            <div class="norm-name">biscuits for cheese</div>
+          </td>
+          <td class="num">500.0 g</td>
+          <td class="num">£3.65</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q15494">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_15494" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_15494" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_15494" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_15494" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_15494" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_15494" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_15494" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_15494" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c15543" data-cid="15543" data-idx="44">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">44 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#15543</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">drinks</span>
+      
+    </div>
+    <div class="core-name">Gold Instant Coffee</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Sainsbury&#x27;s Gold Roast Instant Coffee 500g
+            <div class="norm-name">gold roast instant coffee</div>
+          </td>
+          <td class="num">500.0 g</td>
+          <td class="num">£6.0</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco Gold Instant Coffee 500G
+            <div class="norm-name">gold instant coffee</div>
+          </td>
+          <td class="num">500.0 g</td>
+          <td class="num">£5.25</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q15543">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_15543" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_15543" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_15543" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_15543" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_15543" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_15543" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_15543" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_15543" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c16306" data-cid="16306" data-idx="45">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">45 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#16306</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">drinks</span>
+      <span class="meta-tag brand-tag">lavazza</span>
+    </div>
+    <div class="core-name">Qualita Rossa Coffee Beans</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Lavazza Qualita Rossa Coffee Beans 250g
+            <div class="norm-name">lavazza qualita rossa coffee beans</div>
+          </td>
+          <td class="num">250.0 g</td>
+          <td class="num">£4.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Lavazza Qualita Rossa Coffee Beans 250G
+            <div class="norm-name">lavazza qualita rossa coffee beans</div>
+          </td>
+          <td class="num">250.0 g</td>
+          <td class="num">£4.4</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q16306">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_16306" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_16306" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_16306" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_16306" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_16306" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_16306" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_16306" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_16306" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c16604" data-cid="16604" data-idx="46">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">46 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#16604</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      <span class="meta-tag brand-tag">droetker</span>
+    </div>
+    <div class="core-name">Coloured Gel - Green Extra Strong</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Dr. Oetker Extra Strong Green Food Colouring Gel 15g
+            <div class="norm-name">dr oetker extra strong green food coloring gel</div>
+          </td>
+          <td class="num">15.0 g</td>
+          <td class="num">£1.4</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Dr. Oetker Coloured Gel - Green Extra Strong 15G
+            <div class="norm-name">dr oetker coloured gel green extra strong</div>
+          </td>
+          <td class="num">15.0 g</td>
+          <td class="num">£1.25</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-br">branded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q16604">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_16604" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_16604" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_16604" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_16604" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_16604" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_16604" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_16604" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_16604" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c16897" data-cid="16897" data-idx="47">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">47 / 50</span>
+      <span class="cluster-sz sz3">3-way</span>
+      <span class="cid">#16897</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Pip and Nut Smooth Sweet Salty Peanut Butter</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>ASDA</strong></td>
+          <td class="name-cell">Pip &amp; Nut Smooth Sweet &amp; Salty Peanut Butter 300g
+            <div class="norm-name">pip and nut smooth sweet and salty peanut butter</div>
+          </td>
+          <td class="num">300.0 g</td>
+          <td class="num">£3.0</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Pip &amp; Nut Smooth Sweet Salty Peanut Butter 300g
+            <div class="norm-name">pip and nut smooth sweet salty peanut butter</div>
+          </td>
+          <td class="num">300.0 g</td>
+          <td class="num">£3.25</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Pip &amp; Nut Sweet &amp; Salty Smooth Peanut Butter 300G
+            <div class="norm-name">pip and nut sweet and salty smooth peanut butter</div>
+          </td>
+          <td class="num">300.0 g</td>
+          <td class="num">£3.1</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q16897">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_16897" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_16897" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_16897" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_16897" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_16897" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_16897" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_16897" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_16897" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c16976" data-cid="16976" data-idx="48">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">48 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#16976</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">food_cupboard</span>
+      
+    </div>
+    <div class="core-name">Ballymaloe Original Relish</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Ballymaloe Original Relish 210g
+            <div class="norm-name">ballymaloe original relish</div>
+          </td>
+          <td class="num">210.0 g</td>
+          <td class="num">£2.2</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Ballymaloe Original Relish 210G
+            <div class="norm-name">ballymaloe original relish</div>
+          </td>
+          <td class="num">210.0 g</td>
+          <td class="num">£2.2</td>
+          <td><span class="tier tier-none">—</span></td>
+          <td><span class="badge badge-ub">unbranded</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q16976">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_16976" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_16976" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_16976" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_16976" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_16976" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_16976" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_16976" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_16976" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c18151" data-cid="18151" data-idx="49">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">49 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#18151</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">free-from</span>
+      
+    </div>
+    <div class="core-name">Lightly Dusted Cod Fillets</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Sainsbury&#x27;s Lightly Dusted MSC Cod Fillets x2 255g
+            <div class="norm-name">lightly dusted msc cod fillets</div>
+          </td>
+          <td class="num">255.0 g × 2</td>
+          <td class="num">£3.95</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco Lightly Dusted Cod Fillets 255G
+            <div class="norm-name">lightly dusted cod fillets</div>
+          </td>
+          <td class="num">255.0 g</td>
+          <td class="num">£4.15</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q18151">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_18151" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_18151" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_18151" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_18151" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_18151" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_18151" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_18151" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_18151" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section><section class="cluster" id="c19332" data-cid="19332" data-idx="50">
+  <header class="cluster-header">
+    <div class="cluster-title">
+      <span class="cluster-num">50 / 50</span>
+      <span class="cluster-sz sz2">2-way</span>
+      <span class="cid">#19332</span>
+    </div>
+    <div class="cluster-meta-tags">
+      <span class="meta-tag">frozen</span>
+      
+    </div>
+    <div class="core-name">British Chicken Thighs</div>
+  </header>
+  <table>
+    <thead><tr>
+      <th>Store</th><th>Product name</th><th class="num">Pack size</th>
+      <th class="num">Price</th><th>Tier</th><th>Type</th>
+    </tr></thead>
+    <tbody><tr>
+          <td><strong>Sains</strong></td>
+          <td class="name-cell">Sainsbury&#x27;s British Plain Chicken Thighs 1.5kg
+            <div class="norm-name">british plain chicken thighs</div>
+          </td>
+          <td class="num">1500.0 g</td>
+          <td class="num">£5.25</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr><tr>
+          <td><strong>Tesco</strong></td>
+          <td class="name-cell">Tesco British Chicken Thighs 1.5kg
+            <div class="norm-name">british chicken thighs</div>
+          </td>
+          <td class="num">1500.0 g</td>
+          <td class="num">£4.45</td>
+          <td><span class="tier tier-std">standard</span></td>
+          <td><span class="badge badge-ob">own-brand</span></td>
+        </tr></tbody>
+  </table>
+  <div class="questions" id="q19332">
+    <div class="q-row">
+      <span class="q-label">Q1 · Same core product?</span>
+      <label class="pill"><input type="radio" name="q1_19332" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q1_19332" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q2 · Acceptable weight variance?</span>
+      <label class="pill"><input type="radio" name="q2_19332" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q2_19332" value="no"> ✗ No</label>
+    </div>
+    <div class="q-row">
+      <span class="q-label">Q3 · Same own-brand tier?</span>
+      <label class="pill"><input type="radio" name="q3_19332" value="yes"> ✓ Yes</label>
+      <label class="pill"><input type="radio" name="q3_19332" value="no"> ✗ No</label>
+      <label class="pill na"><input type="radio" name="q3_19332" value="na"> N/A</label>
+    </div>
+    <div class="note-row">
+      <input type="text" name="note_19332" placeholder="Notes (optional)…" maxlength="300">
+    </div>
+  </div>
+</section>
+</div>
+
+<div id="summary">
+  <div id="summary-text">Answer all 50 clusters, then download your results.</div>
+  <button id="dl-btn" disabled>Download CSV</button>
+</div>
+
+<script>
+const CIDS = [1050, 1594, 1643, 1662, 1726, 2406, 2460, 3403, 3725, 4476, 4682, 4952, 4991, 5378, 6073, 6142, 6894, 7609, 8144, 8223, 8312, 8431, 8445, 8481, 9100, 9369, 9494, 9658, 9848, 9874, 10326, 10552, 11022, 11907, 12506, 12680, 13521, 14044, 14329, 14418, 15016, 15299, 15494, 15543, 16306, 16604, 16897, 16976, 18151, 19332];
+const TOTAL = CIDS.length;
+
+// ─── pill selection ───────────────────────────────────────────────────────────
+function selectPill(input) {
+  const row = input.closest('.q-row');
+  row.querySelectorAll('.pill').forEach(p => p.classList.remove('selected-yes','selected-no'));
+  const pill = input.closest('.pill');
+  if (input.value === 'yes' || input.value === 'na') pill.classList.add('selected-yes');
+  else pill.classList.add('selected-no');
+  updateCluster(input.closest('.cluster'));
+  updateProgress();
+}
+
+document.querySelectorAll('.pill input').forEach(inp => {
+  inp.addEventListener('change', () => selectPill(inp));
+});
+
+// ─── cluster state ────────────────────────────────────────────────────────────
+function clusterAnswered(cid) {
+  const q1 = document.querySelector(`input[name="q1_${cid}"]:checked`);
+  const q2 = document.querySelector(`input[name="q2_${cid}"]:checked`);
+  const q3 = document.querySelector(`input[name="q3_${cid}"]:checked`);
+  return q1 && q2 && q3;
+}
+
+function clusterPassed(cid) {
+  const q1 = (document.querySelector(`input[name="q1_${cid}"]:checked`) || {}).value;
+  const q2 = (document.querySelector(`input[name="q2_${cid}"]:checked`) || {}).value;
+  const q3 = (document.querySelector(`input[name="q3_${cid}"]:checked`) || {}).value;
+  return q1 === 'yes' && q2 === 'yes' && (q3 === 'yes' || q3 === 'na');
+}
+
+function updateCluster(section) {
+  const cid = section.dataset.cid;
+  if (!clusterAnswered(cid)) {
+    section.classList.remove('done','failed');
+  } else if (clusterPassed(cid)) {
+    section.classList.add('done'); section.classList.remove('failed');
+  } else {
+    section.classList.add('failed'); section.classList.remove('done');
+  }
+  // auto-save
+  saveState();
+}
+
+// ─── progress ─────────────────────────────────────────────────────────────────
+function updateProgress() {
+  let done = 0, passed = 0, failed = 0;
+  CIDS.forEach(cid => {
+    if (clusterAnswered(cid)) {
+      done++;
+      clusterPassed(cid) ? passed++ : failed++;
+    }
+  });
+  document.getElementById('progress-bar').style.width = (done/TOTAL*100)+'%';
+  document.getElementById('progress-label').textContent =
+    `${done} / ${TOTAL} answered  ·  ✓ ${passed} pass  ·  ✗ ${failed} fail`;
+  document.getElementById('dl-btn').disabled = (done < TOTAL);
+  document.getElementById('summary-text').textContent =
+    done < TOTAL
+      ? `${TOTAL-done} cluster${TOTAL-done===1?'':'s'} remaining…`
+      : `All done!  ${passed}/${TOTAL} passed (${Math.round(passed/TOTAL*100)}%)`;
+}
+
+// ─── keyboard shortcuts ───────────────────────────────────────────────────────
+// Find the "active" cluster = first unanswered, or last focused
+let focusedCid = CIDS[0];
+document.querySelectorAll('.cluster').forEach(sec => {
+  sec.addEventListener('focusin', () => { focusedCid = +sec.dataset.cid; });
+  sec.addEventListener('click',   () => { focusedCid = +sec.dataset.cid; });
+});
+
+document.addEventListener('keydown', ev => {
+  if (ev.target.tagName === 'INPUT' && ev.target.type === 'text') return;
+  const cid = focusedCid;
+  if (!cid) return;
+  const map = {
+    'y': `q1_${cid}_yes`, 'n': `q1_${cid}_no`,
+    'u': `q2_${cid}_yes`, 'j': `q2_${cid}_no`,
+    'i': `q3_${cid}_yes`, 'k': `q3_${cid}_no`, 'o': `q3_${cid}_na`,
+  };
+  if (ev.key === 'Tab') {
+    ev.preventDefault();
+    // jump to next unanswered
+    const idx = CIDS.indexOf(cid);
+    for (let d=1;d<=TOTAL;d++) {
+      const nc = CIDS[(idx+d)%TOTAL];
+      if (!clusterAnswered(nc)) {
+        document.getElementById('c'+nc).scrollIntoView({behavior:'smooth',block:'center'});
+        focusedCid = nc; break;
+      }
+    }
+    return;
+  }
+  const target = map[ev.key];
+  if (!target) return;
+  // find radio
+  const [, qName, val] = target.match(/^(q\d_\d+)_(.+)$/);
+  const inp = document.querySelector(`input[name="${qName}"][value="${val}"]`);
+  if (inp) { inp.checked = true; selectPill(inp); }
+});
+
+// ─── persist state in localStorage ───────────────────────────────────────────
+const LS_KEY = 'sw_review_42';
+function saveState() {
+  const state = {};
+  CIDS.forEach(cid => {
+    ['q1','q2','q3'].forEach(q => {
+      const el = document.querySelector(`input[name="${q}_${cid}"]:checked`);
+      if (el) state[`${q}_${cid}`] = el.value;
+    });
+    const note = document.querySelector(`input[name="note_${cid}"]`);
+    if (note && note.value) state[`note_${cid}`] = note.value;
+  });
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+function loadState() {
+  const raw = localStorage.getItem(LS_KEY);
+  if (!raw) return;
+  const state = JSON.parse(raw);
+  Object.entries(state).forEach(([k,v]) => {
+    const inp = document.querySelector(`input[name="${k}"][value="${v}"]`) ||
+                document.querySelector(`input[name="${k}"]`);
+    if (!inp) return;
+    if (inp.type === 'radio') { inp.checked = true; selectPill(inp); }
+    else { inp.value = v; }
+  });
+  updateProgress();
+}
+loadState();
+
+// ─── download CSV ─────────────────────────────────────────────────────────────
+document.getElementById('dl-btn').addEventListener('click', () => {
+  const rows = [['cluster_id','q1_same_product','q2_weight_ok','q3_tier_ok','cluster_passed','notes']];
+  CIDS.forEach(cid => {
+    const q1 = (document.querySelector(`input[name="q1_${cid}"]:checked`) || {}).value || '';
+    const q2 = (document.querySelector(`input[name="q2_${cid}"]:checked`) || {}).value || '';
+    const q3 = (document.querySelector(`input[name="q3_${cid}"]:checked`) || {}).value || '';
+    const note = (document.querySelector(`input[name="note_${cid}"]`) || {}).value || '';
+    const passed = (q1==='yes' && q2==='yes' && (q3==='yes'||q3==='na')) ? 'yes' : 'no';
+    rows.push([cid,q1,q2,q3,passed,note.replace(/[",\r\n]+/g,' ')]);
+  });
+  const csv = rows.map(r => r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download='sw_personal_review_seed42.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+});
+</script>
+</body>
+</html>
