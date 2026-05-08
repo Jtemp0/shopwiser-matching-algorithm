@@ -98,17 +98,6 @@ def build_validator(meta_map: dict[int, dict]) -> callable:
         if len(brands) >= 2:
             return False
 
-        # 3b. Brand propagation — if any item has a recognised brand, every
-        #     item's normalised name must contain the brand's first token.
-        #     Catches unknown-brand products mixed with a known brand
-        #     (e.g. "J.J. Gin" silently grouped with "Gordon's Gin").
-        if brands:
-            primary = list(brands)[0].split()[0].lower()
-            if len(primary) >= 3:
-                if any(primary not in set(str(i['normalized_name']).split())
-                       for i in items if pd.notna(i['normalized_name'])):
-                    return False
-
         # 4. Tier mismatch
         ob_items = [i for i in items if str(i['product_type']) in ('own_brand', 'unbranded')]
         tiers = {str(i['tier_type']).lower() for i in ob_items if pd.notna(i['tier_type'])}
