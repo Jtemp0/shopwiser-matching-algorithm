@@ -72,6 +72,18 @@ def stratified_sample(df: pd.DataFrame, n: int, seed: int) -> pd.DataFrame:
     return df[df["ensemble_cluster_id"].isin(chosen)].copy()
 
 
+def _val(v) -> str:
+    """Return empty string for NaN/None, else string."""
+    if v is None:
+        return ''
+    try:
+        if pd.isna(v):
+            return ''
+    except (TypeError, ValueError):
+        pass
+    return str(v)
+
+
 def render_html(sample: pd.DataFrame) -> str:
     cluster_ids = sorted(sample["ensemble_cluster_id"].unique().tolist())
     blocks: list[str] = []
@@ -79,15 +91,23 @@ def render_html(sample: pd.DataFrame) -> str:
     for i, cid in enumerate(cluster_ids, start=1):
         items = sample[sample["ensemble_cluster_id"] == cid].copy()
         items = items.sort_values("supermarket")
+
+        def pack_size(r) -> str:
+            uv = _val(r.get('unit_value', ''))
+            ut = _val(r.get('unit_type', ''))
+            if not uv and not ut:
+                return '—'
+            return f"{uv} {ut}".strip()
+
         rows_html = "\n".join(
             f"""
             <tr>
-              <td>{html.escape(str(r['supermarket']))}</td>
-              <td>{html.escape(str(r.get('names', '')))}</td>
-              <td>{html.escape(str(r.get('unit_value', '')))} {html.escape(str(r.get('unit_type', '')))}</td>
-              <td>£{html.escape(str(r.get('prices_(£)', '')))}</td>
-              <td>{html.escape(str(r.get('tier_keyword', '') or '—'))}</td>
-              <td>{'own-brand' if str(r.get('own_brand', '')).lower() == 'true' else 'branded'}</td>
+              <td>{html.escape(_val(r['supermarket']))}</td>
+              <td>{html.escape(_val(r.get('names', '')))}</td>
+              <td>{html.escape(pack_size(r))}</td>
+              <td>£{html.escape(_val(r.get('prices_(£)', '')))}</td>
+              <td>{html.escape(_val(r.get('tier_keyword', '')) or '—')}</td>
+              <td>{'own-brand' if _val(r.get('own_brand', '')).lower() == 'true' else 'branded'}</td>
             </tr>
             """
             for _, r in items.iterrows()
@@ -107,17 +127,17 @@ def render_html(sample: pd.DataFrame) -> str:
           <div class="questions">
             <fieldset>
               <legend>Q1. Are all items the <strong>exact same core product</strong>?</legend>
-              <label><input type="radio" name="q1_{cid}" value="yes" required> Yes</label>
+              <label><input type="radio" name="q1_{cid}" value="yes"> Yes</label>
               <label><input type="radio" name="q1_{cid}" value="no"> No</label>
             </fieldset>
             <fieldset>
               <legend>Q2. Are all items within an <strong>acceptable weight variance</strong>?</legend>
-              <label><input type="radio" name="q2_{cid}" value="yes" required> Yes</label>
+              <label><input type="radio" name="q2_{cid}" value="yes"> Yes</label>
               <label><input type="radio" name="q2_{cid}" value="no"> No</label>
             </fieldset>
             <fieldset>
               <legend>Q3. For own-brand goods, are they of the <strong>same product tier</strong>? <span class="hint">(answer "yes" if not applicable — i.e. no own-brand items in this cluster)</span></legend>
-              <label><input type="radio" name="q3_{cid}" value="yes" required> Yes</label>
+              <label><input type="radio" name="q3_{cid}" value="yes"> Yes</label>
               <label><input type="radio" name="q3_{cid}" value="no"> No</label>
               <label><input type="radio" name="q3_{cid}" value="na"> N/A</label>
             </fieldset>
@@ -164,11 +184,23 @@ def render_html(sample: pd.DataFrame) -> str:
   .footer {{ position: sticky; bottom: 0; padding: 1rem 0;
              background: rgba(255,255,255,0.96); border-top: 1px solid #dfe4ee;
              text-align: right; }}
+  .progress-bar-wrap {{ position: sticky; top: 0; z-index: 100;
+                        background: rgba(255,255,255,0.97); padding: 0.6rem 0 0.5rem;
+                        border-bottom: 1px solid #dfe4ee; margin-bottom: 1rem; }}
+  .progress-label {{ font-size: 0.88rem; color: #4a5568; margin-bottom: 0.35rem; }}
+  .progress-track {{ height: 10px; background: #e9ecf3; border-radius: 99px; overflow: hidden; }}
+  .progress-fill {{ height: 100%; background: #2E86AB; border-radius: 99px;
+                   transition: width 0.2s ease; width: 0%; }}
 </style>
 </head>
 <body>
   <h1>ShopWiser cluster review</h1>
   <p>You are reviewing {len(cluster_ids)} randomly-sampled clusters from the matching pipeline. For each cluster please answer the three Yes/No questions below. Your answers will download as a CSV when you click <em>Submit</em> at the bottom — please send that file back.</p>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-label" id="progress-label">0 of {len(cluster_ids)} clusters answered</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
 
   <div class="meta">
     <label>Reviewer name:&nbsp;<input type="text" id="reviewer_name" placeholder="(your name)"></label>
@@ -183,6 +215,21 @@ def render_html(sample: pd.DataFrame) -> str:
 
 <script>
 const CLUSTER_IDS = {cluster_ids_json};
+const TOTAL = CLUSTER_IDS.length;
+
+function updateProgress() {{
+  let answered = 0;
+  CLUSTER_IDS.forEach(function(cid) {{
+    const q1 = document.querySelector('input[name="q1_'+cid+'"]:checked');
+    const q2 = document.querySelector('input[name="q2_'+cid+'"]:checked');
+    const q3 = document.querySelector('input[name="q3_'+cid+'"]:checked');
+    if (q1 && q2 && q3) answered++;
+  }});
+  document.getElementById('progress-label').textContent = answered + ' of ' + TOTAL + ' clusters answered';
+  document.getElementById('progress-fill').style.width = (answered / TOTAL * 100) + '%';
+}}
+
+document.getElementById('review-form').addEventListener('change', updateProgress);
 
 document.getElementById('review-form').addEventListener('submit', function(ev) {{
   ev.preventDefault();
@@ -198,8 +245,8 @@ document.getElementById('review-form').addEventListener('submit', function(ev) {
     const passed = (q1 === 'yes' && q2 === 'yes' && (q3 === 'yes' || q3 === 'na')) ? 'yes' : 'no';
     rows.push([reviewer, cid, q1, q2, q3, passed, note.replace(/[",\\r\\n]+/g, ' ')]);
   }});
-  if (missing.length) {{
-    alert('Please answer every question. Missing answers for clusters: ' + missing.join(', '));
+  if (rows.length <= 1) {{
+    alert('No answers to download yet — please answer at least one cluster.');
     return;
   }}
   const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\\n');
@@ -209,7 +256,10 @@ document.getElementById('review-form').addEventListener('submit', function(ev) {
   link.href = url;
   link.download = 'shopwiser_review_' + reviewer.replace(/[^a-z0-9]+/gi, '_') + '.csv';
   document.body.appendChild(link); link.click(); document.body.removeChild(link);
-  alert('Thanks! Your answers have been downloaded as a CSV. Please send the file back.');
+  const msg = missing.length
+    ? 'Downloaded ' + (rows.length - 1) + ' answered clusters. ' + missing.length + ' skipped (unanswered). Please send the file back.'
+    : 'Thanks! Your answers have been downloaded as a CSV. Please send the file back.';
+  alert(msg);
 }});
 </script>
 </body>
@@ -252,9 +302,6 @@ def main() -> None:
     ])
     blank.to_csv(OUT_BLANK, index=False)
     print(f"Wrote blank schema : {OUT_BLANK}")
-    print("\nNext step: open the HTML in a browser, hand to 4 unaffiliated reviewers,")
-    print("collect 4 CSVs, then aggregate (cluster passes when ≥3 of 4 reviewers said pass).")
-
 
 if __name__ == "__main__":
     main()
