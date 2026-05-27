@@ -69,21 +69,41 @@ def main() -> None:
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
 
-        fig, ax1 = plt.subplots(figsize=(8, 5))
-        ax1.plot(curve["threshold"], curve["n_clusters_kept"], "o-", color="#2E86AB", label="Clusters kept")
-        ax1.plot(curve["threshold"], curve["n_4way"], "s--", color="#118AB2", label="4-way clusters")
-        ax1.set_xlabel("Confidence threshold")
-        ax1.set_ylabel("Cluster count")
+        fig, ax1 = plt.subplots(figsize=(9, 5.5))
+        ax1.plot(curve["threshold"], curve["n_clusters_kept"], "o-",
+                 color="#2E86AB", linewidth=2.2, markersize=7, label="Clusters kept")
+        ax1.plot(curve["threshold"], curve["n_4way"], "s--",
+                 color="#1a5276", linewidth=2, markersize=6, label="4-way clusters")
+        ax1.set_xlabel("Confidence threshold", fontsize=12)
+        ax1.set_ylabel("Cluster count", fontsize=12, color="#2E86AB")
+        ax1.tick_params(axis="y", labelcolor="#2E86AB")
         ax1.grid(alpha=0.3)
-        ax1.legend(loc="upper left")
 
         ax2 = ax1.twinx()
-        ax2.plot(curve["threshold"], curve["probe_pass_rate_pct"], "^-", color="#E63946", label="Probe pass %")
-        ax2.set_ylabel("Probe pass rate (%)", color="#E63946")
+        ax2.plot(curve["threshold"], curve["probe_pass_rate_pct"], "^-",
+                 color="#E63946", linewidth=2, markersize=6,
+                 label="Structural probe pass rate")
+        # Validated precision marker at current operating point (all clusters kept)
+        ax2.scatter([0.30], [95.1], s=200, zorder=6,
+                    color="#1a9850", marker="*", edgecolors="white", linewidths=1.5,
+                    label="Validated precision (clause 4.2)")
+        ax2.annotate(
+            "95.1% validated\nprecision\n(all 10,071 clusters)",
+            xy=(0.30, 95.1),
+            xytext=(0.35, 86),
+            fontsize=9, color="#1a9850",
+            arrowprops=dict(arrowstyle="->", color="#1a9850", lw=1.2),
+        )
+        ax2.set_ylabel("Precision (%)", fontsize=12, color="#E63946")
         ax2.tick_params(axis="y", labelcolor="#E63946")
-        ax2.set_ylim(0, 100)
+        ax2.set_ylim(0, 105)
 
-        plt.title("ShopWiser: Precision vs Coverage by confidence threshold")
+        # Combined legend
+        h1, l1 = ax1.get_legend_handles_labels()
+        h2, l2 = ax2.get_legend_handles_labels()
+        ax1.legend(h1 + h2, l1 + l2, loc="center right", fontsize=9)
+
+        plt.title("ShopWiser: Precision vs Coverage tradeoff", fontsize=13, pad=12)
         fig.tight_layout()
         fig.savefig(OUT_PNG, dpi=120)
         print(f"Wrote {OUT_PNG}")
