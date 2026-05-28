@@ -3,7 +3,7 @@
 import random
 import numpy as np
 
-from shopwiser.paths import DATA_OUTPUTS_CLUSTERS
+from shopwiser.paths import cluster_outputs_path
 
 # ============================================================
 # CONFIGURATION
@@ -104,7 +104,7 @@ CATEGORY_ALIASES = {
 # Pass 4 (cross-bucket catch-all) threshold
 PASS4_THRESHOLD = 0.90
 
-OUTPUT_DIR = DATA_OUTPUTS_CLUSTERS
+OUTPUT_DIR = cluster_outputs_path(sample=False)
 RANDOM_SEED = 42
 
 random.seed(RANDOM_SEED)

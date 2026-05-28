@@ -1,132 +1,132 @@
 ensemble_cluster_id,supermarket,names,prices_(£),unit_value,unit_type,tier_keyword,own_brand,category
-81,ASDA,Tassimo Kenco Americano Decaff Coffee Pods x 16,4.75,103.9,g,,False,drinks
-81,Morrisons,Tassimo Kenco Americano Decaff Coffee Pods x16,4.99,104.0,g,,False,food_cupboard
-81,Sains,Tassimo Kenco Americano Decaff Coffee Pods x16,4.2,104.0,g,,False,food_cupboard
-81,Tesco,Tassimo Kenco Americano Decaff Pods X16 104G,4.8,104.0,g,,False,drinks
-741,ASDA,Kubus 100% Apple Carrot Banana Juice,1.75,850.0,ml,,False,drinks
-741,Morrisons,Kubus Juice Carrot Banana Apple,1.85,850.0,ml,,False,food_cupboard
-741,Tesco,"Kubus 100% Juice Apple, Carrot & Banana 850Ml",1.75,850.0,ml,,False,food_cupboard
-1336,ASDA,Carr's Table Water Crackers 125g,1.7,125.0,g,,False,food_cupboard
-1336,Morrisons,Carr's Table Water Crackers,1.7,125.0,g,,False,food_cupboard
-1336,Sains,Carr's Table Water Crackers 125g,1.7,125.0,g,,False,food_cupboard
-1336,Tesco,Carrs Table Water Biscuits 125 G,1.7,125.0,g,,False,food_cupboard
-1374,ASDA,The Snack Organisation Sweet Chilli Rice Crackers,1.0,100.0,g,,False,food_cupboard
-1374,Sains,The Snack Organisation Sweet Chilli Rice Crackers 100g,1.15,100.0,g,,False,food_cupboard
-1444,ASDA,Fibre One 90 Calorie Doughnuts Banoffee Flavour,1.45,90.0,g,,False,food_cupboard
-1444,Tesco,Fibre One 90 Calorie Doughnut Banoffee 4X23g,1.5,92.0,g,,False,food_cupboard
-1554,ASDA,Kellogg's Rice Krispies Limited Edition Squares Chocolatey Orange Flavour Bars,1.5,140.0,g,,False,food_cupboard
-1554,Sains,Kellogg's Rice Krispies Limited Edition Squares Chocolatey Orange Flavour Bars 4x36g,1.5,144.0,g,,False,food_cupboard
-1956,ASDA,Tanqueray No. Ten Gin,35.0,700.0,ml,,False,drinks
-1956,Sains,Tanqueray No.Ten Batch Distilled Gin 70cl,27.5,700.0,ml,,False,drinks
-1988,ASDA,Beefeater Pink Strawberry Flavoured Gin,15.0,700.0,ml,,False,drinks
-1988,Sains,Beefeater Pink Strawberry Flavoured Gin 70cl,18.0,700.0,ml,,False,drinks
-2120,ASDA,Hardys Stamp Cabernet Merlot,5.25,750.0,ml,,False,drinks
-2120,Morrisons,Hardys Stamp Cabernet Merlot,6.75,750.0,ml,,False,drinks
-2120,Tesco,Hardy Stamp Cabernet Merlot 75Cl,5.25,750.0,ml,,False,drinks
-2158,ASDA,Freixenet Italian Sparkling Rose,9.0,750.0,ml,,False,drinks
-2158,Morrisons,Freixenet Italian Sparkling Rose,13.0,750.0,ml,,False,drinks
-2158,Tesco,Freixenet Italian Sparkling Rose 75Cl,12.0,750.0,ml,,False,drinks
-2550,ASDA,ASDA 4 Battered Cod Fillets,5.25,500.0,g,,True,frozen
-2550,Morrisons,Morrisons 4 Battered Cod Fillets,4.5,500.0,g,,True,frozen
-2550,Tesco,Tesco 4 Battered Cod Fillets 500G,4.0,500.0,g,,True,frozen
-2618,ASDA,Bisto Shepherds Pie,1.6,375.0,g,,False,frozen
-2618,Morrisons,Bisto Shepherd's Pie,1.69,375.0,g,,False,frozen
-2919,ASDA,Yop Strawberry Yoghurt Drink 500g,1.4,500.0,g,,False,fresh_food
-2919,Morrisons,Yop Strawberry Yoghurt Drink,1.4,500.0,g,,False,fresh_food
-3040,ASDA,Squeaky Bean Applewood Smoked Ham Style Slices,2.0,80.0,g,,False,fresh_food
-3040,Morrisons,Squeaky Bean Smoked Ham Slices,2.49,80.0,g,,False,fresh_food
-3040,Sains,Squeaky Bean Applewood Smoked Ham Style Slices 80g,2.0,80.0,g,,False,free-from
-3040,Tesco,Squeaky Bean Applewood Smoked Ham Style Slices 80G,2.5,80.0,g,,False,fresh_food
-3112,ASDA,ASDA Extra Special 2 Scottish Salmon Fillets,6.1,240.0,g,Extra Special,True,fresh_food
-3112,Morrisons,Morrisons The Best 2 Scottish Salmon Fillets,5.5,220.0,g,The Best,True,fresh_food
-3499,ASDA,ASDA Anchovy Fillets in Olive Oil,0.75,50.0,g,,True,fresh_food
-3499,Sains,Sainsbury's Anchovy Fillets in Olive Oil 50g (30g*),1.15,50.0,g,,True,food_cupboard
-3812,ASDA,Lee Kum Kee Kee Black Bean Garlic Sauce 205g,2.1,205.0,g,,False,food_cupboard
-3812,Morrisons,Lee Kum Kee Black Bean Garlic Sauce,1.9,200.0,g,,False,food_cupboard
-3812,Sains,Lee Kum Kee Black Bean Garlic Sauce 205g,2.1,205.0,g,,False,food_cupboard
-3812,Tesco,Lee Kum Kee Black Bean Garlic Sauce 205G,2.1,205.0,g,,False,food_cupboard
-3994,ASDA,Oxo Stock Pots Red Wine,1.5,80.0,g,,False,food_cupboard
-3994,Morrisons,Oxo Stock Pots Red Wine,1.85,80.0,g,,False,food_cupboard
-4267,ASDA,Sarsons Mixed Pickle 460g,2.5,460.0,g,,False,food_cupboard
-4267,Morrisons,Sarsons Mixed Pickle (460g),2.49,460.0,g,,False,food_cupboard
-4267,Sains,Sarson's Mixed Pickle 460g,1.75,460.0,g,,False,food_cupboard
-4267,Tesco,Sarsons Mixed Pickle 460G,1.5,460.0,g,,False,food_cupboard
-4424,ASDA,Laciate UHT 3.2% Milk,1.2,1000.0,ml,,False,fresh_food
-4424,Sains,Laciate 3.2% UHT Milk 1L,1.25,1000.0,ml,,False,food_cupboard
-4424,Tesco,Laciate Milk 3.2% 1 Litre,1.25,1000.0,ml,,False,food_cupboard
-4429,ASDA,ASDA Long Life Skimmed Milk X6,5.85,6030.9,ml,,True,fresh_food
-4429,Sains,Sainsbury's Skimmed Long Life Milk 6x1L,5.8,6000.0,ml,,True,drinks
-4565,ASDA,Alpro Oat No Sugars Chilled Drink,1.5,1000.0,ml,,False,fresh_food
-4565,Morrisons,Alpro Oat Chilled Drink,1.5,1000.0,ml,,False,free-from
-4565,Sains,Alpro No Sugars Chilled Oat Drink 1L,1.5,1000.0,ml,,False,food_cupboard
-4675,ASDA,Popchips Thai Sweet Chilli Sharing Crisps,1.35,84.9,g,,False,food_cupboard
-4675,Tesco,Popchips Popped Potato Chips Thai Sweet Chilli 85G,1.5,85.0,g,,False,food_cupboard
-5090,ASDA,Popchips Barbeque Sharing Crisps,1.35,84.9,g,,False,free-from
-5090,Morrisons,Popchips Barbeque Sharing Crisps 85g,2.25,85.0,g,,False,food_cupboard
-5090,Sains,Popchips Barbeque Sharing Crisps 85g,1.5,85.0,g,,False,food_cupboard
-5367,ASDA,The Delicious Dessert Company Triple Chocolate Eclairs,2.25,,,,False,bakery
-5367,Sains,The Delicious Dessert Company Triple Chocolate Eclairs 2x78g,2.35,156.0,g,,False,fresh_food
-5367,Tesco,The Delicious Dessert Company Triple Chocolate Eclairs 2 Pack,2.25,,,,False,fresh_food
-6322,ASDA,Cadbury Dairy Milk & More Caramel Nut Crunch 200g,2.0,200.0,g,,False,food_cupboard
-6322,Morrisons,Cadbury Dairy Milk & More Caramel Nut Crunch,2.0,200.0,g,,False,food_cupboard
-6350,ASDA,Mentos Gum Pure Fresh Tropical 50 Pieces,2.5,100.0,g,,False,food_cupboard
-6350,Sains,Mentos Gum Pure Fresh Tropical x50 100g,2.8,100.0,g,,False,food_cupboard
-6350,Tesco,Mentos Pure Fresh Tropical Flavour Gum 50 Pieces 100G,2.8,100.0,g,,False,food_cupboard
-6767,ASDA,Indus Chilli Sauce,1.75,425.0,g,,False,food_cupboard
-6767,Morrisons,Indus Chilli Sauce,1.75,425.0,g,,False,food_cupboard
-7020,ASDA,Carlsberg Danish Pilsner 18 x 440ml,13.0,7920.0,ml,,False,drinks
-7020,Morrisons,Carlsberg Pilsner,13.5,7941.2,ml,,False,drinks
-7020,Tesco,Carlsberg Danish Pilsner Lager Beer Can 18x440ml,11.0,7920.0,ml,,False,drinks
-7050,ASDA,Stella Artois Belgium Premium Lager,14.0,5000.0,ml,,False,drinks
-7050,Morrisons,Stella Artois Premium Lager Beer Cans,13.5,4397.4,ml,,False,drinks
-7050,Sains,Stella Artois Premium Lager Beer Cans 10x440ml,12.0,4400.0,ml,,False,drinks
-7167,ASDA,ASDA Chicken & Vegetable Soup 600g,1.75,600.0,g,,True,fresh_food
-7167,Tesco,Tesco Chicken & Vegetable Soup 600G,1.75,600.0,g,,True,fresh_food
-7759,ASDA,Kopparberg Premium Cider Spiced Apple 500ml,2.0,500.0,ml,,False,drinks
-7759,Morrisons,Kopparberg Spiced Apple,2.5,500.0,ml,,False,drinks
-7759,Sains,Kopparberg Premium Cider Spiced Apple 500ml,1.5,500.0,ml,,False,free-from
-7759,Tesco,Kopparberg Spiced Apple 500ml,1.75,500.0,ml,,False,drinks
-7766,ASDA,Bud Light Beer 20 x 300ml,14.0,6000.0,ml,,False,drinks
-7766,Tesco,Bud Light Beer 20x300ml,10.0,6000.0,ml,,False,drinks
-7789,ASDA,ASDA Unsmoked Gammon Joint (Typically 1.8kg),12.24,1800.0,g,,True,fresh_food
-7789,Morrisons,Morrisons Small Unsmoked Natural Gammon Joint,10.83,1549.4,g,,True,fresh_food
-7789,Sains,Sainsbury's Unsmoked Medium Gammon Joint 1.618kg,10.62,1618.0,g,,True,fresh_food
-8315,Morrisons,Ginsters Butter Chicken Bake,1.0,120.0,g,,False,fresh_food
-8315,Sains,Ginsters Butter Chicken Bake 117g,1.5,117.0,g,,False,fresh_food
-8618,ASDA,Ambrosia Dessert Pots Belgian Chocolate & Mint Fondant Sauce,1.0,220.0,g,,False,food_cupboard
-8618,Morrisons,Ambrosia Dessert Pot Chocolate & Mint,1.59,220.0,g,,False,fresh_food
-8618,Sains,Ambrosia Ready To Eat Belgian Chocolate & Mint Fondant Sauce Dessert Pots 2x110g,1.0,220.0,g,,False,food_cupboard
-8618,Tesco,Ambrosia Chocolate & Mint Fondant Sauce Dessert Pots 2X110g,1.6,220.0,g,,False,food_cupboard
-8688,Morrisons,Heinz Spaghetti in Tomato Sauce,0.9,200.0,g,,False,food_cupboard
-8688,Sains,Heinz Spaghetti In Tomato Sauce 200g,0.8,200.0,g,,False,food_cupboard
-8688,Tesco,Heinz Spaghetti In Tomato Sauce 200G,0.85,200.0,g,,False,food_cupboard
-9004,Morrisons,Walkers 45% Less Salt Salted Crisps,1.0,45.0,g,,False,food_cupboard
-9004,Sains,Walkers Less Salt Lightly Salted Crisps 45g,1.0,45.0,g,,False,food_cupboard
-9004,Tesco,Walkers Lightly Salted Less Salt Grab Bag Crisps 45g,1.0,45.0,g,,False,food_cupboard
-9067,Morrisons,Morrisons Choco Nut Pillows Cereal,1.15,375.0,g,,True,food_cupboard
-9067,Tesco,Tesco Pillows Choco-Nut Cereal 375G,0.99,375.0,g,,True,food_cupboard
-9163,Morrisons,Cadbury Original Drinking Hot Chocolate,2.85,250.0,g,,False,food_cupboard
-9163,Sains,Cadbury Drinking Hot Chocolate 250g,2.7,250.0,g,,False,food_cupboard
-9373,Morrisons,Heinz Minestrone Cup Soup,1.49,72.0,g,,False,food_cupboard
-9373,Sains,Heinz Minestrone Cup Packet Soup 4x18g,1.5,72.0,g,,False,food_cupboard
-9454,Morrisons,Morrisons Organic Plain Flour,1.55,1033.3,g,Organic,True,food_cupboard
-9454,Tesco,Tesco Organic Plain Flour 1Kg,1.4,1000.0,g,Organic,True,food_cupboard
-9971,ASDA,Brooklyn Pilsner Crisp Lager Beer Bottle,2.5,650.0,ml,,False,drinks
-9971,Morrisons,Brooklyn Brewery Pilsner Beer Bottle,2.5,650.0,ml,,False,drinks
-9971,Sains,Brooklyn Brewery Brooklyn Pilsner Crisp Lager Beer 660ml,2.35,660.0,ml,,False,drinks
-9971,Tesco,Brooklyn Pilsner Lager Beer Bottle 660ml,2.35,660.0,ml,,False,drinks
-10290,Morrisons,Morrisons Stir Fry Vegetables,1.69,500.0,g,,True,frozen
-10290,Sains,Sainsbury's Stir Fry Vegetables 500g,2.5,500.0,g,,True,fresh_food
-11156,Morrisons,Morrisons Organic Celery,1.25,,,Organic,True,fresh_food
-11156,Tesco,Tesco Organic Celery,1.0,,,Organic,True,fresh_food
-12201,Sains,Kabuto Noodles Chilli Chicken Flavour Ramen 65g,1.4,65.0,g,,False,food_cupboard
-12201,Tesco,Kabuto Noodles Chilli Chicken Ramen 65G,1.65,65.0,g,,False,food_cupboard
-12646,Sains,Pom Wonderful Pomegranate Juice 710ml,4.8,710.0,ml,,False,drinks
-12646,Tesco,Pom Wonderful 100% Pomegranate Juice 710Ml,4.8,710.0,ml,,False,drinks
-12724,Sains,Robinsons Fruit Creations Refreshing Strawberry & Watermelon Squash 1L,2.5,1000.0,ml,,False,drinks
-12724,Tesco,Robinsons Fruit Creations Strawberry & Watermelon Squash 1L,2.5,1000.0,ml,,False,drinks
-13123,Morrisons,Jason's White Ciabattin Sourdough,2.0,600.0,g,,False,bakery
-13123,Sains,Jason's Sourdough White Ciabattin 580g,2.0,580.0,g,,False,free-from
-13123,Tesco,Jason's White Ciabattin Sourdough 580G,2.0,580.0,g,,False,bakery
-13512,Sains,Sainsbury's Bread & Butter Pudding 2x120g,2.75,240.0,g,,True,fresh_food
-13512,Tesco,Tesco Bread & Butter Puddings 2 X 120G,2.5,240.0,g,,True,fresh_food
+572,ASDA,"Innocent Smoothies Just for Kids Oranges, Mangoes & Pineapples",5.99,1500.0,ml,,False,fresh_food
+572,Sains,"Innocent Kids Smoothies, Oranges, Mangoes & Pineapples 10x150ml",6.0,1500.0,ml,,False,drinks
+572,Tesco,"innocent Kids Orange, Mango & Pineapple Smoothies 10x150ml",6.0,1500.0,ml,,False,drinks
+897,ASDA,ASDA Chia Seeds,1.2,150.0,g,,True,food_cupboard
+897,Morrisons,Morrisons Chia Seeds,1.49,150.0,g,,True,fresh_food
+897,Sains,Sainsbury's Chia Seeds 150g,1.25,150.0,g,,True,food_cupboard
+897,Tesco,Tesco Chia Seeds 150G,1.2,150.0,g,,True,food_cupboard
+1341,ASDA,Fox's Biscuits Milk Chocolate Cookies,1.0,175.0,g,,False,food_cupboard
+1341,Morrisons,Fox's Biscuits Milk Chocolate Cookie,2.0,175.0,g,,False,food_cupboard
+1341,Sains,Fox's Biscuits Milk Chocolate Chunk Cookie 175g,2.0,175.0,g,,False,food_cupboard
+1341,Tesco,Fox's Milk Chocolate Cookies 180G,2.0,180.0,g,,False,food_cupboard
+1355,ASDA,"McVitie's Jaffa Cakes Original Biscuits Snack Pack 6 x 3 Cakes, 198g",1.5,198.0,g,,False,food_cupboard
+1355,Tesco,Mcvitie's The Original Jaffa Cakes Snacks 6 X 3 Pack,1.5,,,,False,food_cupboard
+1398,ASDA,ASDA Free From Stem Ginger Cookies,1.5,150.0,g,Free From,True,food_cupboard
+1398,Tesco,Tesco Free From Stem Ginger Cookie 150G,1.5,150.0,g,Free From,True,food_cupboard
+1464,ASDA,Graze Protein Oat Boosts Cocoa Vanilla,1.75,120.0,g,,False,food_cupboard
+1464,Tesco,Graze Protein Oat Boosts Cocoa Vanilla 4 x 30g (120g),2.75,120.0,g,,False,food_cupboard
+1728,ASDA,ASDA Mediterranean Style Tomato Cous Cous 100g,0.65,100.0,g,,True,food_cupboard
+1728,Morrisons,Morrisons Mediterranean Couscous,0.69,110.0,g,,True,food_cupboard
+1728,Tesco,Tesco Mediterranean Style Couscous 110G,0.7,110.0,g,,True,food_cupboard
+2065,ASDA,Duo Spiced with Caramelised Pineapple Rum,21.0,700.0,ml,,False,drinks
+2065,Sains,Duo Rum Spiced with Caramelised Pineapple 70cl,25.0,700.0,ml,,False,drinks
+2784,ASDA,Actimel Plus Mango & Turmeric Twist Yogurt Drink 8 x 100g,2.75,800.0,g,,False,fresh_food
+2784,Morrisons,Actimel Plus Mango & Turmeric Twist,3.85,800.0,g,,False,fresh_food
+2784,Sains,Actimel Plus Mango & Turmeric Twist 8x100g,3.85,800.0,g,,False,fresh_food
+2784,Tesco,Actimel Plus 100% Vitamin D Mango & Turmeric Live Yoghurt Drink Multipack 8x100g,2.75,800.0,g,,False,fresh_food
+2875,ASDA,Activia Raspberry No Added Sugar Gut Health Yogurt,2.5,450.0,g,,False,fresh_food
+2875,Tesco,Activia Raspberry No Added Sugar No Fat Gut Health Yoghurt 4x115g,1.5,460.0,g,,False,fresh_food
+3146,ASDA,Dorset Cereals Cherry & Almond Porridge Breakfast Cereal 400g,1.5,400.0,g,,False,food_cupboard
+3146,Tesco,Dorset Cereals Cherry & Almond Porridge 400g,1.5,400.0,g,,False,food_cupboard
+3847,ASDA,Hellmann's Light Squeezy Mayonnaise,2.5,425.0,g,,False,food_cupboard
+3847,Sains,Hellmann's Light Squeezy Mayonnaise 430ml,2.5,430.0,ml,,False,food_cupboard
+3847,Tesco,Hellmann's Light Mayonnaise Squeezy 430ml,2.49,430.0,ml,,False,food_cupboard
+4197,ASDA,Branston Caramelised Onion Chutney,1.6,290.9,g,,False,food_cupboard
+4197,Morrisons,Branston Caramelised Onion Chutney (290g),1.79,290.0,g,,False,food_cupboard
+4197,Sains,Branston Caramelised Onion Chutney 290g,1.25,290.0,g,,False,food_cupboard
+4242,ASDA,Very Lazy Teriyaki Paste,1.5,115.4,g,,False,food_cupboard
+4242,Morrisons,Very Lazy Teriyaki Paste,1.99,120.0,g,,False,food_cupboard
+4242,Sains,Very Lazy Teriyaki Paste 120g,2.15,120.0,g,,False,food_cupboard
+4616,ASDA,Doritos Dippers A Hint of Salt Sharing Tortilla Chips Crisps 230g,1.5,230.0,g,,False,food_cupboard
+4616,Morrisons,Doritos Dippers A Hint Of Salt Shar…,2.5,225.0,g,,False,food_cupboard
+4616,Sains,Doritos Dippers Hint of Salt Sharing Tortilla Crisps Chips 230g,2.5,230.0,g,,False,free-from
+5219,ASDA,The BAKERY at ASDA Cookies & Cream Cheesecake,4.5,500.0,g,,True,bakery
+5219,Morrisons,Morrisons Cookies & Cream Heaven…,14.5,,,,True,bakery
+5219,Tesco,Tesco Cookies & Cream Cake,15.0,,,,True,bakery
+5658,ASDA,Homepride White Wine & Cream Cooking Sauce,2.5,400.0,g,,False,food_cupboard
+5658,Morrisons,Homepride White Wine & Cream Cooking Sauce,2.79,400.0,g,,False,food_cupboard
+5658,Sains,Homepride White Wine & Cream Cooking Sauce 400g,2.8,400.0,g,,False,food_cupboard
+5808,ASDA,Want Want Mini Rice Crackers Seaweed Flavour 60g,2.0,60.0,g,,False,food_cupboard
+5808,Sains,Want Want Mini Rice Crackers Seaweed Flavour 60g,2.0,60.0,g,,False,food_cupboard
+5945,ASDA,ASDA Meal For One Beef Stew & Dumplings 400g,3.25,400.0,g,,True,fresh_food
+5945,Morrisons,Morrisons Beef Stew & Dumplings,2.45,400.0,g,,True,frozen
+5945,Sains,Sainsbury's Beef Casserole with Dumplings 400g (Serves 1),3.25,400.0,g,,True,fresh_food
+5945,Tesco,Tesco Beef Casserole & Dumplings 400G,3.25,400.0,g,,True,fresh_food
+6191,ASDA,Cadbury Caramilk Golden Caramel Chocolate Bar,2.0,160.0,g,,False,food_cupboard
+6191,Sains,Cadbury Caramilk Golden Caramel Chocolate 160g,2.0,160.0,g,,False,food_cupboard
+6191,Tesco,Cadbury Caramilk Golden Caramel Chocolate Bar 160g,1.8,160.0,g,,False,food_cupboard
+6349,ASDA,Wrigley's Extra Peppermint Chewing Gum Sugar Free 10 Pieces,0.75,14.0,g,,False,food_cupboard
+6349,Sains,Extra Peppermint Chewing Gum Sugar Free 10 pieces,0.8,14.0,g,,False,food_cupboard
+6534,ASDA,Blossom Hill Red Wine 750ml,5.25,750.0,ml,,False,drinks
+6534,Morrisons,Blossom Hill Red Wine,5.5,750.0,ml,,False,drinks
+6534,Sains,Blossom Hill Soft & Fruity Red Wine 750ml,5.75,750.0,ml,,False,drinks
+6534,Tesco,Blossom Hill Red 75Cl,5.5,750.0,ml,,False,drinks
+6802,ASDA,East End Black Cardmoms,3.0,75.0,g,,False,food_cupboard
+6802,Tesco,East End Black Cardamoms 75G,3.95,75.0,g,,False,food_cupboard
+6867,ASDA,Holy Moly Harissa Hummus,2.2,150.0,g,,False,fresh_food
+6867,Sains,Holy Moly Harissa Hummus 150g,2.2,150.0,g,,False,free-from
+7062,ASDA,Daura Damm Gluten-Free Lager Beer,6.0,1318.7,ml,,False,drinks
+7062,Sains,Daura Damm Lager (Gluten Free) 4x330ml,5.0,1320.0,ml,,False,food_cupboard
+7502,ASDA,Birds Eye 20 Omega 3 Fish Fingers,4.2,550.0,g,,False,frozen
+7502,Morrisons,Birds Eye 20 Fish Fingers Omega 3,4.5,550.0,g,,False,frozen
+7502,Sains,Birds Eye Omega 3 Fish Fingers x20 560g,4.2,560.0,g,,False,fresh_food
+7502,Tesco,Birds Eye 20 Omega 3 Fish Fingers 560G,4.3,560.0,g,,False,frozen
+7744,ASDA,Knorr Organic Vegetable Stock Pot,1.5,104.2,g,,False,food_cupboard
+7744,Tesco,Knorr Organic Vegetable Stock Pot 4x26g,1.5,104.0,g,,False,food_cupboard
+7933,Morrisons,Irwin's Together Potato Breads,1.35,,,,False,food_cupboard
+7933,Sains,Irwin's Together Potato Breads x4,2.0,,,,False,bakery
+8008,Morrisons,Yutaka Udon Noodles,1.69,250.0,g,,False,food_cupboard
+8008,Sains,Yutaka Udon Noodles 250g,1.5,250.0,g,,False,food_cupboard
+8008,Tesco,Yutaka Udon Noodles 250G,1.5,250.0,g,,False,food_cupboard
+8060,Morrisons,Nash's Red Lemonade,1.59,1445.5,ml,,False,food_cupboard
+8060,Sains,Nash Red Lemonade 1.5L,1.6,1500.0,ml,,False,food_cupboard
+8870,ASDA,The BAKERY at ASDA Syrup Sponge Puddings,2.5,,,,True,fresh_food
+8870,Morrisons,Morrisons Syrup Sponge Pudding,2.5,210.0,g,,True,food_cupboard
+8870,Sains,Sainsbury's Syrup Sponge Puddings 2x110g,2.0,220.0,g,,True,free-from
+8870,Tesco,Tesco Syrup Sponge Puddings 2 X 110G,2.5,220.0,g,,True,fresh_food
+8881,Morrisons,Kellogg's Crunchy Nut Granola Red Berries,3.29,375.0,g,,False,food_cupboard
+8881,Sains,Kellogg's Crunchy Nut Red Berries Granola 380g,2.5,380.0,g,,False,food_cupboard
+8881,Tesco,Kellogg's Crunchy Nut Granola Red Berries 380G,2.5,380.0,g,,False,food_cupboard
+8903,ASDA,LU Le Petit Ganache Choco-Hazlenut Biscuits,1.25,105.0,g,,False,food_cupboard
+8903,Morrisons,Lu Le Petit Ganache,1.25,105.0,g,,False,food_cupboard
+8903,Sains,LU Le Petit Ganache Biscuits 105g,1.25,105.0,g,,False,food_cupboard
+8964,ASDA,Kikkoman Teriyaki Marinade,3.25,250.0,ml,,False,food_cupboard
+8964,Morrisons,Kikkoman Teriyaki Marinade,2.45,250.0,ml,,False,food_cupboard
+8964,Sains,Kikkoman Teriyaki Marinade & Sauce 250ml,3.35,250.0,ml,,False,food_cupboard
+8964,Tesco,Kikkoman Teriyaki Marinade 250Ml,3.35,250.0,ml,,False,food_cupboard
+9778,Morrisons,Morrisons Chocolate Drop Icing,2.5,120.0,g,,True,food_cupboard
+9778,Tesco,Tesco Chocolate Drip Icing 120G,2.85,120.0,g,,True,food_cupboard
+9908,Morrisons,Havana Club Especial Golden Rum,18.0,700.0,ml,,False,drinks
+9908,Sains,Havana Club Especial Golden Rum 70cl,23.0,700.0,ml,,False,drinks
+10469,Morrisons,Birds Eye 4 Battered Fish Fillets,5.99,400.0,g,,False,frozen
+10469,Tesco,Birds Eye 4 Battered Fish Fillets 400G,4.0,400.0,g,,False,frozen
+10780,Morrisons,The Black Farmer Premium Pork Sausages,2.8,400.0,g,,False,fresh_food
+10780,Tesco,The Black Farmer Premium Pork Sausages 6 Pack 400G,3.0,400.0,g,,False,fresh_food
+10911,Morrisons,Morrisons Organic Broccoli,1.3,300.0,g,Organic,True,fresh_food
+10911,Sains,"Sainsbury's Broccoli, SO Organic 300g",1.15,300.0,g,So Organic,True,free-from
+10911,Tesco,Tesco Organic Broccoli 335G,1.04,335.0,g,Organic,True,fresh_food
+11028,Morrisons,Morrisons Sweet Vine Ripened Tomatoes,1.39,250.0,g,,True,fresh_food
+11028,Tesco,Tesco Sweet Vine Ripened Tomatoes 255G,1.25,255.0,g,,True,fresh_food
+11165,Morrisons,New York Bakery Co. Sesame Bagel,1.25,,,,False,bakery
+11165,Sains,"New York Bakery Co. Bagels, Sesame x5",1.9,,,,False,bakery
+11165,Tesco,New York Bakery Sesame Bagels 5 Pack,1.25,,,,False,bakery
+11418,Sains,Stamford Street Co. Peach Slices in Light Syrup 411g,0.34,411.0,g,Stamford Street,False,food_cupboard
+11418,Tesco,Summer Pride Peach Slices In Light Syrup 411G,0.34,411.0,g,,False,food_cupboard
+11525,Sains,Sainsbury's Salt & Vinegar Crisps 6x25g,1.2,150.0,g,,True,food_cupboard
+11525,Tesco,Tesco Salt & Vinegar Crisps 6X25g,1.0,150.0,g,,True,food_cupboard
+11639,Sains,Heinz No Added Sugar Beans in a Rich Tomato Sauce 4x200g,3.5,800.0,g,,False,food_cupboard
+11639,Tesco,Heinz No Added Sugar Baked Beans in Tomato Sauce 4 x 200g,2.75,800.0,g,,False,food_cupboard
+11680,Sains,"Sainsbury's Brioche Loaf, Taste the Difference 400g",2.75,400.0,g,Taste The Difference,True,food_cupboard
+11680,Tesco,Tesco Finest Brioche Loaf 400G,2.75,400.0,g,Finest,True,bakery
+12262,Sains,Sacla Intenso Stir in Tomato & Mascarpone,3.35,190.0,g,,False,food_cupboard
+12262,Tesco,Sacla Intenso Tomato & Olive Stir In 190G,1.99,190.0,g,,False,food_cupboard
+12441,Sains,Teapigs Organic Snooze Sleepy Tea with Lavender 15x3g,4.75,45.0,g,,False,food_cupboard
+12441,Tesco,Teapigs Organic Snooze Sleepy Tea 15S 45G,3.5,45.0,g,,False,drinks
+12644,ASDA,ASDA Low Calorie Bitter Lemon,0.65,946.0,ml,,True,drinks
+12644,Sains,Sainsbury's Bitter Lemon 1L,0.8,1000.0,ml,,True,drinks
+12644,Tesco,Tesco Low Cal Bitter Lemon 1 Litre,0.65,1000.0,ml,,True,drinks
+13185,Sains,"Sainsbury's Green Vegetable Selection, Taste the Difference 250g",2.75,250.0,g,Taste The Difference,True,free-from
+13185,Tesco,Tesco Finest Green Vegetable Medley 250g,2.75,250.0,g,Finest,True,fresh_food
+13750,Sains,Sainsbury's Fresh British Turkey Burgers x4 454g,4.0,454.0,g,,True,fresh_food
+13750,Tesco,Tesco 4 British Turkey Burgers 454G,3.5,454.0,g,,True,fresh_food

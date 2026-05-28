@@ -24,7 +24,7 @@ import re
 
 import pandas as pd
 
-from shopwiser.paths import DATA_OUTPUTS, cluster_outputs_path, ml_matching_outputs_path
+from shopwiser.paths import DATA_INTERMEDIATE, cluster_outputs_path, ml_matching_outputs_path
 from shopwiser.conflict_tokens import check_hard_conflict, check_phrase_conflict
 
 MAX_CLUSTER_SIZE = 4
@@ -208,7 +208,7 @@ def run_ensemble(
 ) -> dict:
     rule_csv = rule_csv or (cluster_outputs_path(sample=sample) / 'clusters.csv')
     ml_csv = ml_csv or (ml_matching_outputs_path(sample=sample) / 'ml_clusters.csv')
-    out_dir = out_dir or (DATA_OUTPUTS / ('ensemble_sample' if sample else 'ensemble'))
+    out_dir = out_dir or ((DATA_INTERMEDIATE / 'sample') if sample else DATA_INTERMEDIATE)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     print(f'Loading rule-based clusters: {rule_csv}')

@@ -35,9 +35,9 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 MODEL              = "claude-haiku-4-5-20251001"
-DEFAULT_CSV        = REPO / "data/outputs/ensemble/ensemble_clusters.csv"
-DEFAULT_OUT        = REPO / "data/outputs/ensemble/ensemble_clusters.csv"  # overwrite in-place
-REPORT_OUT         = REPO / "data/outputs/fp_analys/llm_filter_report.csv"
+DEFAULT_CSV        = REPO / "data/intermediate/ensemble_clusters.csv"
+DEFAULT_OUT        = REPO / "data/intermediate/ensemble_clusters.csv"  # overwrite in-place
+REPORT_OUT         = REPO / "data/intermediate/llm_filter_report.csv"
 BATCH              = 10    # clusters per API call
 AUTO_PASS_JACCARD  = 0.65  # min-pair Jaccard ≥ this → skip LLM
 SLEEP_BETWEEN      = 0.4   # seconds between batches

@@ -1010,7 +1010,7 @@ if __name__ == '__main__':
     _p.add_argument(
         '--sample',
         action='store_true',
-        help='Use normalized_products_sample.csv and write under data/outputs/ml_clusters_sample/',
+        help='Use normalized_products_sample.csv and write under data/intermediate/sample/',
     )
     _args = _p.parse_args()
     main(sample=_args.sample)

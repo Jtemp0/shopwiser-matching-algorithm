@@ -24,13 +24,13 @@ Produces three panels suitable for a technical (PhD-level) audience:
 
 Inputs
 ------
-  data/outputs/fp_analys/contract_validation.csv     500 validated rows
-  data/outputs/ensemble/cluster_review_metrics.csv   confidence + size per cluster
+  data/validation/contract_validation.csv     500 validated rows
+  data/intermediate/cluster_review_metrics.csv   confidence + size per cluster
 
 Outputs
 -------
-  data/outputs/improvements/precision_coverage_rigorous.png
-  data/outputs/improvements/precision_coverage_rigorous.csv
+  data/validation/precision_coverage_rigorous.png
+  data/validation/precision_coverage_rigorous.csv
 
 Usage
 -----
@@ -47,11 +47,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 REPO = Path(__file__).resolve().parent.parent.parent
-VALID = REPO / "data/outputs/fp_analys/contract_validation.csv"
-METRICS = REPO / "data/outputs/ensemble/cluster_review_metrics.csv"
-FINAL = REPO / "data/outputs/improvements/ensemble_clusters_final.csv"
-OUT_PNG = REPO / "data/outputs/improvements/precision_coverage_rigorous.png"
-OUT_CSV = REPO / "data/outputs/improvements/precision_coverage_rigorous.csv"
+VALID = REPO / "data/validation/contract_validation.csv"
+METRICS = REPO / "data/intermediate/cluster_review_metrics.csv"
+FINAL = REPO / "data/deliverable/ensemble_clusters_final.csv"
+OUT_PNG = REPO / "data/validation/precision_coverage_rigorous.png"
+OUT_CSV = REPO / "data/validation/precision_coverage_rigorous.csv"
 
 RNG_SEED = 20260527
 N_BOOTSTRAP = 2000
