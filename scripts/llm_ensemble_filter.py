@@ -482,13 +482,13 @@ def main(argv: list[str] | None = None) -> None:
     llm_approval_rate = llm_approved / max(1, len(llm_verify_ids)) * 100
 
     print(f"\n{'='*60}")
-    print(f"Filter summary:")
+    print("Filter summary:")
     print(f"  Auto-passed (no LLM):   {len(auto_pass_ids):>6,}")
     print(f"  LLM-verified total:     {len(llm_verify_ids):>6,}")
     print(f"    → approved:           {llm_approved:>6,}  ({llm_approval_rate:.1f}%)")
     print(f"    → rejected:           {llm_rejected:>6,}")
     print(f"  Total clusters kept:    {total_kept:>6,}  (removed {total_removed:,})")
-    print(f"")
+    print("")
 
     # Breakdown by cluster size
     size_dist = df_filtered.groupby("cluster_size")["ensemble_cluster_id"].nunique()

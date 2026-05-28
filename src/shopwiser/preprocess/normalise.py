@@ -238,7 +238,7 @@ def main(*, sample: bool = False) -> None:
     df_out = pd.concat([df.reset_index(drop=True), normalized_df], axis=1)
 
     n = len(df_out)
-    print(f'\n=== Extraction Statistics ===')
+    print('\n=== Extraction Statistics ===')
     print(f'  Supermarket brand extracted : {df_out["supermarket_brand"].notna().sum():>7,}  ({df_out["supermarket_brand"].notna().mean()*100:.1f}%)')
     print(f'  Tier extracted              : {df_out["tier_keyword"].notna().sum():>7,}  ({df_out["tier_keyword"].notna().mean()*100:.1f}%)')
     print(f'  Known brand detected        : {df_out["known_brand"].notna().sum():>7,}  ({df_out["known_brand"].notna().mean()*100:.1f}%)')
@@ -256,7 +256,7 @@ def main(*, sample: bool = False) -> None:
     print(f'  Descriptors detected        : {desc_n:>7,}  ({desc_n/n*100:.1f}%)')
     print(f'  Truncated names flagged     : {n_trunc:>7,}  ({n_trunc/n*100:.1f}%)')
 
-    print(f'\n  Unit type distribution:')
+    print('\n  Unit type distribution:')
     for ut, cnt in df_out['unit_type'].value_counts().items():
         print(f'    {str(ut):<6} {cnt:>7,}  ({cnt/n*100:.1f}%)')
 

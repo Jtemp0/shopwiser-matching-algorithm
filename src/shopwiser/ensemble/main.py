@@ -1,19 +1,22 @@
 """Phase 3 ensemble: union ML-matching and rule-based clusters.
 
 Both pipelines emit one cluster_id per product_idx.  Each cluster with
-size ≥ 2 induces a complete subgraph of intra-cluster pairs; we score those
-pairs with the cluster-level ``avg_pairwise_score`` and combine into a
-single edge list, deduping per (min,max) pair by keeping the max score.
+size ≥ 2 induces a complete subgraph of intra-cluster pairs, combined into a
+single edge list and deduped per (min,max) pair by keeping the max score.
+
+Edge scoring note: rule-based clusters carry a real ``avg_pairwise_score``;
+ML clusters do not export a pairwise score, so ML edges enter at score 0.0.
+The Kruskal union processes edges in descending score order, so rule edges
+are placed first and ML edges fill the remaining slots. In effect the union
+is rule-prioritised: where both sources propose the same pair the rule score
+wins the dedup, and ML contributes unique members (e.g. a 4th retailer) that
+the rule matcher missed.
 
 Final clusters are built by Kruskal-style score-ordered union-find under
 two hard constraints:
 
     1.  at most one product per supermarket
     2.  at most 4 members per cluster
-
-Rule-based and ML edges flow through the same sort, so wherever they
-disagree, the higher-confidence source wins the tie — and either pipeline
-can contribute unique 4th members that the other missed.
 """
 
 from __future__ import annotations
