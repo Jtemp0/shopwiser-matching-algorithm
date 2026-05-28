@@ -13,7 +13,7 @@ to a single outlier reviewer.
 
 Usage
 -----
-    uv run python scripts/improvements/aggregate_review_results.py \
+    uv run python scripts/validation/aggregate_review_results.py \
         --in data/validation/reviews/
 
 The script reads every *.csv in the directory and assumes each came from a
