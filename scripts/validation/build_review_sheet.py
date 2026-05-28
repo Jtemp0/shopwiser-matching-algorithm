@@ -31,8 +31,8 @@ Outputs
 
 Usage
 -----
-    uv run python scripts/improvements/build_review_sheet.py
-    uv run python scripts/improvements/build_review_sheet.py --seed 7 --n 50
+    uv run python scripts/validation/build_review_sheet.py
+    uv run python scripts/validation/build_review_sheet.py --seed 7 --n 50
 """
 
 from __future__ import annotations
