@@ -9,7 +9,7 @@ from shopwiser.paths import normalized_products_path
 
 from .config import BRAND_EXCLUSIONS, CATEGORY_ALIASES
 
-# v8: normalise synonym spellings in normalized_name so that fuzzy matching
+# normalise synonym spellings in normalized_name so that fuzzy matching
 #     can score them well (e.g. "decaffeinated" and "decaff" are the same thing).
 _NAME_SYNONYM_RE = [
     # Coffee

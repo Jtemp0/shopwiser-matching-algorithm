@@ -1,8 +1,8 @@
 """
-Contract validation using Claude Haiku — Clause 4 of the ShopWiser Agreement.
+Acceptance validation of the cluster output, scored by an LLM against the agreed quality questions.
 
 Runs N independent random samples of 50 clusters and evaluates each against
-the exact three binary questions in the contract:
+the three binary acceptance questions:
 
   Q1: Are all items in the cluster the exact same core product?
   Q2: Are all items within an acceptable weight variance?
@@ -12,13 +12,13 @@ the exact three binary questions in the contract:
 A cluster passes if all three answers are "Yes" (Q3 = N/A → treated as Yes
 when the cluster contains no own-brand products).
 
-Overall success: ≥ 90 % of 50 clusters pass (≥ 45 / 50).  Clause 4.4.
+Overall success: ≥ 90% of 50 clusters pass (≥ 45 / 50).
 
 Usage:
-  uv run python scripts/contract_validate_haiku.py               # 4 samples, default seeds
-  uv run python scripts/contract_validate_haiku.py --runs 3
-  uv run python scripts/contract_validate_haiku.py --cluster-size all   # 4-way only by default
-  uv run python scripts/contract_validate_haiku.py --out results/cv.csv
+  uv run python scripts/validation/contract_validate.py               # 4 samples, default seeds
+  uv run python scripts/validation/contract_validate.py --runs 3
+  uv run python scripts/validation/contract_validate.py --cluster-size all   # 4-way only by default
+  uv run python scripts/validation/contract_validate.py --out results/cv.csv
 """
 
 from __future__ import annotations
@@ -33,14 +33,14 @@ from pathlib import Path
 
 import pandas as pd
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 MODEL          = "claude-haiku-4-5-20251001"
 DEFAULT_CSV    = REPO / "data/deliverable/ensemble_clusters_final.csv"
 DEFAULT_OUT    = REPO / "data/validation/contract_validation.csv"
-PASS_THRESHOLD = 0.90   # Clause 4.4
-SAMPLE_SIZE    = 50     # Clause 4.1
+PASS_THRESHOLD = 0.90   # acceptance threshold
+SAMPLE_SIZE    = 50     # acceptance sample size
 BATCH          = 10     # clusters per LLM call
 SEEDS          = [42, 137, 271, 999]   # 4 independent draws
 
@@ -167,7 +167,7 @@ def _cluster_block(df: pd.DataFrame, cid: int) -> str:
 SYSTEM_PROMPT = """\
 You are a fair product comparability assessor for a UK grocery price-comparison
 service.  You evaluate clusters of products from different supermarkets against
-three binary questions from a freelance contract.
+the three binary acceptance questions.
 
 IMPORTANT CONTEXT:
 - The service compares prices across ASDA, Morrisons, Sainsbury's and Tesco.
@@ -297,10 +297,10 @@ Output ONLY a valid JSON object — no markdown, no commentary.
 """
 
 USER_TEMPLATE = """\
-Evaluate each cluster below against the three contract questions.  For every
+Evaluate each cluster below against the three acceptance questions.  For every
 cluster return a JSON verdict entry.
 
-CONTRACT QUESTIONS (answer Yes or No for each):
+ACCEPTANCE QUESTIONS (answer Yes or No for each):
 Q1: Are all items in the cluster the exact same core product?
 Q2: Are all items within an acceptable weight variance?
 Q3: For own-brand goods, are they of the same product tier
@@ -328,7 +328,7 @@ cluster_ids to evaluate in order: {ids}
 """
 
 
-def _call_haiku(client, cluster_ids: list[int], df: pd.DataFrame) -> list[dict]:
+def _call_llm(client, cluster_ids: list[int], df: pd.DataFrame) -> list[dict]:
     blocks = "\n\n".join(_cluster_block(df, cid) for cid in cluster_ids)
     user = USER_TEMPLATE.format(
         ids=cluster_ids,
@@ -372,7 +372,7 @@ def run_sample(
         batch_ids = sampled[bi * batch_size: (bi + 1) * batch_size]
         print(f"    batch {bi+1}/{n_batches} ({len(batch_ids)} clusters)...", end=" ", flush=True)
         try:
-            verdicts = _call_haiku(client, batch_ids, df)
+            verdicts = _call_llm(client, batch_ids, df)
             verdicts_all.extend(verdicts)
             print("ok")
         except Exception as exc:
@@ -410,7 +410,7 @@ def main() -> None:
         print("ANTHROPIC_API_KEY not set — aborting.")
         sys.exit(1)
 
-    p = argparse.ArgumentParser(description="Contract clause-4 validation via Haiku")
+    p = argparse.ArgumentParser(description="Acceptance validation of cluster output via LLM")
     p.add_argument("--csv",          type=Path, default=DEFAULT_CSV)
     p.add_argument("--out",          type=Path, default=DEFAULT_OUT)
     p.add_argument("--runs",         type=int,  default=4)
@@ -496,7 +496,7 @@ def main() -> None:
         f"min {min(rates):.1%}  avg {sum(rates)/len(rates):.1%}  max {max(rates):.1%}"
     )
     print(
-        f"Contract threshold: {PASS_THRESHOLD:.0%} per sample  "
+        f"Acceptance threshold: {PASS_THRESHOLD:.0%} per sample  "
         f"({PASS_THRESHOLD * args.sample_size:.0f}/{args.sample_size} clusters must pass)"
     )
     print(

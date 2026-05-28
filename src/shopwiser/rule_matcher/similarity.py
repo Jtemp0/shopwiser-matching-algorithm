@@ -28,7 +28,7 @@ def _unit_type_compatible(ut_a, ut_b) -> bool:
 
 def _unit_value_compatible(uv_a, uv_b, tolerance, pq_a=None, pq_b=None) -> bool:
     """
-    v5.2: Extended with pack-normalised comparison.
+    Extended with pack-normalised comparison.
     Some retailers (e.g. ASDA) report the *total* weight of a multipack while
     others (Sains, Tesco) report the *per-unit* weight.  When both sides share
     the same pack_quantity (>1), we also try dividing each side's unit_value by
@@ -93,7 +93,7 @@ def _pack_compatible(pq_a, pq_b) -> bool:
 
 def _pack_compatible_branded(pq_a, pq_b) -> bool:
     """
-    v7 relaxed version for branded pass only.
+    Relaxed version for branded pass only.
 
     Many retailers scrape pack count inconsistently: one may record pq=5 for a
     "5 Pack" product while another leaves pack_quantity as NaN even though the
@@ -141,14 +141,14 @@ def _has_diet_marker(text: str) -> bool:
 
 
 def _has_alcohol_free(text: str) -> bool:
-    """v5: detect alcohol-free markers from grocery_vocab ATTRIBUTES['alcohol_marker']."""
+    """Detect alcohol-free markers from grocery_vocab ATTRIBUTES['alcohol_marker']."""
     t = text.lower()
     return any(p in t for p in ALCOHOL_FREE_PATTERNS)
 
 
 def _hard_conflict_check(name_a: str, name_b: str) -> bool:
     """
-    v5 / v5.1: Returns True if the two names represent irreconcilably different
+    Returns True if the two names represent irreconcilably different
     product variants regardless of fuzzy score.
 
     Checks (in order):
@@ -199,7 +199,7 @@ def _hard_conflict_check(name_a: str, name_b: str) -> bool:
         if hits_a and hits_b and hits_a != hits_b:
             return True
 
-    # 6. Packaging format conflict (can vs bottle) — v5.2
+    # 6. Packaging format conflict (can vs bottle)
     pkg_a = toks_a & PACKAGING_FORMAT_TOKENS
     pkg_b = toks_b & PACKAGING_FORMAT_TOKENS
     if pkg_a and pkg_b and not (pkg_a & pkg_b):
@@ -224,7 +224,7 @@ def _attribute_penalty(attrs_a, attrs_b, name_a='', name_b='') -> float:
     if _has_diet_marker(str_a) != _has_diet_marker(str_b):
         penalty += DIET_PENALTY
 
-    # v5: alcohol-free conflict (wired from grocery_vocab ATTRIBUTES['alcohol_marker'])
+    # alcohol-free conflict (wired from grocery_vocab ATTRIBUTES['alcohol_marker'])
     if _has_alcohol_free(str_a) != _has_alcohol_free(str_b):
         penalty += ALCOHOL_FREE_PENALTY
 
@@ -267,7 +267,7 @@ def compute_similarity(row_a, row_b, pass_type, unit_tolerance):
         return False, 0.0
 
     # Hard constraint 4: pack quantity ratio
-    # v7: branded pass uses a relaxed check (unit_value is the primary safeguard for branded);
+    # branded pass uses a relaxed check (unit_value is the primary safeguard for branded);
     # own_brand / unbranded keep the strict check to avoid generic-name false positives.
     _pq_fn = _pack_compatible_branded if pass_type == 'branded' else _pack_compatible
     if not _pq_fn(row_a.get('pack_quantity'), row_b.get('pack_quantity')):
@@ -284,7 +284,7 @@ def compute_similarity(row_a, row_b, pass_type, unit_tolerance):
             return False, 0.0
         if row_a.get('product_type') != row_b.get('product_type'):
             return False, 0.0
-        # v10: frozen vs fresh_food / food_cupboard are distinct storage conditions
+        # frozen vs fresh_food / food_cupboard are distinct storage conditions
         # (prevents fresh whole vegetables matching frozen prepared products)
         _cat_a = str(row_a.get('category', '') or '').lower()
         _cat_b = str(row_b.get('category', '') or '').lower()
@@ -294,11 +294,11 @@ def compute_similarity(row_a, row_b, pass_type, unit_tolerance):
     raw_name_a = str(row_a.get('normalized_name', '') or '')
     raw_name_b = str(row_b.get('normalized_name', '') or '')
 
-    # v10: both names empty → nothing to compare; reject
+    # both names empty → nothing to compare; reject
     if not raw_name_a and not raw_name_b:
         return False, 0.0
 
-    # Hard constraint 5 (v5): irreconcilable product variant
+    # Hard constraint 5: irreconcilable product variant
     if _hard_conflict_check(raw_name_a, raw_name_b):
         return False, 0.0
 
@@ -328,7 +328,7 @@ def compute_similarity(row_a, row_b, pass_type, unit_tolerance):
     else:
         score = 0.70 * token_sort + 0.30 * partial
 
-    # Attribute penalty (includes v5 alcohol-free)
+    # Attribute penalty (includes alcohol-free)
     penalty = _attribute_penalty(
         row_a.get('attributes_keywords'), row_b.get('attributes_keywords'),
         name_a=raw_name_a, name_b=raw_name_b
@@ -360,7 +360,7 @@ def compute_similarity(row_a, row_b, pass_type, unit_tolerance):
 
 def compute_similarity_pass4(row_a, row_b):
     """
-    v5 Pass 4 — cross-bucket catch-all.
+    Pass 4 — cross-bucket catch-all.
 
     High threshold (PASS4_THRESHOLD=0.90).  Allows any product_type
     combination EXCEPT branded↔own_brand (those are intentionally separate).
@@ -388,7 +388,7 @@ def compute_similarity_pass4(row_a, row_b):
     name_a = str(row_a.get('normalized_name', '') or '')
     name_b = str(row_b.get('normalized_name', '') or '')
 
-    # v10: both names empty → nothing to compare; reject (prevents empty-brand FP)
+    # both names empty → nothing to compare; reject (prevents empty-brand FP)
     if not name_a and not name_b:
         return False, 0.0
 

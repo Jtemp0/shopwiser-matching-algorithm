@@ -1,4 +1,4 @@
-"""Clustering thresholds, token sets, and seeds (v10)."""
+"""Clustering thresholds, token sets, and seeds."""
 
 import random
 import numpy as np
@@ -25,18 +25,18 @@ COMPLETION_UNIT_TOL = {
 FUZZY_THRESHOLD            = 0.710   # lowered from 0.720 — meat/type ONE_SIDED guards protect precision
 FUZZY_THRESHOLD_OWNBRAND   = 0.775   # lowered from 0.805
 FUZZY_THRESHOLD_NOUNIT     = 0.790   # lowered from 0.800
-# v8: per-type thresholds for the completion passes (5B/5C).
+# per-type thresholds for the completion passes (5B/5C).
 # Branded can go lower because brand pre-filters heavily; own_brand needs
 # to stay high because generic names (e.g. "black beans" vs "black eyed
 # beans") can score above 0.80 despite being different products.
 COMPLETION_THRESHOLD = {
-    'branded':   0.600,   # v10: completion-only threshold; guarded by hard conflicts + brand/unit gates
-    'own_brand': 0.680,   # v10: completion-only threshold in tight tier/category/unit context
-    'unbranded': 0.640,   # v10: completion-only threshold with unit/category guards
+    'branded':   0.600,   # completion-only threshold; guarded by hard conflicts + brand/unit gates
+    'own_brand': 0.680,   # completion-only threshold in tight tier/category/unit context
+    'unbranded': 0.640,   # completion-only threshold with unit/category guards
 }
 FUZZY_THRESHOLD_COMPLETION = 0.600   # kept for backward-compat references
 
-SHORT_STRIPPED_THRESHOLD = 0.74   # ≤3 equal-token branded pairs (v7: lowered from 0.87;
+SHORT_STRIPPED_THRESHOLD = 0.74   # ≤3 equal-token branded pairs (lowered from 0.87;
                                   # ingredient/flavor conflicts caught by FLAVOR_NAMED_TOKENS and
                                   # ONE_SIDED_CONFLICT_TOKENS, making the elevated threshold
                                   # unnecessarily strict for legitimate matches with minor penalties)
@@ -49,12 +49,12 @@ ATTR_PENALTIES = {
     'organic':   0.20,
     'free_from': 0.20,
     'fairtrade': 0.10,
-    'vegan':     0.10,   # v7: reduced from 0.25; "vegan" is often just a label difference for
+    'vegan':     0.10,   # reduced from 0.25; "vegan" is often just a label difference for
                          # the same product (e.g. Cadbury Plant Bar labelled vegan in one store)
 }
 DIET_PENALTY = 0.10
 
-# ── v5: alcohol-free penalty (wired from grocery_vocab ATTRIBUTES['alcohol_marker'])
+# ── alcohol-free penalty (wired from grocery_vocab ATTRIBUTES['alcohol_marker'])
 ALCOHOL_FREE_PENALTY   = 0.60
 ALCOHOL_FREE_PATTERNS  = [
     'alcohol free', 'alcohol-free', 'non-alcoholic',
@@ -112,7 +112,7 @@ np.random.seed(RANDOM_SEED)
 
 
 def print_config_banner() -> None:
-    print('Configuration loaded (v10).')
+    print('Configuration loaded.')
     print(f'  Fuzzy threshold:          {FUZZY_THRESHOLD} (own-brand: {FUZZY_THRESHOLD_OWNBRAND}, no-unit: {FUZZY_THRESHOLD_NOUNIT})')
     print(f'  Short stripped threshold: {SHORT_STRIPPED_THRESHOLD}')
     print(f'  Unit tolerance:           ±{UNIT_TOLERANCE_BRANDED*100:.0f}% branded, ±{UNIT_TOLERANCE_OWN_BRAND*100:.0f}% own-brand')
