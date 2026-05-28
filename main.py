@@ -44,9 +44,9 @@ def _cmd_ensemble(args: argparse.Namespace) -> None:
 
 
 def _cmd_export_demo(args: argparse.Namespace) -> None:
-    from shopwiser.utils.cofounder_demo_export import export_cofounder_demo
+    from shopwiser.utils.sample_export import export_sample
 
-    long_p, wide_p, html_p = export_cofounder_demo(
+    long_p, wide_p, html_p = export_sample(
         ml_clusters_csv=Path(args.input) if args.input else None,
         out_dir=Path(args.out_dir) if args.out_dir else None,
         use_stratified_fallback=args.stratified,
@@ -101,7 +101,7 @@ def build_parser() -> argparse.ArgumentParser:
         sp.add_argument(
             '--sample',
             action='store_true',
-            help='Use raw_1000 / normalized_products_sample / clusters_sample paths',
+            help='Use the bundled ~1000-row sample (writes under data/intermediate/sample/)',
         )
 
     pn = sub.add_parser(
@@ -134,7 +134,7 @@ def build_parser() -> argparse.ArgumentParser:
     pdemo = sub.add_parser(
         'export-demo',
         aliases=('demo',),
-        help='Build cofounder demo CSV/HTML from ml_clusters.csv → data/validation/demo/',
+        help='Build a demo sample (CSV/HTML) from ml_clusters.csv → data/validation/demo/',
     )
     pdemo.add_argument(
         '--input',
@@ -155,7 +155,7 @@ def build_parser() -> argparse.ArgumentParser:
         action='store_true',
         help='Auto-sample clusters instead of the hand-validated list',
     )
-    pdemo.add_argument('--html', action='store_true', help='Also write cofounder_demo.html')
+    pdemo.add_argument('--html', action='store_true', help='Also write sample_clusters.html')
     pdemo.set_defaults(func=_cmd_export_demo)
 
     pa = sub.add_parser(

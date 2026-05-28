@@ -1,16 +1,15 @@
 """
-Independent Review Metrics for ShopWiser Cluster Pipeline
-==========================================================
+Cluster quality metrics for the ShopWiser pipeline.
 
-Applies the full validation methodology from REVIEW.md (review-of-shopwiser-contractor-work/)
-to any cluster deliverable produced by the pipeline.
+Computes structural, coverage, and quality-probe metrics for any cluster
+output produced by the pipeline, and writes a per-cluster confidence score.
 
-The seven-part framework:
+Seven-part framework:
 
   Part 1  Basic shape: 4-way / 3-way / 2-way cluster counts, coverage
   Part 2  Pipeline origin: stage-1-pure vs post-hoc-assembled clusters
-  Part 3  Structural checks re-run with explicit null handling
-  Part 4  Independent quality probe: TF-IDF char cosine + token Jaccard +
+  Part 3  Structural checks with explicit null handling
+  Part 4  Quality probe: TF-IDF char cosine + token Jaccard +
           size agreement + brand uniqueness + category uniqueness →
           per-cluster confidence score + likely_good binary
   Part 5  Coverage stats: raw products in / out of clusters
@@ -18,14 +17,14 @@ The seven-part framework:
   Part 7  Attribute-extraction coverage
 
 Outputs:
-  console  – labelled sections matching REVIEW.md numbering
+  console  – labelled sections matching the numbering above
   data/intermediate/cluster_review_metrics.csv  – per-cluster scores
   data/intermediate/review_summary.json         – machine-readable headline numbers
 
 Usage:
-    uv run python scripts/review_metrics.py
-    uv run python scripts/review_metrics.py --clusters path/to/ensemble.csv
-    uv run python scripts/review_metrics.py --clusters path/to/ensemble.csv \\
+    uv run python scripts/validation/review_metrics.py
+    uv run python scripts/validation/review_metrics.py --clusters path/to/ensemble.csv
+    uv run python scripts/validation/review_metrics.py --clusters path/to/ensemble.csv \\
         --raw path/to/raw.csv --out-dir path/to/output/
 """
 
@@ -48,7 +47,7 @@ warnings.filterwarnings("ignore")
 # ---------------------------------------------------------------------------
 # Path setup
 # ---------------------------------------------------------------------------
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 DEFAULT_CLUSTERS = REPO_ROOT / "data/intermediate/ensemble_clusters.csv"
@@ -107,7 +106,7 @@ def _size_ratio(vals: np.ndarray) -> float:
 # ---------------------------------------------------------------------------
 
 def part_1_basic_shape(df: pd.DataFrame) -> dict:
-    _section("PART 1  Basic shape of the deliverable")
+    _section("PART 1  Basic shape of the cluster output")
 
     sizes = df.groupby("ensemble_cluster_id").size()
     n_total = len(df)
@@ -117,7 +116,7 @@ def part_1_basic_shape(df: pd.DataFrame) -> dict:
     cnt_2 = int((sizes == 2).sum())
     cnt_other = int(((sizes != 4) & (sizes != 3) & (sizes != 2)).sum())
 
-    print(f"Total products in deliverable : {n_total:,}")
+    print(f"Total products in output : {n_total:,}")
     print(f"Total clusters                : {n_clusters:,}")
     print()
     print(f"  4-way clusters : {cnt_4:>7,}")
@@ -188,38 +187,38 @@ def part_3_structural_checks(df: pd.DataFrame) -> dict:
     n_clusters = df["ensemble_cluster_id"].nunique()
     print(f"Running 4 structural checks across {n_clusters:,} clusters...\n")
 
-    v1 = v2 = v3 = v5 = 0
+    viol1 = viol2 = viol3 = viol5 = 0
     cross_cat = 0
 
     for _cid, g in df.groupby("ensemble_cluster_id"):
         # Check 1: one product per supermarket
         if g["supermarket"].duplicated().any():
-            v1 += 1
+            viol1 += 1
 
         # Check 2: pack-size mismatch > 15%
         sv = g["unit_value"].dropna().values
         if len(sv) >= 2 and (float(sv.max()) / float(sv.min()) - 1) > 0.15:
-            v2 += 1
+            viol2 += 1
 
         # Check 3: known_brand values disagree (null-aware — nulls excluded)
         if g["known_brand"].dropna().str.lower().str.strip().nunique() > 1:
-            v3 += 1
+            viol3 += 1
 
         # Check 5: branded item (known_brand filled) mixed with own-brand
         ob_mask = g["own_brand"].astype(str).str.lower() == "true"
         has_branded_with_brand = ((~ob_mask) & g["known_brand"].notna()).any()
         if has_branded_with_brand and ob_mask.any():
-            v5 += 1
+            viol5 += 1
 
-        # Bonus: cross-category clusters (not in original contractor checks)
+        # Bonus: cross-category clusters (supplementary signal)
         if g["cat_norm"].dropna().nunique() > 1:
             cross_cat += 1
 
-    total_viol = v1 + v2 + v3 + v5
-    print(f"  Check 1  one product per supermarket per cluster  : {v1:>6,} violations")
-    print(f"  Check 2  size mismatch > 15% (null-aware)         : {v2:>6,} violations")
-    print(f"  Check 3  known_brand values disagree              : {v3:>6,} violations")
-    print(f"  Check 5  branded mixed with own-brand             : {v5:>6,} violations")
+    total_viol = viol1 + viol2 + viol3 + viol5
+    print(f"  Check 1  one product per supermarket per cluster  : {viol1:>6,} violations")
+    print(f"  Check 2  size mismatch > 15% (null-aware)         : {viol2:>6,} violations")
+    print(f"  Check 3  known_brand values disagree              : {viol3:>6,} violations")
+    print(f"  Check 5  branded mixed with own-brand             : {viol5:>6,} violations")
     print(f"  Bonus    cross-category clusters                  : {cross_cat:>6,} "
           f"({cross_cat/n_clusters*100:.1f}%)")
     print()
@@ -227,10 +226,10 @@ def part_3_structural_checks(df: pd.DataFrame) -> dict:
     print(f"  (Upper bound on failing clusters — some clusters fail multiple checks)")
 
     return {
-        "check1_duplicate_retailer": v1,
-        "check2_size_mismatch_15pct": v2,
-        "check3_brand_conflict": v3,
-        "check5_branded_vs_own_brand": v5,
+        "check1_duplicate_retailer": viol1,
+        "check2_size_mismatch_15pct": viol2,
+        "check3_brand_conflict": viol3,
+        "check5_branded_vs_own_brand": viol5,
         "cross_category_clusters": cross_cat,
         "cross_category_pct": round(cross_cat / n_clusters * 100, 1) if n_clusters else 0,
     }
@@ -347,7 +346,7 @@ def part_4_quality_probe(df: pd.DataFrame) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 
 def part_5_coverage(df: pd.DataFrame, raw: pd.DataFrame | None) -> dict:
-    _section("PART 5  Coverage stats (raw dataset vs deliverable)")
+    _section("PART 5  Coverage stats (raw dataset vs clustered output)")
 
     if raw is None:
         print("  Raw dataset not provided — skipping coverage analysis.")
@@ -359,8 +358,8 @@ def part_5_coverage(df: pd.DataFrame, raw: pd.DataFrame | None) -> dict:
     pct_covered = n_matched / n_raw * 100 if n_raw else 0
 
     print(f"  Raw corpus products  : {n_raw:,}")
-    print(f"  In deliverable       : {n_matched:,}  ({pct_covered:.1f}%)")
-    print(f"  Not in deliverable   : {n_unmatched:,}  ({100-pct_covered:.1f}%)")
+    print(f"  In output       : {n_matched:,}  ({pct_covered:.1f}%)")
+    print(f"  Not in output   : {n_unmatched:,}  ({100-pct_covered:.1f}%)")
     print()
     print("  By retailer (raw vs matched):")
 
@@ -462,7 +461,7 @@ def part_7_attribute_coverage(df: pd.DataFrame) -> dict:
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        description="Independent review metrics for ShopWiser cluster deliverables."
+        description="Cluster quality metrics for the ShopWiser pipeline."
     )
     p.add_argument(
         "--clusters",

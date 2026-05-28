@@ -1,5 +1,5 @@
 """
-Post-process the ensemble deliverable for hand-off:
+Post-process the ensemble clusters into the final output:
 
   1. Brand canonicalisation: apostrophes/hyphens normalised across known
      UK supermarket brands (McVitie's, Hartley's, Ben's, Young's, Jacob's,
@@ -33,7 +33,7 @@ Output
 
 Usage
 -----
-    uv run python scripts/improvements/finalise_deliverable.py
+    uv run python scripts/finalise_clusters.py
 """
 
 from __future__ import annotations
@@ -43,7 +43,7 @@ import re
 import numpy as np
 import pandas as pd
 
-REPO = Path(__file__).resolve().parent.parent.parent
+REPO = Path(__file__).resolve().parent.parent
 CLUSTERS = REPO / "data/intermediate/ensemble_clusters.csv"
 METRICS = REPO / "data/intermediate/cluster_review_metrics.csv"
 OUT = REPO / "data/deliverable/ensemble_clusters_final.csv"

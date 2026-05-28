@@ -1,8 +1,8 @@
 """
-Build the clause 4.2 validation review sheet.
+Build the cluster acceptance review sheet.
 
 Produces a self-contained HTML form that any unaffiliated reviewer can open in
-a browser and fill in. The form asks the three contractual Yes/No questions
+a browser and fill in. The form asks the three acceptance Yes/No questions
 per cluster:
 
     Q1. Are all items in the cluster the exact same core product?
@@ -12,16 +12,16 @@ per cluster:
 
 When the reviewer clicks Submit, the form serialises every answer to a CSV
 file that downloads to their machine. The four CSVs (one per assessor) can
-then be aggregated into the contractual 90% pass-rate measure.
+then be aggregated into the 90% acceptance pass-rate measure.
 
 Sampling
 --------
 Stratified random sample of 50 clusters across the cluster-size buckets,
-weighted by the deliverable's distribution to mirror what we ship.
+weighted by the cluster-size distribution of the final output.
 
 Inputs
 ------
-  data/deliverable/ensemble_clusters_final.csv  (the shipped deliverable)
+  data/deliverable/ensemble_clusters_final.csv  (the final clustered output)
 
 Outputs
 -------
@@ -155,7 +155,7 @@ def render_html(sample: pd.DataFrame) -> str:
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>ShopWiser cluster review (clause 4.2)</title>
+<title>ShopWiser cluster review</title>
 <style>
   body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
          max-width: 960px; margin: 2rem auto; padding: 0 1.25rem; color: #1d2433; }}

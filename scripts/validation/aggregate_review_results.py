@@ -1,8 +1,8 @@
 """
-Aggregate clause 4.2 review CSVs from the 4 reviewers into the contractual
+Aggregate the reviewer CSVs from the 4 reviewers into the acceptance
 pass-rate measure.
 
-Per clause 4.3 a cluster is deemed to "pass" if all three Yes/No questions
+A cluster is deemed to "pass" if all three Yes/No questions
 receive "Yes" (or N/A for Q3 when no own-brand items present). Per clause
 4.4 the algorithm satisfies the success criteria if at least 90% of the 50
 sampled clusters pass.
@@ -72,7 +72,7 @@ def main() -> None:
     print(f"Clusters reviewed        : {len(by_cluster)}")
     print(f"Clusters passing majority: {int(by_cluster['majority_pass'].sum())}")
     print(f"Pass rate                : {pass_rate:.1f}%")
-    print(f"Contractual threshold    : 90.0%")
+    print(f"Acceptance threshold    : 90.0%")
     print(f"Result                   : {'PASS' if pass_rate >= 90 else 'BELOW THRESHOLD'}")
 
     by_cluster.to_csv(OUT, index=False)

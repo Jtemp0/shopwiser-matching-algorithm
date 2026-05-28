@@ -540,10 +540,9 @@ def build_final_clusters(
     # Step 1: Argmax — each anchor's single best match per target SM, above threshold.
     # Also enforce MARGIN_THRESHOLD: when the anchor has multiple candidates in the
     # same target supermarket, require the top-1 score to lead the runner-up by at
-    # least MARGIN_THRESHOLD. This is the "decisive winner" criterion in Darius's
-    # spec (acceptance condition: `margin over runner-up exceeds τ_margin`). It
-    # eliminates edges where two retailer SKUs score nearly identically against
-    # one anchor — those are guesses, not matches.
+    # least MARGIN_THRESHOLD ("decisive winner" criterion). It eliminates edges where
+    # two retailer SKUs score nearly identically against one anchor — those are
+    # guesses, not matches.
     ranked = directed.sort_values(
         ['anchor', 'target_sm', 'match_prob'],
         ascending=[True, True, False],

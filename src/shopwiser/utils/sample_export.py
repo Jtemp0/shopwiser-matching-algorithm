@@ -1,4 +1,4 @@
-"""Export a hand-validated cofounder demo slice from ``ml_clusters.csv``.
+"""Export a hand-validated demo sample slice from ``ml_clusters.csv``.
 
 The **long** CSV keeps every pipeline column (normalisation, units, attributes, etc.).
 The **wide** CSV is one row per cluster with retailer product title, size, and price.
@@ -22,7 +22,7 @@ DEMO_DIR = DATA_VALIDATION / 'demo'
 # either identical or within ~3% relative spread (where numeric); same branded SKU
 # or clear own-label equivalent (e.g. chopped ginger). Replaces auto-sampled clusters
 # that mixed different products (e.g. cake blob, spread vs pudding).
-VALIDATED_COFOUNDER_DEMO_CLUSTER_IDS: tuple[int, ...] = (
+VALIDATED_SAMPLE_CLUSTER_IDS: tuple[int, ...] = (
     2728,  # Lavazza Qualità Rossa coffee beans 1kg
     2813,  # Ginsters Peppered Steak Slice
     2854,  # Peperami Firestick
@@ -183,7 +183,7 @@ def _write_html(wide: pd.DataFrame, path: Path, *, n_clusters: int) -> None:
     path.write_text('\n'.join(parts), encoding='utf-8')
 
 
-def export_cofounder_demo(
+def export_sample(
     ml_clusters_csv: Path | None = None,
     out_dir: Path | None = None,
     *,
@@ -195,7 +195,7 @@ def export_cofounder_demo(
 ) -> tuple[Path, Path, Path | None]:
     """Write long CSV, wide CSV, and optionally HTML under ``data/validation/demo/``.
 
-    By default uses ``VALIDATED_COFOUNDER_DEMO_CLUSTER_IDS``. Set
+    By default uses ``VALIDATED_SAMPLE_CLUSTER_IDS``. Set
     ``use_stratified_fallback=True`` to ignore that list and sample automatically.
 
     Returns ``(long_csv, wide_csv, html_or_none)``.
@@ -211,7 +211,7 @@ def export_cofounder_demo(
     elif cluster_ids is not None:
         demo_ids = list(cluster_ids)
     else:
-        demo_ids = list(VALIDATED_COFOUNDER_DEMO_CLUSTER_IDS)
+        demo_ids = list(VALIDATED_SAMPLE_CLUSTER_IDS)
         if n_clusters != len(demo_ids):
             demo_ids = demo_ids[:n_clusters]
 
@@ -224,7 +224,7 @@ def export_cofounder_demo(
     demo['demo_order'] = demo['cluster_id'].map(order_map)
     demo.sort_values(['demo_order', 'supermarket'], inplace=True)
 
-    long_path = out / 'cofounder_demo_clusters_long.csv'
+    long_path = out / 'sample_clusters_long.csv'
     demo.to_csv(long_path, index=False)
 
     rows: list[dict] = []
@@ -255,19 +255,19 @@ def export_cofounder_demo(
         rows.append(row)
 
     wide = pd.DataFrame(rows)
-    wide_path = out / 'cofounder_demo_clusters_wide.csv'
+    wide_path = out / 'sample_clusters_wide.csv'
     wide.to_csv(wide_path, index=False)
 
     html_path: Path | None = None
     if write_html:
-        html_path = out / 'cofounder_demo.html'
+        html_path = out / 'sample_clusters.html'
         _write_html(wide, html_path, n_clusters=len(demo_ids))
 
     return long_path, wide_path, html_path
 
 
 def main(argv: list[str] | None = None) -> None:
-    p = argparse.ArgumentParser(description='Export cofounder demo tables from ml_clusters.csv')
+    p = argparse.ArgumentParser(description='Export demo sample tables from ml_clusters.csv')
     p.add_argument(
         '--input',
         type=Path,
@@ -282,10 +282,10 @@ def main(argv: list[str] | None = None) -> None:
         action='store_true',
         help='Sample clusters automatically instead of the validated ID list',
     )
-    p.add_argument('--html', action='store_true', help='Also write cofounder_demo.html')
+    p.add_argument('--html', action='store_true', help='Also write sample_clusters.html')
     args = p.parse_args(argv)
 
-    long_p, wide_p, html_p = export_cofounder_demo(
+    long_p, wide_p, html_p = export_sample(
         ml_clusters_csv=args.input,
         out_dir=args.out_dir,
         use_stratified_fallback=args.stratified,

@@ -5,8 +5,7 @@ ASDA, Morrisons) from scraped catalogue data, producing cross-retailer
 clusters for price comparison.
 
 The pipeline is deterministic up to the LLM filter stage, which uses Claude
-Haiku to verify borderline clusters against the contract's clause 4.2
-questions.
+Haiku to verify borderline clusters against the agreed acceptance questions.
 
 ---
 
@@ -63,14 +62,14 @@ uv run python scripts/llm_ensemble_filter.py
 
 # 6. Per-cluster structural metrics + confidence_score
 #    (writes data/intermediate/cluster_review_metrics.csv, consumed by step 7)
-uv run python scripts/review_metrics.py --clusters data/intermediate/ensemble_clusters.csv
+uv run python scripts/validation/review_metrics.py --clusters data/intermediate/ensemble_clusters.csv
 
 # 7. Finalisation pass (brand canonicalisation, unit_value normalisation,
 #    pack-size guard, confidence_score column)
-uv run python scripts/improvements/finalise_deliverable.py
+uv run python scripts/finalise_clusters.py
 ```
 
-**Canonical deliverable:** `data/deliverable/ensemble_clusters_final.csv`
+**Canonical output:** `data/deliverable/ensemble_clusters_final.csv`
 (one row per product, grouped by `ensemble_cluster_id`, with a
 `confidence_score` per cluster).
 
@@ -82,20 +81,20 @@ steps 1–4.
 ## Validation & analysis
 
 ```bash
-# Precision validation against clause 4.2 (Claude Haiku proxy, needs API key)
-# Runs on the final deliverable by default
+# Acceptance validation (LLM proxy, needs API key)
+# Runs on the final output by default
 set -a && source .env && set +a
-uv run python scripts/contract_validate_haiku.py
+uv run python scripts/validation/contract_validate.py
 
 # Precision / calibration / coverage charts
-uv run python scripts/improvements/precision_coverage_rigorous.py
+uv run python scripts/validation/precision_coverage.py
 
 # Human review form (50-cluster stratified sample → HTML)
-uv run python scripts/improvements/build_review_sheet.py
+uv run python scripts/validation/build_review_sheet.py
 
 # After the 4 reviewers return their CSVs into data/validation/reviews/,
-# aggregate them into the clause 4.2 pass rate
-uv run python scripts/improvements/aggregate_review_results.py --in data/validation/reviews/
+# aggregate them into the acceptance pass rate
+uv run python scripts/validation/aggregate_review_results.py --in data/validation/reviews/
 
 # Similarity unit tests
 uv run python main.py test-similarity
@@ -113,13 +112,13 @@ src/shopwiser/
   ml_matcher/                   FAISS retrieval + LightGBM ranker
   ensemble/                     Kruskal union of the two matchers
   conflict_tokens.py            Flavour / variant / tier conflict vocabulary
-scripts/                        LLM filter, validation
-scripts/improvements/           Finalisation, charts, review sheet
+scripts/                        Pipeline steps (LLM filter, finalisation)
+scripts/validation/             Acceptance validation, charts, review sheet
 data/
   input/                        raw scrapes + normalised features
   intermediate/                 matcher + ensemble outputs (regenerated)
-  deliverable/                  ensemble_clusters_final.csv  <-- the product
-  validation/                   contract validation, charts, review form
+  deliverable/                  ensemble_clusters_final.csv  <-- the final output
+  validation/                   acceptance validation, charts, review form
 ```
 
 ---
@@ -163,6 +162,6 @@ on a small slice first to sanity-check end to end.
 - The `export-demo` and `audit` CLI commands are optional utilities (demo
   HTML export and an independent LLM audit) and are **not** part of the core
   matching pipeline. Ignore them for a standard run.
-- Categorical confidence bands are intentionally omitted from the deliverable;
+- Categorical confidence bands are intentionally omitted from the output;
   the raw `confidence_score` is shipped so any cut-off can be chosen against the
   empirical calibration (see the reliability diagram from the charts step).

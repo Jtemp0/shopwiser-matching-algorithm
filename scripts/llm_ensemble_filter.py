@@ -4,7 +4,7 @@ LLM-based ensemble filter — post-processing pass for the relaxed Kruskal ensem
 The relaxed ensemble (Jaccard floor lowered to 0.15) recovers coverage but admits
 borderline clusters that need semantic verification.  This script classifies every
 cluster into one of three tiers and verifies the borderline tier with Claude Haiku
-using the same Q1/Q2/Q3 questions as the contract validation (clause 4.4).
+using the same Q1/Q2/Q3 acceptance questions as the validation step.
 
 Tiers
 -----
@@ -84,7 +84,7 @@ def _min_pair_jaccard(names: list[str]) -> float:
 
 
 # ---------------------------------------------------------------------------
-# Cluster display helpers (identical to contract_validate_haiku.py)
+# Cluster display helpers (identical to contract_validate.py)
 # ---------------------------------------------------------------------------
 
 def _tier_label(row: pd.Series) -> str:
@@ -144,13 +144,13 @@ def _cluster_block(df: pd.DataFrame, cid: int) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Prompt (identical to contract_validate_haiku.py)
+# Prompt (identical to contract_validate.py)
 # ---------------------------------------------------------------------------
 
 SYSTEM_PROMPT = """\
 You are a fair product comparability assessor for a UK grocery price-comparison
 service.  You evaluate clusters of products from different supermarkets against
-three binary questions from a freelance contract.
+the three binary acceptance questions.
 
 IMPORTANT CONTEXT:
 - The service compares prices across ASDA, Morrisons, Sainsbury's and Tesco.
@@ -280,10 +280,10 @@ Output ONLY a valid JSON object — no markdown, no commentary.
 """
 
 USER_TEMPLATE = """\
-Evaluate each cluster below against the three contract questions.  For every
+Evaluate each cluster below against the three acceptance questions.  For every
 cluster return a JSON verdict entry.
 
-CONTRACT QUESTIONS (answer Yes or No for each):
+ACCEPTANCE QUESTIONS (answer Yes or No for each):
 Q1: Are all items in the cluster the exact same core product?
 Q2: Are all items within an acceptable weight variance?
 Q3: For own-brand goods, are they of the same product tier
@@ -315,7 +315,7 @@ cluster_ids to evaluate in order: {ids}
 # Haiku call
 # ---------------------------------------------------------------------------
 
-def _call_haiku(client, cluster_ids: list[int], df: pd.DataFrame) -> list[dict]:
+def _call_llm(client, cluster_ids: list[int], df: pd.DataFrame) -> list[dict]:
     blocks = "\n\n".join(_cluster_block(df, cid) for cid in cluster_ids)
     user = USER_TEMPLATE.format(ids=cluster_ids, blocks=blocks)
     msg = client.messages.create(
@@ -415,7 +415,7 @@ def main(argv: list[str] | None = None) -> None:
         batch = llm_verify_ids[b_idx : b_idx + args.batch]
         batch_num = b_idx // args.batch + 1
         try:
-            verdicts = _call_haiku(client, batch, df)
+            verdicts = _call_llm(client, batch, df)
         except Exception as exc:
             print(f"  batch {batch_num}/{total_batches} ERROR: {exc} — marking all as REJECTED")
             for cid in batch:

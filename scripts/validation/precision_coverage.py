@@ -1,14 +1,14 @@
 """
-Rigorous precision-vs-coverage analysis for the cluster deliverable.
+Precision-vs-coverage analysis for the cluster output.
 
 Produces three panels suitable for a technical (PhD-level) audience:
 
   (a) Empirical precision-recall curve with bootstrap 95% CI band.
       Constructed by sweeping the confidence threshold over the 500
       human-validated cluster reviews (10 seeds × 50 stratified samples,
-      clause 4.2 protocol). Precision at threshold t is the fraction of
+      acceptance protocol). Precision at threshold t is the fraction of
       validated clusters with confidence_score >= t that passed all three
-      clause 4.2 questions. CI is computed via 2,000 bootstrap resamples
+      acceptance questions. CI is computed via 2,000 bootstrap resamples
       over the validation set.
 
   (b) Reliability diagram (calibration plot). Validated clusters are
@@ -18,7 +18,7 @@ Produces three panels suitable for a technical (PhD-level) audience:
       diagonal is perfect calibration.
 
   (c) Coverage curve. Number of clusters retained (and 4-way subset)
-      in the FULL deliverable as the confidence threshold is swept.
+      in the full cluster output as the confidence threshold is swept.
       This is the operational tradeoff side: how much of the catalogue
       remains at each threshold.
 
@@ -29,12 +29,12 @@ Inputs
 
 Outputs
 -------
-  data/validation/precision_coverage_rigorous.png
-  data/validation/precision_coverage_rigorous.csv
+  data/validation/precision_coverage.png
+  data/validation/precision_coverage.csv
 
 Usage
 -----
-    uv run python scripts/improvements/precision_coverage_rigorous.py
+    uv run python scripts/validation/precision_coverage.py
 """
 
 from __future__ import annotations
@@ -50,8 +50,8 @@ REPO = Path(__file__).resolve().parent.parent.parent
 VALID = REPO / "data/validation/contract_validation.csv"
 METRICS = REPO / "data/intermediate/cluster_review_metrics.csv"
 FINAL = REPO / "data/deliverable/ensemble_clusters_final.csv"
-OUT_PNG = REPO / "data/validation/precision_coverage_rigorous.png"
-OUT_CSV = REPO / "data/validation/precision_coverage_rigorous.csv"
+OUT_PNG = REPO / "data/validation/precision_coverage.png"
+OUT_CSV = REPO / "data/validation/precision_coverage.csv"
 
 RNG_SEED = 20260527
 N_BOOTSTRAP = 2000
@@ -75,10 +75,10 @@ def main() -> None:
 
     valid = pd.read_csv(VALID)
     metrics = pd.read_csv(METRICS)
-    # restrict metrics to clusters that survive in the final post-processed deliverable
+    # restrict metrics to clusters that survive in the final post-processed output
     final_ids = set(pd.read_csv(FINAL, low_memory=False)["ensemble_cluster_id"].unique())
     metrics = metrics[metrics["ensemble_cluster_id"].isin(final_ids)].reset_index(drop=True)
-    print(f"Final deliverable clusters: {len(metrics):,}")
+    print(f"Final output clusters: {len(metrics):,}")
     merged = valid.merge(
         metrics[["ensemble_cluster_id", "confidence_score", "cluster_size"]],
         left_on="cluster_id", right_on="ensemble_cluster_id", how="inner",
@@ -147,7 +147,7 @@ def main() -> None:
         bin_hi.append(ci_h)
         bin_n.append(n)
 
-    # (c) Coverage on the full deliverable
+    # (c) Coverage on the full cluster output
     full_scores = metrics["confidence_score"].to_numpy()
     full_sizes = metrics["cluster_size"].to_numpy()
     cov_n, cov_n4 = [], []
@@ -258,14 +258,14 @@ def main() -> None:
                 fontsize=9, color=col_cov,
                 arrowprops=dict(arrowstyle="->", color=col_cov, lw=1))
     ax.set_xlabel("Confidence threshold $t$", fontsize=11)
-    ax.set_ylabel("Clusters retained in full deliverable", fontsize=11)
+    ax.set_ylabel("Clusters retained in full output", fontsize=11)
     ax.set_title("(c) Coverage curve", fontsize=11)
     ax.set_xlim(0.30, 1.00)
     ax.set_ylim(0, total * 1.08)
     ax.grid(alpha=0.3)
     ax.legend(loc="upper right", fontsize=9)
 
-    fig.suptitle("ShopWiser cluster deliverable: precision, calibration, coverage",
+    fig.suptitle("ShopWiser clusters: precision, calibration, coverage",
                  fontsize=13, y=1.02)
     fig.tight_layout()
     fig.savefig(OUT_PNG, dpi=150, bbox_inches="tight")

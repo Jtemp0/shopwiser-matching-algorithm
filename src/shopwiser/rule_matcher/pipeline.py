@@ -83,7 +83,7 @@ def run_clustering(df: pd.DataFrame) -> None:
         return f'{tier}||{cat}||{tok2}'
 
     def _own_key_e(row):
-        """v7: no-tier key — catches products where tier classification differs between stores."""
+        """no-tier key — catches products where tier classification differs between stores."""
         cat   = str(row['cat_norm']).lower().strip()
         utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
         ubucket = _unit_bucket(row['unit_value'], bucket_size=100)
@@ -92,7 +92,7 @@ def run_clustering(df: pd.DataFrame) -> None:
         return f'{cat}||{utype}||{ubucket}||{tok1}'
 
     def _own_key_f(row):
-        """v9: no-tier, no-bucket key — relies on sub-blocking (500/1000g) for wider unit coverage.
+        """no-tier, no-bucket key — relies on sub-blocking (500/1000g) for wider unit coverage.
         Helps when unit values differ slightly between SMs for the same product."""
         cat   = str(row['cat_norm']).lower().strip()
         utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
@@ -101,7 +101,7 @@ def run_clustering(df: pd.DataFrame) -> None:
         return f'{cat}||{utype}||{tok1}'
 
     def _own_key_g(row):
-        """v9: no-tier, no-bucket, tok2 — covers products where first token differs but second matches."""
+        """no-tier, no-bucket, tok2 — covers products where first token differs but second matches."""
         cat   = str(row['cat_norm']).lower().strip()
         utype = str(row['unit_type']).strip() if pd.notna(row['unit_type']) else 'none'
         toks  = _get_tokens(row['normalized_name'])
@@ -109,7 +109,7 @@ def run_clustering(df: pd.DataFrame) -> None:
         return f'{cat}||{utype}||{tok2}'
 
     def _own_key_h(row):
-        """v10: cross-category key — catches own-brand products miscategorised across SMs
+        """cross-category key — catches own-brand products miscategorised across SMs
         (e.g. 'Gluten Free Bread' as bakery at Tesco vs free_from at Sainsbury's).
         Uses tier + utype + first two name tokens; omits cat to allow cross-category comparison."""
         tier  = str(row['tier_type'] or 'standard').lower().strip()
@@ -173,7 +173,7 @@ def run_clustering(df: pd.DataFrame) -> None:
 
     def _unb_key_e(row):
         """
-        v5: Cross-token-window key — cat + utype + unit_bucket(25g) + tok3.
+        Cross-token-window key — cat + utype + unit_bucket(25g) + tok3.
         Catches products whose tok1/tok2 differ but share a later token
         (e.g. 'jacket potato' vs 'baking potato' — both have 'potato' but at
         different positions; key_c/d don't help because tok3 is also absent).
@@ -189,7 +189,7 @@ def run_clustering(df: pd.DataFrame) -> None:
 
     def _unb_key_f(row):
         """
-        v7: tok3-based key — catches products where tok1/tok2 are category descriptors
+        tok3-based key — catches products where tok1/tok2 are category descriptors
         (e.g. 'thick cut' / 'oven ready') but the core product word is tok3
         (e.g. 'chips' / 'burgers').  Using a 50g bucket keeps block sizes manageable.
         """
@@ -210,7 +210,7 @@ def run_clustering(df: pd.DataFrame) -> None:
     print(f'Pass 3 complete: {len(matches_unbranded):,} matches')
 
     # ============================================================
-    # PASS 4 — CROSS-BUCKET CATCH-ALL (v5 new)
+    # PASS 4 — CROSS-BUCKET CATCH-ALL
     # ============================================================
 
     # Tentative singletons: products with no direct match in passes 1–3
@@ -276,7 +276,7 @@ def run_clustering(df: pd.DataFrame) -> None:
     print(f'Raw clusters: {n_raw:,}  singletons: {(raw_cluster_sizes==1).sum():,}  multi: {(raw_cluster_sizes>1).sum():,}')
 
     # ============================================================
-    # PASS 5 — CLUSTER COMPLETION (v8)
+    # PASS 5 — CLUSTER COMPLETION
     # ============================================================
     # Many 3-way clusters exist because the 4th supermarket's matching product
     # was never placed in the same blocking bucket (blocking miss).  This pass
@@ -284,7 +284,7 @@ def run_clustering(df: pd.DataFrame) -> None:
     # against same-brand / tier+category products from the missing SM.
 
     _ALL_SMS_COMPLETION = {'ASDA', 'Tesco', 'Sains', 'Morrisons'}
-    # v11: wider caps unlock more recall.  Branch-level tier/category/brand
+    # wider caps unlock more recall.  Branch-level tier/category/brand
     # gates keep FP risk contained.
     _COMPLETION_MAX_CANDS = {'branded': 400, 'own_brand': 200, 'unbranded': 120}
 
@@ -312,7 +312,7 @@ def run_clustering(df: pd.DataFrame) -> None:
                 cands = cands[cands['tier_type'] == tier.iloc[0]]
             if not cat.empty:
                 cands = cands[cands['cat_norm'] == cat.iloc[0]]
-            # v10: apply frozen/fresh_food storage-condition guard
+            # apply frozen/fresh_food storage-condition guard
             # (same logic as compute_similarity own_brand guard)
             _member_cats = members['category'].dropna().str.lower()
             _cluster_frozen = any('frozen' in c for c in _member_cats)
@@ -340,7 +340,7 @@ def run_clustering(df: pd.DataFrame) -> None:
         return cands, ptype
 
 
-    # v11: Iterate completion over 2-way AND 3-way clusters so that 2-way→3-way
+    # Iterate completion over 2-way AND 3-way clusters so that 2-way→3-way
     # upgrades feed the next iteration's 3-way→4-way upgrades.  Uses the
     # COMPLETION_UNIT_TOL (wider) since brand/category/tier already gate the pool.
     _completion_unit_tol = {
@@ -484,7 +484,7 @@ def run_clustering(df: pd.DataFrame) -> None:
 
     def fix_same_supermarket_violation(group_df, pair_scores):
         """
-        v5 SCORE-BASED fix (replaces v4 greedy iteration).
+        Score-based assignment.
 
         For clusters with multiple products from the same supermarket:
         - For each duplicate SM, keep the product with the highest
@@ -582,7 +582,7 @@ def run_clustering(df: pd.DataFrame) -> None:
 
     def _purge_hard_conflicts(group_df):
         """
-        v5.2: Post-cluster hard-conflict purge.
+        Post-cluster hard-conflict purge.
 
         Transitive union-find chains can link products via a "bridge" product that
         has no flavor/packaging tokens, creating a cluster where two members would
@@ -645,7 +645,7 @@ def run_clustering(df: pd.DataFrame) -> None:
     print(f'  Unit-type violations fixed:    {unit_type_violations_fixed:,}')
     print(f'  Cross-tier violations fixed:   {tier_violations_fixed:,}')
 
-    # v5.2: Post-cluster hard-conflict purge — split clusters where a transitive
+    # Post-cluster hard-conflict purge — split clusters where a transitive
     # union-find bridge created internally inconsistent flavor/packaging pairs.
     print('Running post-cluster hard-conflict purge...')
     purge_products_removed = 0
@@ -665,7 +665,7 @@ def run_clustering(df: pd.DataFrame) -> None:
     print(f'  Final cluster count:           {len(final_clusters):,}')
 
     # ============================================================
-    # PASS 5B — POST-PROCESSING CLUSTER COMPLETION (v8)
+    # PASS 5B — POST-PROCESSING CLUSTER COMPLETION
     # ============================================================
     # The raw-cluster completion pass (Pass 5) misses 3-way clusters that
     # emerge from splitting larger raw clusters during post-processing.
@@ -786,7 +786,7 @@ def run_clustering(df: pd.DataFrame) -> None:
     def _p5_best_match(cl_df, filt, ptype, unit_tol):
         """Return (best_cand_idx, best_score, best_mem_idx) over all members × candidates.
 
-        v9: When compute_similarity gives a non-zero score that still falls below _comp_thresh,
+        When compute_similarity gives a non-zero score that still falls below _comp_thresh,
         we try a token_set_ratio blended fallback.  In the completion-pass context the
         brand/category/unit constraints are already very tight, so a partial-token overlap
         (e.g. "Cream of Tomato Soup" vs "Tomato Soup") is usually a valid match.
@@ -1438,7 +1438,7 @@ def run_clustering(df: pd.DataFrame) -> None:
     n_multi = len(non_singleton)
 
     print('\n' + '=' * 60)
-    print('DIAGNOSTIC REPORT v10')
+    print("DIAGNOSTIC REPORT")
     print('=' * 60)
     print(f'Total clusters (incl singletons): {len(cluster_summary):,}')
     print(f'Singletons:                       {(cluster_summary["cluster_size"]==1).sum():,}')
