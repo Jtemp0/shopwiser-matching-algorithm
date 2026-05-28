@@ -42,7 +42,7 @@ set -a && source .env && set +a
 ## Running the full pipeline
 
 Run these in order from the repo root. Each step reads the previous step's
-output from `data/outputs/`.
+output from `data/intermediate/`.
 
 ```bash
 # 1. Raw CSV → normalised features
@@ -61,12 +61,16 @@ uv run python main.py ensemble
 set -a && source .env && set +a
 uv run python scripts/llm_ensemble_filter.py
 
-# 6. Finalisation pass (brand canonicalisation, unit_value normalisation,
+# 6. Per-cluster structural metrics + confidence_score
+#    (writes data/intermediate/cluster_review_metrics.csv, consumed by step 7)
+uv run python scripts/review_metrics.py --clusters data/intermediate/ensemble_clusters.csv
+
+# 7. Finalisation pass (brand canonicalisation, unit_value normalisation,
 #    pack-size guard, confidence_score column)
 uv run python scripts/improvements/finalise_deliverable.py
 ```
 
-**Canonical deliverable:** `data/outputs/improvements/ensemble_clusters_final.csv`
+**Canonical deliverable:** `data/deliverable/ensemble_clusters_final.csv`
 (one row per product, grouped by `ensemble_cluster_id`, with a
 `confidence_score` per cluster).
 
@@ -78,10 +82,8 @@ steps 1–4.
 ## Validation & analysis
 
 ```bash
-# Structural metrics + per-cluster confidence
-uv run python scripts/review_metrics.py --clusters data/outputs/improvements/ensemble_clusters_final.csv
-
-# Precision validation against clause 4.2 (Claude Haiku, needs API key)
+# Precision validation against clause 4.2 (Claude Haiku proxy, needs API key)
+# Runs on the final deliverable by default
 set -a && source .env && set +a
 uv run python scripts/contract_validate_haiku.py
 
@@ -91,9 +93,9 @@ uv run python scripts/improvements/precision_coverage_rigorous.py
 # Human review form (50-cluster stratified sample → HTML)
 uv run python scripts/improvements/build_review_sheet.py
 
-# After the 4 reviewers return their CSVs into data/outputs/improvements/reviews/,
+# After the 4 reviewers return their CSVs into data/validation/reviews/,
 # aggregate them into the clause 4.2 pass rate
-uv run python scripts/improvements/aggregate_review_results.py --in data/outputs/improvements/reviews/
+uv run python scripts/improvements/aggregate_review_results.py --in data/validation/reviews/
 
 # Similarity unit tests
 uv run python main.py test-similarity
@@ -111,12 +113,13 @@ src/shopwiser/
   ml_matcher/                   FAISS retrieval + LightGBM ranker
   ensemble/                     Kruskal union of the two matchers
   conflict_tokens.py            Flavour / variant / tier conflict vocabulary
-scripts/                        LLM filter, validation, audits
+scripts/                        LLM filter, validation
 scripts/improvements/           Finalisation, charts, review sheet
 data/
-  raw/                          Input catalogue CSVs
-  processed/                    Normalised features
-  outputs/                      Pipeline outputs (clusters, ensemble, final)
+  input/                        raw scrapes + normalised features
+  intermediate/                 matcher + ensemble outputs (regenerated)
+  deliverable/                  ensemble_clusters_final.csv  <-- the product
+  validation/                   contract validation, charts, review form
 ```
 
 ---
@@ -132,7 +135,7 @@ incoming data has different feature naming:
 - Matcher thresholds: `src/shopwiser/rule_matcher/config.py` and
   `src/shopwiser/ml_matcher/config.py`
 
-Point `data/raw/` at the new CSV and re-run from step 1.
+Point `data/input/` at the new CSV and re-run from step 1.
 
 ---
 

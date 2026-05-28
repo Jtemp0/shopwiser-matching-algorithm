@@ -37,8 +37,8 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 MODEL          = "claude-haiku-4-5-20251001"
-DEFAULT_CSV    = REPO / "data/outputs/ensemble/ensemble_clusters.csv"
-DEFAULT_OUT    = REPO / "data/outputs/fp_analys/contract_validation.csv"
+DEFAULT_CSV    = REPO / "data/deliverable/ensemble_clusters_final.csv"
+DEFAULT_OUT    = REPO / "data/validation/contract_validation.csv"
 PASS_THRESHOLD = 0.90   # Clause 4.4
 SAMPLE_SIZE    = 50     # Clause 4.1
 BATCH          = 10     # clusters per LLM call

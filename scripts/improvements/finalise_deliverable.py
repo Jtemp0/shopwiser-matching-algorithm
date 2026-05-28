@@ -24,12 +24,12 @@ Post-process the ensemble deliverable for hand-off:
 
 Inputs
 ------
-  data/outputs/ensemble/ensemble_clusters.csv
-  data/outputs/ensemble/cluster_review_metrics.csv
+  data/intermediate/ensemble_clusters.csv
+  data/intermediate/cluster_review_metrics.csv
 
 Output
 ------
-  data/outputs/improvements/ensemble_clusters_final.csv
+  data/deliverable/ensemble_clusters_final.csv
 
 Usage
 -----
@@ -44,9 +44,9 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
-CLUSTERS = REPO / "data/outputs/ensemble/ensemble_clusters.csv"
-METRICS = REPO / "data/outputs/ensemble/cluster_review_metrics.csv"
-OUT = REPO / "data/outputs/improvements/ensemble_clusters_final.csv"
+CLUSTERS = REPO / "data/intermediate/ensemble_clusters.csv"
+METRICS = REPO / "data/intermediate/cluster_review_metrics.csv"
+OUT = REPO / "data/deliverable/ensemble_clusters_final.csv"
 
 # (regex, replacement) — case-insensitive on the whole-word form,
 # then we re-case to the canonical form

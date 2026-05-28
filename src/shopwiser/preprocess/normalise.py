@@ -1,7 +1,7 @@
 """
 Per-row normalisation pipeline and CSV driver.
 
-Reads data/raw/raw.csv → writes data/processed/normalized_products.csv (26 columns).
+Reads data/input/raw.csv → writes data/input/normalized_products.csv (26 columns).
 
 Split across ``cleaning`` (accents, parentheticals), ``brand`` (own-label, tier, ABV,
 known brands), ``units`` (multipack, g/ml, price inference), and ``attributes``
@@ -176,7 +176,7 @@ def normalize_product_name(row: pd.Series) -> dict:
 
 
 def main(*, sample: bool = False) -> None:
-    """Run CSV normalisation. ``sample=True`` uses ``data/raw/raw_1000.csv`` and writes ``normalized_products_sample.csv``."""
+    """Run CSV normalisation. ``sample=True`` uses ``data/input/raw_1000.csv`` and writes ``normalized_products_sample.csv``."""
     INPUT_PATH = raw_csv_path(sample=sample)
     OUTPUT_PATH = normalized_products_path(sample=sample)
 
@@ -256,7 +256,7 @@ if __name__ == '__main__':
     _p.add_argument(
         '--sample',
         action='store_true',
-        help='Use data/raw/raw_1000.csv and write data/processed/normalized_products_sample.csv',
+        help='Use data/input/raw_1000.csv and write data/input/normalized_products_sample.csv',
     )
     _args = _p.parse_args()
     main(sample=_args.sample)

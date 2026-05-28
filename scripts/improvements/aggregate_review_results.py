@@ -14,7 +14,7 @@ to a single outlier reviewer.
 Usage
 -----
     uv run python scripts/improvements/aggregate_review_results.py \
-        --in data/outputs/improvements/reviews/
+        --in data/validation/reviews/
 
 The script reads every *.csv in the directory and assumes each came from a
 different reviewer. Empty directory just prints the schema reminder.
@@ -28,8 +28,8 @@ from pathlib import Path
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-DEFAULT_DIR = REPO_ROOT / "data/outputs/improvements/reviews"
-OUT = REPO_ROOT / "data/outputs/improvements/review_aggregated.csv"
+DEFAULT_DIR = REPO_ROOT / "data/validation/reviews"
+OUT = REPO_ROOT / "data/validation/review_aggregated.csv"
 
 
 def main() -> None:

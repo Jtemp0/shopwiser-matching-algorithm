@@ -13,9 +13,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from shopwiser.paths import DATA_OUTPUTS, PROJECT_ROOT
+from shopwiser.paths import DATA_INTERMEDIATE, DATA_VALIDATION
 
-DEMO_DIR = DATA_OUTPUTS / 'demo'
+DEMO_DIR = DATA_VALIDATION / 'demo'
 
 # Twenty-five exact 4-way clusters (one row per supermarket), manually reviewed.
 # Selection rules: identical ``normalized_name`` across all four rows; unit_value
@@ -193,14 +193,14 @@ def export_cofounder_demo(
     seed: int = 42,
     write_html: bool = False,
 ) -> tuple[Path, Path, Path | None]:
-    """Write long CSV, wide CSV, and optionally HTML under ``data/outputs/demo/``.
+    """Write long CSV, wide CSV, and optionally HTML under ``data/validation/demo/``.
 
     By default uses ``VALIDATED_COFOUNDER_DEMO_CLUSTER_IDS``. Set
     ``use_stratified_fallback=True`` to ignore that list and sample automatically.
 
     Returns ``(long_csv, wide_csv, html_or_none)``.
     """
-    csv_in = ml_clusters_csv or (PROJECT_ROOT / 'data/outputs/ml_clusters/ml_clusters.csv')
+    csv_in = ml_clusters_csv or (DATA_INTERMEDIATE / 'ml_clusters.csv')
     out = out_dir or DEMO_DIR
     out.mkdir(parents=True, exist_ok=True)
 
@@ -272,9 +272,9 @@ def main(argv: list[str] | None = None) -> None:
         '--input',
         type=Path,
         default=None,
-        help='Path to ml_clusters.csv (default: data/outputs/ml_clusters/ml_clusters.csv)',
+        help='Path to ml_clusters.csv (default: data/intermediate/ml_clusters.csv)',
     )
-    p.add_argument('--out-dir', type=Path, default=None, help='Output directory (default: data/outputs/demo)')
+    p.add_argument('--out-dir', type=Path, default=None, help='Output directory (default: data/validation/demo/)')
     p.add_argument('--n-clusters', type=int, default=25, help='When using --stratified, number of clusters')
     p.add_argument('--seed', type=int, default=42, help='Random seed for stratified sampling')
     p.add_argument(

@@ -21,13 +21,13 @@ weighted by the deliverable's distribution to mirror what we ship.
 
 Inputs
 ------
-  data/outputs/ensemble/ensemble_clusters.csv
+  data/deliverable/ensemble_clusters_final.csv  (the shipped deliverable)
 
 Outputs
 -------
-  data/outputs/improvements/review_sheet.html      open in browser
-  data/outputs/improvements/review_sample.csv      machine-readable sample
-  data/outputs/improvements/review_results_blank.csv   schema for aggregation
+  data/validation/review_sheet.html      open in browser
+  data/validation/review_sample.csv      machine-readable sample
+  data/validation/review_results_blank.csv   schema for aggregation
 
 Usage
 -----
@@ -46,10 +46,10 @@ import numpy as np
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-CLUSTERS = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters.csv"
-OUT_HTML = REPO_ROOT / "data/outputs/improvements/review_sheet.html"
-OUT_SAMPLE = REPO_ROOT / "data/outputs/improvements/review_sample.csv"
-OUT_BLANK = REPO_ROOT / "data/outputs/improvements/review_results_blank.csv"
+CLUSTERS = REPO_ROOT / "data/deliverable/ensemble_clusters_final.csv"
+OUT_HTML = REPO_ROOT / "data/validation/review_sheet.html"
+OUT_SAMPLE = REPO_ROOT / "data/validation/review_sample.csv"
+OUT_BLANK = REPO_ROOT / "data/validation/review_results_blank.csv"
 
 
 def stratified_sample(df: pd.DataFrame, n: int, seed: int) -> pd.DataFrame:

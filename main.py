@@ -119,14 +119,14 @@ def build_parser() -> argparse.ArgumentParser:
     pm = sub.add_parser(
         'ml-match',
         aliases=('match-ml',),
-        help='FAISS + LightGBM matching → data/outputs/ml_clusters/',
+        help='FAISS + LightGBM matching → data/intermediate/',
     )
     add_sample(pm)
     pm.set_defaults(func=_cmd_ml_match)
 
     pe = sub.add_parser(
         'ensemble',
-        help='Union ML-matching + rule-based clusters → data/outputs/ensemble/',
+        help='Union ML-matching + rule-based clusters → data/intermediate/',
     )
     add_sample(pe)
     pe.set_defaults(func=_cmd_ensemble)
@@ -134,19 +134,19 @@ def build_parser() -> argparse.ArgumentParser:
     pdemo = sub.add_parser(
         'export-demo',
         aliases=('demo',),
-        help='Build cofounder demo CSV/HTML from ml_clusters.csv → data/outputs/demo/',
+        help='Build cofounder demo CSV/HTML from ml_clusters.csv → data/validation/demo/',
     )
     pdemo.add_argument(
         '--input',
         type=str,
         default=None,
-        help='Path to ml_clusters.csv (default: data/outputs/ml_clusters/ml_clusters.csv)',
+        help='Path to ml_clusters.csv (default: data/intermediate/ml_clusters.csv)',
     )
     pdemo.add_argument(
         '--out-dir',
         type=str,
         default=None,
-        help='Output directory (default: data/outputs/demo)',
+        help='Output directory (default: data/validation/demo/)',
     )
     pdemo.add_argument('--n-clusters', type=int, default=25)
     pdemo.add_argument('--seed', type=int, default=42)

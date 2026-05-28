@@ -23,6 +23,11 @@ scripts/darius_matcher.py
 *.mov
 *.mp4
 
+# Dev / generated data subfolders (regenerated on demand)
+data/intermediate/sample/
+data/validation/demo/
+data/validation/reviews/
+
 # Folders
 docs/
 papers/

@@ -19,8 +19,8 @@ The seven-part framework:
 
 Outputs:
   console  – labelled sections matching REVIEW.md numbering
-  data/outputs/ensemble/cluster_review_metrics.csv  – per-cluster scores
-  data/outputs/ensemble/review_summary.json         – machine-readable headline numbers
+  data/intermediate/cluster_review_metrics.csv  – per-cluster scores
+  data/intermediate/review_summary.json         – machine-readable headline numbers
 
 Usage:
     uv run python scripts/review_metrics.py
@@ -51,9 +51,9 @@ warnings.filterwarnings("ignore")
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-DEFAULT_CLUSTERS = REPO_ROOT / "data/outputs/ensemble/ensemble_clusters.csv"
-DEFAULT_RAW = REPO_ROOT / "data/raw/raw.csv"
-DEFAULT_OUT_DIR = REPO_ROOT / "data/outputs/ensemble"
+DEFAULT_CLUSTERS = REPO_ROOT / "data/intermediate/ensemble_clusters.csv"
+DEFAULT_RAW = REPO_ROOT / "data/input/raw.csv"
+DEFAULT_OUT_DIR = REPO_ROOT / "data/intermediate"
 
 # Calibration constants from hand-audit of 20 clusters (10 flagged good, 10 bad)
 # "Of 10 flagged bad: 8 genuinely wrong (precision of bad label = 80% error rate)
@@ -472,12 +472,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--raw",
         default=str(DEFAULT_RAW),
-        help="Path to raw scraped data CSV (default: data/raw/raw.csv)",
+        help="Path to raw scraped data CSV (default: data/input/raw.csv)",
     )
     p.add_argument(
         "--out-dir",
         default=str(DEFAULT_OUT_DIR),
-        help="Directory for output files (default: data/outputs/ensemble/)",
+        help="Directory for output files (default: data/intermediate/)",
     )
     p.add_argument(
         "--skip-probe",
