@@ -91,6 +91,10 @@ uv run python scripts/improvements/precision_coverage_rigorous.py
 # Human review form (50-cluster stratified sample → HTML)
 uv run python scripts/improvements/build_review_sheet.py
 
+# After the 4 reviewers return their CSVs into data/outputs/improvements/reviews/,
+# aggregate them into the clause 4.2 pass rate
+uv run python scripts/improvements/aggregate_review_results.py --in data/outputs/improvements/reviews/
+
 # Similarity unit tests
 uv run python main.py test-similarity
 ```
@@ -134,9 +138,9 @@ Point `data/raw/` at the new CSV and re-run from step 1.
 
 ## Notes
 
-- The `ensemble-complete`, `ensemble-merge`, and `export-demo` CLI commands are
-  optional LLM-completion experiments and are **not** part of the final
-  deliverable pipeline. Ignore them for a standard run.
+- The `export-demo` and `audit` CLI commands are optional utilities (demo
+  HTML export and an independent LLM audit) and are **not** part of the core
+  matching pipeline. Ignore them for a standard run.
 - Categorical confidence bands are intentionally omitted from the deliverable;
   the raw `confidence_score` is shipped so any cut-off can be chosen against the
   empirical calibration (see the reliability diagram from the charts step).
