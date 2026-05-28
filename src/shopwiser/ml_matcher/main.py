@@ -7,6 +7,7 @@ from rapidfuzz import fuzz
 
 from shopwiser.rule_matcher.data_prep import load_prepared_dataframe
 
+from . import config
 from .config import (
     ACCEPT_SIZE_GATE,
     ACCEPT_THRESHOLD,
@@ -19,7 +20,6 @@ from .config import (
     COMPLETION_THRESHOLD,
     MARGIN_THRESHOLD,
     MAX_CLUSTER_SIZE,
-    OUTPUT_DIR,
     REVERSE_THRESHOLD,
     configure_paths,
 )
@@ -975,7 +975,7 @@ def build_final_clusters(
     print(f'Perfect 4-way Clusters: {n_4way:,}')
     print('=' * 50)
 
-    output_path = OUTPUT_DIR / 'ml_clusters.csv'
+    output_path = config.OUTPUT_DIR / 'ml_clusters.csv'
     df.to_csv(output_path, index=False)
     print(f'\nSaved final clusters to {output_path}')
 

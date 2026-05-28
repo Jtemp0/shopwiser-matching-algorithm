@@ -126,8 +126,26 @@ data/
 
 ## Adapting to new scraped data
 
-The pipeline keys off column names defined in the preprocess layer. When the
-incoming data has different feature naming:
+### Expected input schema
+
+The raw CSV at `data/input/raw.csv` must contain these columns:
+
+| Column | Description |
+|---|---|
+| `supermarket` | Retailer name (`Tesco`, `Sains`, `ASDA`, `Morrisons`) |
+| `names` | Product title as scraped |
+| `prices_(£)` | Price in GBP |
+| `unit` | Pack/size string (e.g. `400g`, `6 x 330ml`) |
+| `category` | Source category |
+| `own_brand` | `True`/`False` |
+
+The normalise step validates these up-front and fails with a clear message if
+any are missing — so a mis-named column from a new scraper is caught immediately
+rather than deep in the pipeline.
+
+### Where the logic lives
+
+When the incoming data has different feature naming or vocabulary:
 
 - Column mapping and cleaning: `src/shopwiser/preprocess/normalise.py`
 - Brand vocabulary: `src/shopwiser/preprocess/brand.py`
@@ -135,7 +153,8 @@ incoming data has different feature naming:
 - Matcher thresholds: `src/shopwiser/rule_matcher/config.py` and
   `src/shopwiser/ml_matcher/config.py`
 
-Point `data/input/` at the new CSV and re-run from step 1.
+Point `data/input/raw.csv` at the new CSV and re-run from step 1. Use `--sample`
+on a small slice first to sanity-check end to end.
 
 ---
 
