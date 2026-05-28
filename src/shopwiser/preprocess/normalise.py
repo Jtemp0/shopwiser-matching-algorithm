@@ -187,7 +187,28 @@ def main(*, sample: bool = False) -> None:
     print(f'  Input:  {INPUT_PATH}')
     print(f'  Output: {OUTPUT_PATH}')
 
+    if not INPUT_PATH.exists():
+        raise FileNotFoundError(
+            f"Input file not found: {INPUT_PATH}\n"
+            f"Place the scraped catalogue CSV at that path, or pass --sample to use "
+            f"the bundled ~1000-row sample (data/input/raw_1000.csv)."
+        )
+
     df = pd.read_csv(INPUT_PATH, low_memory=False)
+
+    # Validate the input schema up-front so a mis-named column from a new
+    # scraper fails fast with a clear message instead of a deep KeyError.
+    required = ['supermarket', 'names', 'prices_(£)', 'unit', 'category', 'own_brand']
+    missing = [c for c in required if c not in df.columns]
+    if missing:
+        raise ValueError(
+            f"Input CSV is missing required column(s): {missing}\n"
+            f"  Expected schema : {required}\n"
+            f"  Columns found   : {list(df.columns)}\n"
+            f"If your scraper uses different column names, rename them to match before "
+            f"running (see README → 'Adapting to new scraped data')."
+        )
+
     initial_count = len(df)
     df = df[df['names'].notna() & (df['names'].str.strip() != '')].reset_index(drop=True)
     print(f'\nLoaded {initial_count:,} rows, removed {initial_count - len(df):,} empty names')
