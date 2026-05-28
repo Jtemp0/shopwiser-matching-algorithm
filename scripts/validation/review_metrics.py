@@ -40,7 +40,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
 warnings.filterwarnings("ignore")
 
@@ -223,7 +222,7 @@ def part_3_structural_checks(df: pd.DataFrame) -> dict:
           f"({cross_cat/n_clusters*100:.1f}%)")
     print()
     print(f"  Sum of violations across 4 checks: {total_viol:,}")
-    print(f"  (Upper bound on failing clusters — some clusters fail multiple checks)")
+    print("  (Upper bound on failing clusters — some clusters fail multiple checks)")
 
     return {
         "check1_duplicate_retailer": viol1,
@@ -544,7 +543,7 @@ def main(argv: list[str] | None = None) -> None:
         print(f"  Coverage           :  {summary['n_matched']:,} / {summary['n_raw']:,} "
               f"products  ({summary['pct_covered']:.1f}%)")
     if "calibrated_precision_overall" in summary:
-        print(f"  Calibrated precision:")
+        print("  Calibrated precision:")
         print(f"    4-way : {summary.get('calibrated_precision_4way', '?')}%  "
               f"(probe pass {summary.get('probe_pass_rate_4way', '?')}%)")
         print(f"    3-way : {summary.get('calibrated_precision_3way', '?')}%  "

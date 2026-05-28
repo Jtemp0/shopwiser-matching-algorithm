@@ -5,12 +5,7 @@ import pandas as pd
 from rapidfuzz import fuzz
 
 # Conflict vocabulary lives in shopwiser.conflict_tokens (single source of truth).
-# Re-exported here so existing call-sites that import from this module keep working.
-from shopwiser.conflict_tokens import (
-    FLAVOR_NAMED_TOKENS,
-    ONE_SIDED_CONFLICT_TOKENS,
-    check_hard_conflict as _check_hard_conflict_bool,
-)
+from shopwiser.conflict_tokens import check_hard_conflict as _check_hard_conflict_bool
 
 
 def check_hard_conflict(name_a: str, name_b: str) -> int:

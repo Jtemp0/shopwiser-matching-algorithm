@@ -3,7 +3,6 @@
 import faiss
 import numpy as np
 import pandas as pd
-import re
 from sentence_transformers import SentenceTransformer
 
 from .config import EMBEDDING_MODEL, TOP_K_CANDIDATES

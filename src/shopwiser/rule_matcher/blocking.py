@@ -49,7 +49,6 @@ def build_blocks(sub_df, key_fn, max_block_size=MAX_BLOCK_SIZE):
                 sub_raw[b500].append(idx)
                 if b500 != b1000:   # only add second bucket when they differ
                     sub_raw[b1000].append(idx)
-            seen_in_sub = set()
             for sub_key, sub_idx in sub_raw.items():
                 # dedup seen pairs within the same parent block
                 if sub_df.loc[sub_idx, 'supermarket'].nunique() < 2:

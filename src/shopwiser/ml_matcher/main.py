@@ -57,18 +57,6 @@ def _best_delta_size_scalar(
     return min(d1, d2, d3)
 
 
-def _delta_size_multi(
-    parsed_a: tuple[float, float] | None,
-    parsed_b: tuple[float, float] | None,
-) -> float:
-    """Multi-interpretation relative size delta; returns -1.0 when either side has no unit."""
-    if parsed_a is None or parsed_b is None:
-        return -1.0
-    uv_a, pq_a = parsed_a
-    uv_b, pq_b = parsed_b
-    return _best_delta_size_scalar(uv_a, pq_a, uv_b, pq_b)
-
-
 def _delta_size_total(
     parsed_a: tuple[float, float] | None,
     parsed_b: tuple[float, float] | None,
@@ -349,7 +337,6 @@ def _run_model_guided_retrieval(
     norm_name_map = df['normalized_name'].fillna('').to_dict()
     brand_map = df['known_brand_clean'].fillna('').to_dict()
     product_type_map = df['product_type'].to_dict() if 'product_type' in df.columns else {}
-    is_truncated_map = df['is_truncated'].fillna(False).astype(bool).to_dict() if 'is_truncated' in df.columns else {}
 
     # Build component snapshot
     components_now: dict[int, int] = {}
@@ -438,7 +425,6 @@ def _run_model_guided_retrieval(
     anchor_arr = np.array([c[0] for c in raw_cands], dtype=np.int64)
     target_arr = np.array([c[1] for c in raw_cands], dtype=np.int64)
     sim_arr = np.array([c[2] for c in raw_cands], dtype=np.float32)
-    cid_arr = np.array([c[3] for c in raw_cands], dtype=np.int64)
 
     id_a = np.minimum(anchor_arr, target_arr)
     id_b = np.maximum(anchor_arr, target_arr)
@@ -572,7 +558,6 @@ def build_final_clusters(
         on=['anchor', 'target_sm'], how='left',
     )
 
-    n_pre_threshold = len(best_matches)
     best_matches = best_matches[best_matches['match_prob'] >= ACCEPT_THRESHOLD]
     n_pre_margin = len(best_matches)
     best_matches = best_matches[best_matches['margin'] >= MARGIN_THRESHOLD]

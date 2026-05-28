@@ -72,7 +72,7 @@ def main() -> None:
     print(f"Clusters reviewed        : {len(by_cluster)}")
     print(f"Clusters passing majority: {int(by_cluster['majority_pass'].sum())}")
     print(f"Pass rate                : {pass_rate:.1f}%")
-    print(f"Acceptance threshold    : 90.0%")
+    print("Acceptance threshold    : 90.0%")
     print(f"Result                   : {'PASS' if pass_rate >= 90 else 'BELOW THRESHOLD'}")
 
     by_cluster.to_csv(OUT, index=False)

@@ -158,7 +158,6 @@ def _write_html(wide: pd.DataFrame, path: Path, *, n_clusters: int) -> None:
     ]
 
     for _, r in wide.iterrows():
-        cid = int(r['cluster_id'])
         cat = html.escape(str(r['category']))
         label = html.escape(str(r['cluster_label']))
         parts.append('<section class="cluster">')

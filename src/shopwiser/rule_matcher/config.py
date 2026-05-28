@@ -65,7 +65,7 @@ ALCOHOL_FREE_PATTERNS  = [
 # Canonical home: ``shopwiser.conflict_tokens``. Re-exported here so existing
 # imports (``from shopwiser.rule_matcher.config import FLAVOR_NAMED_TOKENS, …``)
 # keep working without churn. Edit the vocabulary in conflict_tokens.py.
-from shopwiser.conflict_tokens import (  # noqa: E402
+from shopwiser.conflict_tokens import (  # noqa: E402,F401  (intentional re-exports)
     COOKING_STATE_TOKENS,
     FLAVOR_NAMED_TOKENS,
     HARD_CONFLICT_NORM,

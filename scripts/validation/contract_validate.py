@@ -131,7 +131,7 @@ def _weight_variance_summary(g: pd.DataFrame) -> str:
                 max_variance = max(max_variance, pct)
 
     within = max_variance <= 15.0
-    verdict = "within 15% → Q2 = Yes" if within else f"EXCEEDS 15% → Q2 = No"
+    verdict = "within 15% → Q2 = Yes" if within else "EXCEEDS 15% → Q2 = No"
     return f"Q2 pre-check: max pairwise size variance {max_variance:.1f}% ({verdict})"
 
 
@@ -144,7 +144,6 @@ def _cluster_block(df: pd.DataFrame, cid: int) -> str:
         uv       = r.get("unit_value")
         unit     = r.get("unit", "")
         pq       = r.get("pack_quantity")
-        pt       = str(r.get("product_type", "")).lower()
         tier     = _tier_label(r)
 
         # weight / size display
