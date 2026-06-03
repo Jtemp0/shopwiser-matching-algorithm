@@ -129,18 +129,27 @@ data/
 
 The raw CSV at `data/input/raw.csv` must contain these columns:
 
-| Column | Description |
-|---|---|
-| `supermarket` | Retailer name (`Tesco`, `Sains`, `ASDA`, `Morrisons`) |
-| `names` | Product title as scraped |
-| `prices_(£)` | Price in GBP |
-| `unit` | Pack/size string (e.g. `400g`, `6 x 330ml`) |
-| `category` | Source category |
-| `own_brand` | `True`/`False` |
+| Column | Required | Description |
+|---|---|---|
+| `supermarket` | yes | Retailer name (`Tesco`, `Sains`, `ASDA`, `Morrisons`) |
+| `names` | yes | Product title as scraped |
+| `prices_(£)` | yes | Price in GBP |
+| `unit` | yes | Pack/size string (e.g. `400g`, `6 x 330ml`) |
+| `own_brand` | yes | `True`/`False` |
+| `category` | optional | Source category (see note below) |
 
-The normalise step validates these up-front and fails with a clear message if
-any are missing — so a mis-named column from a new scraper is caught immediately
-rather than deep in the pipeline.
+The normalise step validates the required columns up-front and fails with a
+clear message if any are missing — so a mis-named column from a new scraper is
+caught immediately rather than deep in the pipeline.
+
+**`category` is optional.** When present it drives the blocking buckets, the
+frozen-vs-fresh gate, and one ML ranker feature. When absent, the pipeline
+runs without it (a uniform placeholder is substituted and products bucket on
+brand / tier / size / name instead). The bulk of the matching logic does not
+depend on it, so the deliverable still holds up — expect only a small precision
+reduction on cross-category look-alikes (e.g. tinned soup vs fresh, frozen vs
+chilled). If the new scraper exposes any coarse aisle/department grouping,
+mapping it into the `category` column recovers most of that benefit.
 
 ### Where the logic lives
 
