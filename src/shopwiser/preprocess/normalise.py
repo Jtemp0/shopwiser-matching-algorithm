@@ -20,6 +20,10 @@ import pandas as pd
 
 from shopwiser.paths import normalized_products_path, raw_csv_path
 
+# Placeholder written into the `category` column when the input has none.
+# Keep in sync with the same constant in rule_matcher.data_prep.
+DEFAULT_CATEGORY = 'uncategorised'
+
 # ── Non-food / non-drink keyword exclusion ────────────────────────────────────
 # Products whose names contain any of these tokens (whole-word, case-insensitive)
 # are excluded from the output — they are non-food items miscategorised by
@@ -198,7 +202,7 @@ def main(*, sample: bool = False) -> None:
 
     # Validate the input schema up-front so a mis-named column from a new
     # scraper fails fast with a clear message instead of a deep KeyError.
-    required = ['supermarket', 'names', 'prices_(£)', 'unit', 'category', 'own_brand']
+    required = ['supermarket', 'names', 'prices_(£)', 'unit', 'own_brand']
     missing = [c for c in required if c not in df.columns]
     if missing:
         raise ValueError(
@@ -207,6 +211,20 @@ def main(*, sample: bool = False) -> None:
             f"  Columns found   : {list(df.columns)}\n"
             f"If your scraper uses different column names, rename them to match before "
             f"running (see README → 'Adapting to new scraped data')."
+        )
+
+    # `category` is optional. It drives blocking buckets, the frozen/fresh gate,
+    # and one ML ranker feature, but the pipeline runs without it — products are
+    # then bucketed by brand/tier/size/name instead. When absent we materialise a
+    # constant placeholder so every downstream consumer sees a uniform value
+    # (no special-casing needed elsewhere). Expect a small precision reduction on
+    # cross-category look-alikes (e.g. tinned soup vs fresh, frozen vs chilled).
+    if 'category' not in df.columns:
+        df['category'] = DEFAULT_CATEGORY
+        print(
+            f"\n⚠ No 'category' column in input — running without category gates "
+            f"(placeholder '{DEFAULT_CATEGORY}'). Matching still works; expect a "
+            f"slightly higher cross-category false-positive rate."
         )
 
     initial_count = len(df)

@@ -9,6 +9,10 @@ from shopwiser.paths import normalized_products_path
 
 from .config import BRAND_EXCLUSIONS, CATEGORY_ALIASES
 
+# Placeholder used when the input has no `category` column.
+# Keep in sync with the same constant in preprocess.normalise.
+DEFAULT_CATEGORY = 'uncategorised'
+
 # normalise synonym spellings in normalized_name so that fuzzy matching
 #     can score them well (e.g. "decaffeinated" and "decaff" are the same thing).
 _NAME_SYNONYM_RE = [
@@ -50,13 +54,20 @@ def load_prepared_dataframe(*, sample: bool = False) -> pd.DataFrame:
     print(f'\nLoaded {len(df):,} products from {path.name}, {df.shape[1]} columns')
 
     REQUIRED_COLS = [
-        'supermarket', 'names', 'category', 'own_brand',
+        'supermarket', 'names', 'own_brand',
         'supermarket_brand', 'tier_type', 'known_brand',
         'pack_quantity', 'unit_value', 'unit_type',
         'attributes_keywords', 'core_product_name', 'normalized_name',
     ]
     missing = [c for c in REQUIRED_COLS if c not in df.columns]
     assert not missing, f'Missing columns: {missing}'
+
+    # `category` is optional (see preprocess.normalise). When absent we materialise
+    # a constant placeholder so the blocking keys, frozen/fresh gate and ML
+    # `same_category` feature all see a uniform value rather than crashing — the
+    # category dimension simply collapses and products bucket on brand/tier/size/name.
+    if 'category' not in df.columns:
+        df['category'] = DEFAULT_CATEGORY
 
     df = df.reset_index(drop=True)
     df['product_idx'] = df.index
