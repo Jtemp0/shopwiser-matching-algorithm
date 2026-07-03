@@ -19,6 +19,19 @@ import sys
 from pathlib import Path
 
 
+def _cmd_ingest(args: argparse.Namespace) -> None:
+    from shopwiser.ingest.main import ingest
+    from shopwiser.paths import DATA_INPUT, RAW_CSV
+
+    ingest(
+        Path(args.input),
+        Path(args.output) if args.output else DATA_INPUT / RAW_CSV,
+        scrape_date=args.date,
+        keep_ineligible=args.keep_ineligible,
+        write_sample=args.write_sample,
+    )
+
+
 def _cmd_normalise(args: argparse.Namespace) -> None:
     from shopwiser.preprocess.normalise import main
 
@@ -103,6 +116,20 @@ def build_parser() -> argparse.ArgumentParser:
             action='store_true',
             help='Use the bundled ~1000-row sample (writes under data/intermediate/sample/)',
         )
+
+    pi = sub.add_parser(
+        'ingest',
+        help='Scraped catalogue CSV → data/input/raw.csv (pipeline input schema)',
+    )
+    pi.add_argument('input', help='Path to the scraped CSV (e.g. original_data.csv)')
+    pi.add_argument('--output', default=None, help='Output path (default: data/input/raw.csv)')
+    pi.add_argument('--date', type=int, default=None, metavar='YYYYMMDD',
+                    help='Scrape date stamped on every row (default: today)')
+    pi.add_argument('--keep-ineligible', action='store_true',
+                    help="Keep rows the scraper flagged is_eligible=False")
+    pi.add_argument('--write-sample', action='store_true',
+                    help='Also write a seeded 1000-row raw_1000.csv for --sample runs')
+    pi.set_defaults(func=_cmd_ingest)
 
     pn = sub.add_parser(
         'normalise',
