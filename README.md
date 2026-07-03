@@ -44,6 +44,10 @@ Run these in order from the repo root. Each step reads the previous step's
 output from `data/intermediate/`.
 
 ```bash
+# 0. (New scrapes only) Raw scraper CSV → data/input/raw.csv
+#    Skip this if you already have a raw.csv in the pipeline's input schema.
+uv run python main.py ingest path/to/scraped.csv
+
 # 1. Raw CSV → normalised features
 uv run python main.py normalise
 
@@ -105,8 +109,9 @@ uv run python main.py test-similarity
 ## Project layout
 
 ```
-main.py                         Unified CLI (steps 1–4 above)
+main.py                         Unified CLI (ingest + steps 1–4 above)
 src/shopwiser/
+  ingest/                       Scraped catalogue CSV → raw.csv schema
   preprocess/                   Normalisation, units, brand, attributes
   rule_matcher/                 Fuzzy + hard-gate matcher
   ml_matcher/                   FAISS retrieval + LightGBM ranker
@@ -124,6 +129,44 @@ data/
 ---
 
 ## Adapting to new scraped data
+
+### Ingesting a raw scrape (`ingest` step)
+
+The live scraper emits one row per product page in a different, less-structured
+shape than the pipeline's input contract (prices are display strings, ASDA
+titles carry the brand in a separate column, category coverage is patchy, and
+there is no `own_brand` flag). The `ingest` step bridges that gap:
+
+```bash
+uv run python main.py ingest path/to/scraped.csv          # → data/input/raw.csv
+uv run python main.py ingest scraped.csv --write-sample    # also writes raw_1000.csv for --sample runs
+```
+
+Expected scraper columns: `source`, `product_name`, `product_price`,
+`product_unit_price` (required); `brand_name`, `details_category`,
+`product_size`, `is_eligible`, `product_url` (optional, used when present).
+What it does:
+
+| Transformation | Detail |
+|---|---|
+| Retailer mapping | `source` → `supermarket` (`Asda`→`ASDA`, `Sainsbury's`→`Sains`, …) |
+| Price parsing | `"£2.15"`, `"£1,099.95"` → float `prices_(£)` |
+| Unit-price parsing | `"£14.93/KG"`, `"87.0p/100g"`, `"£10.67/75cl"`, `"£11.80/kg DR.WT"` → `prices_unit_(£)` per base `unit` (`kg`/`l`/`unit`/`m`) |
+| Brand reconstruction | ASDA titles get `brand_name` prepended unless already present, so brand extraction downstream sees one format |
+| Own-brand detection | Derived from the title/brand against the own-label prefixes in `preprocess/grocery_vocab.py` |
+| Category | Coarse bucket (`food_cupboard`/`fresh_food`/`drinks`/`frozen`/`free-from`/`bakery`) from the retailer section name, falling back to a title-based classifier — see `ingest/categories.py` |
+| Eligibility filter | Rows the scraper flagged `is_eligible=False` (pet food, homeware, vapes, …) are dropped; pass `--keep-ineligible` to retain them |
+
+`product_url` is carried through as a provenance/join key back to the scrape.
+The step prints per-retailer coverage and category distribution so you can spot
+a mis-mapped column before running the rest of the pipeline. Parsers and
+classifier rules are covered by `tests/test_ingest.py`.
+
+Reference run (Jack's July 2026 scrape, 64.5k rows): 55.7k eligible rows
+ingested, 100% of present unit-prices parsed, 26% own-brand — then `normalise`
+reports 89.5% unit coverage and `cluster` produces ~7.7k cross-retailer
+clusters (rule matcher only) with zero same-supermarket / unit-type / tier
+violations.
 
 ### Expected input schema
 
